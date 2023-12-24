@@ -6,23 +6,25 @@ WORKDIR /app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+RUN apt-get update -y && apt-get install python3-pip python3 -y && pip3 install stix2
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Server/Jellyfin.HardwareVisualizer.Server.csproj", "Server/"]
 COPY ["Jellyfin.HardwareVisualizer.Database/Jellyfin.HardwareVisualizer.Database.csproj", "Jellyfin.HardwareVisualizer.Database/"]
 COPY ["Shared/Jellyfin.HardwareVisualizer.Shared.csproj", "Shared/"]
 COPY ["Client/Jellyfin.HardwareVisualizer.Client.csproj", "Client/"]
+
+RUN dotnet workload restore "./Client/./Jellyfin.HardwareVisualizer.Client.csproj"
+RUN dotnet workload restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
+
 RUN dotnet restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
 COPY . .
-WORKDIR "/src/Server"
-RUN dotnet build "./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet build "./Server/./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-
-RUN apt-get update -y && apt-get install python3-pip python3 -y && pip3 install stix2
-
-RUN dotnet publish "./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Server/./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
