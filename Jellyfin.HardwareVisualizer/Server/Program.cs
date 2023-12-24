@@ -6,6 +6,9 @@ using Microsoft.OpenApi.Models;
 using ServiceLocator.Discovery.Option;
 using ServiceLocator.Discovery.Service;
 using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Jellyfin.HardwareVisualizer.Server
 {
@@ -29,6 +32,23 @@ namespace Jellyfin.HardwareVisualizer.Server
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddRazorPages();
 			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(options =>
+				{
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						//define which claim requires to check
+						ValidateIssuer = true,
+						ValidateAudience = true,
+						ValidateLifetime = true,
+						ValidateIssuerSigningKey = true,
+						//store the value in appsettings.json
+						ValidIssuer = builder.Configuration["Jwt:Issuer"],
+						ValidAudience = builder.Configuration["Jwt:Issuer"],
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+					};
+				});
+
 			builder.Services.AddSwaggerGen(options =>
 			{
 				options.SwaggerDoc("v1", new OpenApiInfo
@@ -77,6 +97,8 @@ namespace Jellyfin.HardwareVisualizer.Server
 			app.UseStaticFiles();
 
 			app.UseRouting();
+			app.UseAuthentication();
+			app.UseAuthorization();
 
 			app.UseSwagger();
 			app.UseSwaggerUI();
@@ -93,6 +115,7 @@ namespace Jellyfin.HardwareVisualizer.Server
 				var context = services.GetRequiredService<HardwareVisualizerDataContext>();
 				context.Database.Migrate();
 			}
+
 
 			app.Run();
 		}

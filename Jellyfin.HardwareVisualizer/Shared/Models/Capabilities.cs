@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Jellyfin.HardwareVisualizer.Shared;
+namespace Jellyfin.HardwareVisualizer.Shared.Models;
 
 public class Capabilities
 {

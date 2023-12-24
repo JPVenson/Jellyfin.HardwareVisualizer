@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Jellyfin.HardwareVisualizer.Database;
 using Jellyfin.HardwareVisualizer.Shared;
+using Jellyfin.HardwareVisualizer.Shared.Models;
 using ServiceLocator.Attributes;
-using DeviceType = Jellyfin.HardwareVisualizer.Shared.DeviceType;
+using DeviceType = Jellyfin.HardwareVisualizer.Shared.Models.DeviceType;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 

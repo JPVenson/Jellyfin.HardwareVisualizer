@@ -1,5 +1,6 @@
 ﻿using Jellyfin.HardwareVisualizer.Database;
 using Jellyfin.HardwareVisualizer.Shared;
+using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ServiceLocator.Attributes;
@@ -68,13 +69,13 @@ public class SubmissionService : ISubmissionService
 
 		Gpu selectedGpu = null;
 		Cpu selectedCpu = null;
-		if (submission.hwinfo.SelectedGpu is >= 0 && submission.hwinfo.gpu.Count >= submission.hwinfo.SelectedGpu)
+		if (submission.Hwinfo.SelectedGpu is >= 0 && submission.Hwinfo.Gpu.Count >= submission.Hwinfo.SelectedGpu)
 		{
-			selectedGpu = submission.hwinfo.gpu[submission.hwinfo.SelectedGpu.Value];
+			selectedGpu = submission.Hwinfo.Gpu[submission.Hwinfo.SelectedGpu.Value];
 		}
-		if (submission.hwinfo.SelectedCpu is >= 0)
+		if (submission.Hwinfo.SelectedCpu is >= 0)
 		{
-			selectedCpu = submission.hwinfo.cpu[submission.hwinfo.SelectedCpu.Value];
+			selectedCpu = submission.Hwinfo.Cpu[submission.Hwinfo.SelectedCpu.Value];
 		}
 
 		if (selectedCpu is null && selectedGpu is null)
@@ -90,7 +91,7 @@ public class SubmissionService : ISubmissionService
 			Id = Guid.NewGuid(),
 			HardwareSurveyEntry = new List<HardwareSurveyEntry>()
 		};
-		foreach (var fromCodec in submission.tests)
+		foreach (var fromCodec in submission.Tests)
 		{
 			await foreach (var surveyEntry in GetResolutionTest(db, fromCodec))
 			{
@@ -107,15 +108,15 @@ public class SubmissionService : ISubmissionService
 
 	private async Task<Guid?> GetOrAddCpuType(HardwareVisualizerDataContext db, Cpu selectedCpu)
 	{
-		var findCpu = await db.CpuTypes.FirstOrDefaultAsync(e => e.Identifier == selectedCpu.product);
+		var findCpu = await db.CpuTypes.FirstOrDefaultAsync(e => e.Identifier == selectedCpu.Product);
 		if (findCpu is null)
 		{
 			findCpu = new CpuType()
 			{
 				Id = Guid.NewGuid(),
-				Identifier = selectedCpu.product,
-				Name = selectedCpu.product,
-				Vendor = selectedCpu.vendor,
+				Identifier = selectedCpu.Product,
+				Name = selectedCpu.Product,
+				Vendor = selectedCpu.Vendor,
 			};
 			db.CpuTypes.Add(findCpu);
 		}
@@ -163,7 +164,7 @@ public class SubmissionService : ISubmissionService
 			{
 				FromResolutionId = await GetOrAddResolution(db, resolutionTest.From),
 				ToResolutionId = await GetOrAddResolution(db, resolutionTest.To),
-				MaxStreams = resolutionTest.results.max_streams,
+				MaxStreams = resolutionTest.Results.MaxStreams,
 				HardwareCodecId = await GetOrAddCodec(db, arg.MediaCodec),
 				Id = Guid.NewGuid(),
 			};
@@ -194,15 +195,15 @@ public class SubmissionService : ISubmissionService
 
 	private async Task<Guid> GetOrAddGpuType(HardwareVisualizerDataContext db, Gpu gpu)
 	{
-		var findGpu = await db.GpuTypes.FirstOrDefaultAsync(e => e.Identifier == gpu.product);
+		var findGpu = await db.GpuTypes.FirstOrDefaultAsync(e => e.Identifier == gpu.Product);
 		if (findGpu is null)
 		{
 			findGpu = new GpuType()
 			{
 				Id = Guid.NewGuid(),
-				Identifier = gpu.product,
-				Name = gpu.product,
-				Vendor = gpu.vendor,
+				Identifier = gpu.Product,
+				Name = gpu.Product,
+				Vendor = gpu.Vendor,
 			};
 			db.GpuTypes.Add(findGpu);
 		}
