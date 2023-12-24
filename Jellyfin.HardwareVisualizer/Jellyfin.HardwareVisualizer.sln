@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.HardwareVisualizer.Server", "Server\Jellyfin.HardwareVisualizer.Server.csproj", "{3B7C9963-B74F-4040-8FE4-40970539C9C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Server", "Server\Jellyfin.HardwareVisualizer.Server.csproj", "{3B7C9963-B74F-4040-8FE4-40970539C9C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.HardwareVisualizer.Client", "Client\Jellyfin.HardwareVisualizer.Client.csproj", "{78ADA1AF-E375-46E5-A74A-F6917D4F678B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Client", "Client\Jellyfin.HardwareVisualizer.Client.csproj", "{78ADA1AF-E375-46E5-A74A-F6917D4F678B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.HardwareVisualizer.Shared", "Shared\Jellyfin.HardwareVisualizer.Shared.csproj", "{9DDF8756-77D8-4698-9C14-15F07458B63D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Shared", "Shared\Jellyfin.HardwareVisualizer.Shared.csproj", "{9DDF8756-77D8-4698-9C14-15F07458B63D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.HardwareVisualizer.Database", "..\Jellyfin.HardwareVisualizer.Database\Jellyfin.HardwareVisualizer.Database.csproj", "{AEDB9CBE-D8C4-4DD9-B7A0-A6574BCF837A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Database", "Jellyfin.HardwareVisualizer.Database\Jellyfin.HardwareVisualizer.Database.csproj", "{1AF48922-37DC-49E8-90FF-EA031DE77842}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEDB9CBE-D8C4-4DD9-B7A0-A6574BCF837A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEDB9CBE-D8C4-4DD9-B7A0-A6574BCF837A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEDB9CBE-D8C4-4DD9-B7A0-A6574BCF837A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEDB9CBE-D8C4-4DD9-B7A0-A6574BCF837A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

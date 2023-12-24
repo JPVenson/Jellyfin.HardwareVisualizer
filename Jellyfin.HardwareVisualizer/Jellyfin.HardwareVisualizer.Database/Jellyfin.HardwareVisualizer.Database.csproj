@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jellyfin.HardwareVisualizer\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
+    <ProjectReference Include="..\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
   </ItemGroup>
 
 </Project>

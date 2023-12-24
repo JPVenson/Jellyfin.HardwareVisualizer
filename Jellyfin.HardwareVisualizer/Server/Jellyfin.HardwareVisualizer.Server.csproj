@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="NetServiceLocator" Version="1.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
@@ -22,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Jellyfin.HardwareVisualizer.Database\Jellyfin.HardwareVisualizer.Database.csproj" />
+    <ProjectReference Include="..\Jellyfin.HardwareVisualizer.Database\Jellyfin.HardwareVisualizer.Database.csproj" />
     <ProjectReference Include="..\Client\Jellyfin.HardwareVisualizer.Client.csproj" />
     <ProjectReference Include="..\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
   </ItemGroup>
