@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
-using Jellyfin.HardwareVisualizer.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jellyfin.HardwareVisualizer.Database;
 
 public class HardwareVisualizerDataContext : DbContext
 {
+	public HardwareVisualizerDataContext(DbContextOptions contextOptions) : base(contextOptions)
+	{
+		
+	}
+
 	public DbSet<GpuType> GpuTypes { get; set; }
 	public DbSet<CpuType> CpuTypes { get; set; }
 	public DbSet<HardwareCodec> HardwareCodecs { get; set; }
@@ -19,9 +22,6 @@ public class HardwareVisualizerDataContext : DbContext
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		//optionsBuilder.UseInMemoryDatabase(databaseName: "AuthorDb");
-		optionsBuilder.UseNpgsql("User ID=postgres;Password=Tzghhb2Ab;Host=localhost;Port=5432;Database=Jellyfin.HardwareVisualizer;");
-
 		base.OnConfiguring(optionsBuilder);
 	}
 

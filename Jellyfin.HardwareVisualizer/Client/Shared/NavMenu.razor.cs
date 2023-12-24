@@ -16,16 +16,19 @@ public partial class NavMenu
 
 	public Guid SelectedDevice { get; set; }
 
-	private async Task AddDevice(ChangeEventArgs arg)
+	private async Task AddDevice()
 	{
-		var argValue = (string)arg.Value;
+		var argValue = SelectedDevice.ToString();
 		if (string.IsNullOrWhiteSpace(argValue))
 		{
 			return;
 		}
 
+		Console.WriteLine(argValue);
+
 		var renderDeviceViewModel = DataSelectorService.AllDevices.First(e => e.Id.ToString() == argValue);
 		await DataSelectorService.AddDevice(renderDeviceViewModel);
+		SelectedDevice = Guid.Empty;
 	}
 
 	private async Task RemoveDevice(Guid arg)

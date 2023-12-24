@@ -15,7 +15,12 @@
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
         "applicationUrl": "http://localhost:5209",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "PG_USER": "postgres",
+            "PG_PASSWORD": "jellyfin",
+            "PG_HOST": "localhost",
+            "PG_PORT": "5432",
+            "PG_DATABASE": "Jellyfin.HardwareVisualizer"
         }
       },
       "IIS Express": {
@@ -23,7 +28,12 @@
         "launchBrowser": true,
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "PG_USER": "postgres",
+            "PG_PASSWORD": "jellyfin",
+            "PG_HOST": "localhost",
+            "PG_PORT": "5432",
+            "PG_DATABASE": "Jellyfin.HardwareVisualizer"
         }
       }
     }

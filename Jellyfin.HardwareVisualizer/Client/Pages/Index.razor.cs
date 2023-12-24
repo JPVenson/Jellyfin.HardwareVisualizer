@@ -23,7 +23,10 @@ public partial class Index
 		_usageChart.Options.Responsive = true;
 		_usageChart.Options.Title = new OptionsTitle();
 		_usageChart.Options.Title.Display = true;
-		_usageChart.Options.Title.Text = "Test Title";
+		_usageChart.Options.Title.Text = "Maximum Concurrent Streams";
+		_usageChart.Options.Legend = new Legend();
+		_usageChart.Options.Legend.Display = true;
+		
 
 		DataSelectorService.DeviceAdded += DataSelectorService_DeviceAdded;
 		DataSelectorService.DeviceRemoved += DataSelectorService_DeviceAdded;
@@ -33,7 +36,6 @@ public partial class Index
 	{
 		_usageChart.Data.Labels.Clear();
 		_usageChart.Data.Datasets.Clear();
-
 		var labelData = new Dictionary<string, IList<HardwareDisplayModel>>();
 		
 		foreach (var deviceData in DataSelectorService

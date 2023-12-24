@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\downloads\" />
+  </ItemGroup>
+
 </Project>
