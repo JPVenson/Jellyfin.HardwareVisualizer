@@ -14,7 +14,10 @@ COPY ["Shared/Jellyfin.HardwareVisualizer.Shared.csproj", "Shared/"]
 COPY ["Client/Jellyfin.HardwareVisualizer.Client.csproj", "Client/"]
 RUN dotnet restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
 COPY . .
+WORKDIR "/src/Client"
+RUN dotnet workload restore "./Jellyfin.HardwareVisualizer.Client.csproj"
 WORKDIR "/src/Server"
+RUN dotnet workload restore "./Jellyfin.HardwareVisualizer.Server.csproj"
 RUN dotnet build "./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
