@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
+/// <summary>
+///		Provides lookup values for device data.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class DeviceApiController : ControllerBase
@@ -24,7 +27,12 @@ public class DeviceApiController : ControllerBase
 		_mapperService = mapperService;
 	}
 
+	/// <summary>
+	///		Gets a list of CPU and GPU render devices that were submitted.
+	/// </summary>
+	/// <returns></returns>
 	[HttpGet("")]
+	[ResponseCache(VaryByHeader = "User-Agent", Duration = 60)]
 	[ProducesResponseType<IEnumerable<RenderDeviceViewModel>>(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetDevices()
 	{

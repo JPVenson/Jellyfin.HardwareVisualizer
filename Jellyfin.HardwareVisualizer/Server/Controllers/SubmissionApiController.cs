@@ -5,10 +5,12 @@ using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
 using Jellyfin.HardwareVisualizer.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
+/// <summary>
+///		Api Controller for submitting or getting the results of an Hardware Survey.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class SubmissionApiController : ControllerBase
@@ -26,6 +28,11 @@ public class SubmissionApiController : ControllerBase
 		_mapperService = mapperService;
 	}
 	
+	/// <summary>
+	///		Posts a new Hardware Survey Result.
+	/// </summary>
+	/// <param name="submission">A doc containing all set values for the hardware Survey.</param>
+	/// <returns>The ID of the single hardware survey.</returns>
 	[HttpPost()]
 	[ProducesResponseType<string>(StatusCodes.Status200OK)]
 	public async Task<IActionResult> Submit([FromBody, Required] TranscodeSubmission submission)
@@ -33,6 +40,10 @@ public class SubmissionApiController : ControllerBase
 		return Ok(await _submissionService.SubmitHardwareSurvey(submission));
 	}
 	
+	/// <summary>
+	///		[Internal] 
+	/// </summary>
+	/// <returns></returns>
 	[HttpPost("Recalc")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> Recalc()
@@ -41,6 +52,11 @@ public class SubmissionApiController : ControllerBase
 		return Ok();
 	}
 
+	/// <summary>
+	///		Gets the Hardware Survey result of a single submission.
+	/// </summary>
+	/// <param name="id">The id as returned by <code>POST /</code></param>
+	/// <returns></returns>
 	[HttpGet("single/{Id}")]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<HardwareSurveySubmission>(StatusCodes.Status200OK)]
@@ -54,6 +70,11 @@ public class SubmissionApiController : ControllerBase
 		return Ok(data);
 	}
 
+	/// <summary>
+	///		Gets a set of aggregated data points of all submissions for the given <see cref="deviceId"/>
+	/// </summary>
+	/// <param name="deviceId"></param>
+	/// <returns></returns>
 	[HttpGet("")]
 	[ProducesResponseType<IEnumerable<HardwareDisplayModel>>(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetData([FromQuery, Required]string deviceId)

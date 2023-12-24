@@ -1,8 +1,5 @@
-﻿using System.Net.Http.Json;
-using System.Web;
-using ChartJs.Blazor.BarChart;
+﻿using ChartJs.Blazor.BarChart;
 using ChartJs.Blazor.Common;
-using ChartJs.Blazor.Util;
 using Jellyfin.HardwareVisualizer.Client.Service;
 using Jellyfin.HardwareVisualizer.Shared;
 using Microsoft.AspNetCore.Components;
@@ -13,7 +10,7 @@ public partial class Index
 {
 	[Inject]
 	public DataSelectorService DataSelectorService { get; set; }
-	
+
 	private BarConfig _usageChart;
 
 	protected override async Task OnInitializedAsync()
@@ -27,20 +24,31 @@ public partial class Index
 		_usageChart.Options.Legend = new Legend();
 		_usageChart.Options.Legend.Display = true;
 		
-
 		DataSelectorService.DeviceAdded += DataSelectorService_DeviceAdded;
 		DataSelectorService.DeviceRemoved += DataSelectorService_DeviceAdded;
 	}
+
+	private string[] ChartBackgroundColors = new[]
+	{
+		"#003f5c",
+		"#665191",
+		"#2f4b7c",
+		"#a05195",
+		"#f95d6a",
+		"#d45087",
+		"#ff7c43",
+		"#ffa600"
+	};
 
 	private void DataSelectorService_DeviceAdded(object? sender, RenderDeviceViewModel arg)
 	{
 		_usageChart.Data.Labels.Clear();
 		_usageChart.Data.Datasets.Clear();
 		var labelData = new Dictionary<string, IList<HardwareDisplayModel>>();
-		
+
 		foreach (var deviceData in DataSelectorService
-			         .SelectedDevices
-			         .Select(f => (f, DataSelectorService.DeviceData[f.Id])))
+					 .SelectedDevices
+					 .Select(f => (f, DataSelectorService.DeviceData[f.Id])))
 		{
 			foreach (var hardwareDisplayModel in deviceData.Item2)
 			{
@@ -54,10 +62,11 @@ public partial class Index
 				valuesForCodec.Add(hardwareDisplayModel);
 			}
 		}
-		
+
 		var hardwareDisplayModels = labelData.Values.ToArray();
-		foreach (var renderDeviceViewModel in DataSelectorService.SelectedDevices)
+		for (var i = 0; i < DataSelectorService.SelectedDevices.Count; i++)
 		{
+			var renderDeviceViewModel = DataSelectorService.SelectedDevices[i];
 			var values = new int[labelData.Count];
 
 			for (var index = 0; index < hardwareDisplayModels.Length; index++)
@@ -67,13 +76,14 @@ public partial class Index
 					?.MaxStreams ?? 0;
 				values[index] = hasData;
 			}
-			
+
 			_usageChart.Data.Datasets.Add(new BarDataset<int>(values)
 			{
 				Label = renderDeviceViewModel.Name,
-				BackgroundColor = ColorUtil.RandomColorString()
+				BackgroundColor = ChartBackgroundColors[i % ChartBackgroundColors.Length]
 			});
 		}
+
 		StateHasChanged();
 	}
 }
