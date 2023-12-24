@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Jellyfin.HardwareVisualizer</title>
     <base href="/" />
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="https://jellyfin.org/images/favicon.ico" />
     <link href="Jellyfin.HardwareVisualizer.Client.styles.css" rel="stylesheet" />
+    <script type="text/javascript">
+
+        if (window.matchMedia('(prefers-color-scheme: dark)').media === 'not all') {
+            document.documentElement.style.display = 'none';
+            document.head.insertAdjacentHTML(
+                'beforeend',
+                '<link rel="stylesheet" href="css/themes/light/site-theme.min.css" onload="document.documentElement.style.display = \'\'">',
+            );
+        }
+
+    </script>
+    <link href="css/themes/light/site-theme.min.css" rel="stylesheet" media="(prefers-color-scheme: light)" />
+    <link href="css/themes/dark/site-theme.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)" />
 </head>
 
 <body>

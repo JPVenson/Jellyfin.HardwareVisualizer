@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/css/themes/light/site-theme.css",
     "inputFile": "wwwroot/css/themes/light/site-theme.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/themes/dark/site-theme.css",
+    "inputFile": "wwwroot/css/themes/dark/site-theme.scss"
   }
 ]

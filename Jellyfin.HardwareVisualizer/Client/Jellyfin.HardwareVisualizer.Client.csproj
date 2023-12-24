@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\SharedInternal\Jellyfin.HardwareVisualizer.Shared.Internals.csproj" />
 		<ProjectReference Include="..\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
 	</ItemGroup>
 

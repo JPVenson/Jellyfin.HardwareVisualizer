@@ -5,7 +5,9 @@ using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
 using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -31,11 +33,13 @@ public class SubmissionApiController : ControllerBase
 	
 	/// <summary>
 	///		Posts a new Hardware Survey Result.
+	///		Rate Limited to 1 call per hour.
 	/// </summary>
 	/// <param name="submission">A doc containing all set values for the hardware Survey.</param>
 	/// <returns>The ID of the single hardware survey.</returns>
 	[HttpPost()]
 	[ProducesResponseType<string>(StatusCodes.Status200OK)]
+	[EnableRateLimiting("fixed_submit")]
 	public async Task<IActionResult> Submit([FromBody, Required] TranscodeSubmission submission)
 	{
 		return Ok(await _submissionService.SubmitHardwareSurvey(submission));
@@ -47,6 +51,7 @@ public class SubmissionApiController : ControllerBase
 	/// <returns></returns>
 	[HttpPost("Recalc")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
+	[Authorize]
 	public async Task<IActionResult> Recalc()
 	{
 		await _submissionService.RecalcHardwareStats();
@@ -61,6 +66,7 @@ public class SubmissionApiController : ControllerBase
 	[HttpGet("single/{Id}")]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<HardwareSurveySubmission>(StatusCodes.Status200OK)]
+	[EnableRateLimiting("fixed_metadata")]
 	public async Task<IActionResult> GetSingleData([FromQuery] Guid id)
 	{
 		var data = await _submissionService.GetSingleSubmission(id);
@@ -78,6 +84,7 @@ public class SubmissionApiController : ControllerBase
 	/// <returns></returns>
 	[HttpGet("")]
 	[ProducesResponseType<IEnumerable<HardwareDisplayModel>>(StatusCodes.Status200OK)]
+	[EnableRateLimiting("fixed_metadata")]
 	public async Task<IActionResult> GetData([FromQuery, Required]string deviceId)
 	{
 		var data = await _submissionService.GetSubmissions(deviceId);

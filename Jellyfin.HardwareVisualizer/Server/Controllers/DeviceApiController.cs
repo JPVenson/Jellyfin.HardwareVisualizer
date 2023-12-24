@@ -4,6 +4,7 @@ using Jellyfin.HardwareVisualizer.Server.Services.Submission;
 using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -12,6 +13,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("fixed_metadata")]
 public class DeviceApiController : ControllerBase
 {
 

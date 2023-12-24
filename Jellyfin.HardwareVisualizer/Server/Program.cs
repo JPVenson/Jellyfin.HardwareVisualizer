@@ -1,14 +1,22 @@
 using Jellyfin.HardwareVisualizer.Database;
 using Jellyfin.HardwareVisualizer.Server.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ServiceLocator.Discovery.Option;
 using ServiceLocator.Discovery.Service;
 using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Octokit;
+using Microsoft.Extensions.DependencyInjection;
+using Octokit.Internal;
+using ProductHeaderValue = Octokit.ProductHeaderValue;
 
 namespace Jellyfin.HardwareVisualizer.Server
 {
@@ -17,7 +25,10 @@ namespace Jellyfin.HardwareVisualizer.Server
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-			builder.Configuration.AddEnvironmentVariables("PG_").AddEnvironmentVariables("JF_");
+			builder.Configuration
+				.AddEnvironmentVariables("PG_")
+				.AddEnvironmentVariables("JF_")
+				.AddEnvironmentVariables("GH_");
 			// Add services to the container.
 
 			builder.Services
@@ -32,20 +43,59 @@ namespace Jellyfin.HardwareVisualizer.Server
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddRazorPages();
 			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-				.AddJwtBearer(options =>
+			builder.Services.AddHttpContextAccessor();
+
+			builder.Services.AddRateLimiter(_ => _.AddFixedWindowLimiter("fixed_submit", options =>
+			{
+				options.PermitLimit = 1;
+				options.Window = TimeSpan.FromHours(1);
+				options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+				options.QueueLimit = 1;
+			}));
+			builder.Services.AddRateLimiter(_ => _.AddFixedWindowLimiter("fixed_metadata", options =>
+			{
+				options.PermitLimit = 10;
+				options.Window = TimeSpan.FromMinutes(1);
+				options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+				options.QueueLimit = 10;
+			}));
+			builder.Services
+				.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+				.AddCookie()
+				.AddGitHub(options =>
 				{
-					options.TokenValidationParameters = new TokenValidationParameters
+					var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
+					options.ClientId = oauthSettings.ClientId;
+					options.ClientSecret = oauthSettings.ClientSecret;
+					options.Scope.Add("user:email");
+					options.Scope.Add("read:org");
+
+					options.SaveTokens = true;
+					options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+					options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+					options.ClaimActions.MapJsonKey("urn:github:login", "login");
+					options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
+					options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
+
+
+					options.Events.OnCreatingTicket = async context =>
 					{
-						//define which claim requires to check
-						ValidateIssuer = true,
-						ValidateAudience = true,
-						ValidateLifetime = true,
-						ValidateIssuerSigningKey = true,
-						//store the value in appsettings.json
-						ValidIssuer = builder.Configuration["Jwt:Issuer"],
-						ValidAudience = builder.Configuration["Jwt:Issuer"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+						var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+						request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+						request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+						var response = await context.Backchannel.SendAsync(request,
+							HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+						response.EnsureSuccessStatusCode();
+						var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+						context.RunClaimActions(json.RootElement);
+						var octClient =
+							new GitHubClient(new ProductHeaderValue("Jellyfin.HardwareSurvey.Server"), new InMemoryCredentialStore(new Credentials(context.AccessToken)));
+						var organizations = await octClient.Organization.GetAllForCurrent();
+						if (organizations.All(e => e.Id != 45698031))
+						{
+							context.Fail("Not part of the Jellyfin Organization");
+							return;
+						}
 					};
 				});
 
@@ -69,7 +119,29 @@ namespace Jellyfin.HardwareVisualizer.Server
 					}
 				});
 
-				// using System.Reflection;
+				options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+				{
+					Description = "ApiKey must appear in header",
+					Type = SecuritySchemeType.ApiKey,
+					Name = "XApiKey",
+					In = ParameterLocation.Header,
+					Scheme = "ApiKeyScheme"
+				});
+				var key = new OpenApiSecurityScheme()
+				{
+					Reference = new OpenApiReference
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = "ApiKey"
+					},
+					In = ParameterLocation.Header
+				};
+				var requirement = new OpenApiSecurityRequirement
+				{
+					{ key, new List<string>() }
+				};
+				options.AddSecurityRequirement(requirement);
+
 				var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 				options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 			});
@@ -101,7 +173,13 @@ namespace Jellyfin.HardwareVisualizer.Server
 			app.UseAuthorization();
 
 			app.UseSwagger();
-			app.UseSwaggerUI();
+			app.UseSwaggerUI(options =>
+			{
+				options.OAuthClientId("api-swagger");
+				options.OAuthScopes("profile", "openid", "api");
+				options.OAuthUsePkce();
+				options.EnablePersistAuthorization();
+			});
 
 			app.MapRazorPages();
 			app.MapControllers();
