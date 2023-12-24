@@ -7,7 +7,7 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>
-		<RunAOTCompilation>true</RunAOTCompilation>
+		<!--<RunAOTCompilation>true</RunAOTCompilation>-->
 
 	</PropertyGroup>
 

@@ -6,7 +6,6 @@ WORKDIR /app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-RUN apt-get update -y && apt-get install python3-pip python3 -y && pip3 install stix2
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Server/Jellyfin.HardwareVisualizer.Server.csproj", "Server/"]
