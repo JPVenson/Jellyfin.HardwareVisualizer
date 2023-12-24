@@ -1,0 +1,16 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Jellyfin.HardwareVisualizer.Shared
+@using ChartJs.Blazor;
+
+<PageTitle>Index</PageTitle>
+
+<fieldset>
+	<div>
+		@if (_usageChart != null)
+		{
+			<Chart Config="_usageChart"></Chart>
+		}
+	</div>
+</fieldset>
+

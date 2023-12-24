@@ -1,0 +1,70 @@
+﻿@using Jellyfin.HardwareVisualizer.Shared
+<div class="top-row ps-3 navbar navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="">Jellyfin.HardwareVisualizer</a>
+		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+	</div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+	<nav class="flex-column">
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="oi oi-home" aria-hidden="true"></span> Home
+			</NavLink>
+		</div>
+
+		<div>
+			<div>
+				@foreach (var selected in DataSelectorService.SelectedDevices)
+				{
+					<div>
+						@selected.Name
+						<button @onclick="() => RemoveDevice(selected.Id)">
+							X
+						</button>
+					</div>
+				}
+			</div>
+
+			<select @onchange="AddDevice" class="form-control">
+				<option>Please select an Render Device.</option>
+				@if (!DataSelectorService.SelectedDevices.Any() || DataSelectorService.SelectedDevices.All(e => e.DeviceType == DeviceType.Cpu))
+				{
+					<optgroup label="Cpus">
+						@foreach (var cpu in DataSelectorService.AllDevices
+							.Where(e => DataSelectorService.SelectedDevices.All(f => f.Id != e.Id))
+							.Where(e => e.DeviceType == DeviceType.Cpu))
+						{
+							<option value="@cpu.Id">@cpu.Name</option>
+						}
+					</optgroup>
+				}
+				@if (!DataSelectorService.SelectedDevices.Any() || DataSelectorService.SelectedDevices.All(e => e.DeviceType == DeviceType.Gpu))
+				{
+					<optgroup label="Gpus">
+						@foreach (var gpu in DataSelectorService.AllDevices
+											.Where(e => DataSelectorService.SelectedDevices.All(f => f.Id != e.Id))
+											.Where(e => e.DeviceType == DeviceType.Gpu))
+						{
+							<option value="@gpu.Id">@gpu.Name</option>
+						}
+					</optgroup>
+				}
+			</select>
+		</div>
+	</nav>
+</div>
+
+@code {
+	private bool collapseNavMenu = true;
+
+	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
+}
