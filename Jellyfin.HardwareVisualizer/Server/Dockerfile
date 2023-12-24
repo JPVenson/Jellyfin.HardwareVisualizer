@@ -19,11 +19,11 @@ RUN dotnet workload restore "./Server/./Jellyfin.HardwareVisualizer.Server.cspro
 RUN dotnet restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
 COPY . .
 
-RUN dotnet build "./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Server/./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Server/./Jellyfin.HardwareVisualizer.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
