@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Server/Jellyfin.HardwareVisualizer.Server.csproj", "Server/"]
-COPY ["Jellyfin.HardwareVisualizer.Database.csproj", "Jellyfin.HardwareVisualizer.Database/"]
+COPY ["Jellyfin.HardwareVisualizer.Database/Jellyfin.HardwareVisualizer.Database.csproj", "Jellyfin.HardwareVisualizer.Database/"]
 COPY ["Shared/Jellyfin.HardwareVisualizer.Shared.csproj", "Shared/"]
 COPY ["Client/Jellyfin.HardwareVisualizer.Client.csproj", "Client/"]
 
