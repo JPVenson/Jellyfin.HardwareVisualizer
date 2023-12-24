@@ -13,7 +13,7 @@ COPY ["Jellyfin.HardwareVisualizer.Database/Jellyfin.HardwareVisualizer.Database
 COPY ["Shared/Jellyfin.HardwareVisualizer.Shared.csproj", "Shared/"]
 COPY ["Client/Jellyfin.HardwareVisualizer.Client.csproj", "Client/"]
 
-RUN dotnet workload restore "./Server/./Jellyfin.HardwareVisualizer.Client.csproj"
+RUN dotnet workload restore "./Client/./Jellyfin.HardwareVisualizer.Client.csproj"
 RUN dotnet workload restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
 
 RUN dotnet restore "./Server/./Jellyfin.HardwareVisualizer.Server.csproj"
