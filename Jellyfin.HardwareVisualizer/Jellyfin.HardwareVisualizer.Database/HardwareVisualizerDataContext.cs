@@ -73,6 +73,13 @@ public class HardwareSurveyEntry
 	public Guid HardwareCodecId { get; set; }
 	public HardwareCodec HardwareCodec { get; set; }
 
+
+	public Guid? GpuTypeId { get; set; }
+	public GpuType? GpuType { get; set; } = null!;
+
+	public Guid? CpuTypeId { get; set; }
+	public CpuType? CpuType { get; set; } = null!;
+
 	public Guid HardwareSurveySubmissionId { get; set; }
 	public HardwareSurveySubmission HardwareSurveySubmission { get; set; } = null!;
 
@@ -88,12 +95,6 @@ public class HardwareSurveySubmission
 {
 	[Key]
 	public Guid Id { get; set; }
-
-	public Guid? GpuTypeId { get; set; }
-	public GpuType? GpuType { get; set; } = null!;
-
-	public Guid? CpuTypeId { get; set; }
-	public CpuType? CpuType { get; set; } = null!;
 
 	public ICollection<HardwareSurveyEntry> HardwareSurveyEntry { get; set; } = null!;
 

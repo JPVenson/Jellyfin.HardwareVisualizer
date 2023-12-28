@@ -9,6 +9,12 @@ public class CodecTest
 	[Required]
 	public string MediaCodec { get; set; }
 
+	[JsonPropertyName("selected_gpu")]
+	public int? SelectedGpu { get; set; } = null!;
+
+	[JsonPropertyName("selected_cpu")]
+	public int? SelectedCpu { get; set; } = null!;
+
 	[JsonPropertyName("resolutions")]
 	[Required]
 	[MinLength(1)]

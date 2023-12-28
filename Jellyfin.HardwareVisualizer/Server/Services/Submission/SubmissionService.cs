@@ -1,5 +1,4 @@
 ﻿using Jellyfin.HardwareVisualizer.Database;
-using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -7,16 +6,6 @@ using ServiceLocator.Attributes;
 using DeviceType = Jellyfin.HardwareVisualizer.Database.DeviceType;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.Submission;
-
-public interface ISubmissionService
-{
-	Task RecalcHardwareStats();
-	Task<string> SubmitHardwareSurvey(TranscodeSubmission submission);
-	Task<HardwareSurveySubmission?> GetSingleSubmission(Guid id);
-	Task<HardwareDisplay[]> GetSubmissions(string deviceName);
-	Task<CpuType[]> GetCpuRenderDevices();
-	Task<GpuType[]> GetGpuRenderDevices();
-}
 
 [ScopedService(typeof(ISubmissionService))]
 public class SubmissionService : ISubmissionService
@@ -34,8 +23,8 @@ public class SubmissionService : ISubmissionService
 		var submissionsByGpu =
 			await db.HardwareSurveyEntries.GroupBy(e => new
 				{
-					DeviceType = e.HardwareSurveySubmission.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
-					DeviceName = e.HardwareSurveySubmission.GpuType.Name ?? e.HardwareSurveySubmission.CpuType.Name,
+					DeviceType = e.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
+					DeviceName = e.GpuType!.Name ?? e.CpuType!.Name,
 					CodecName = e.HardwareCodec.Name,
 					From = e.FromResolution.Name,
 					To = e.ToResolution.Name,
@@ -66,34 +55,16 @@ public class SubmissionService : ISubmissionService
 			Id = Guid.NewGuid(),
 			Json = JsonConvert.SerializeObject(submission)
 		};
-
-		Gpu selectedGpu = null;
-		Cpu selectedCpu = null;
-		if (submission.Hwinfo.SelectedGpu is >= 0 && submission.Hwinfo.Gpu.Count >= submission.Hwinfo.SelectedGpu)
-		{
-			selectedGpu = submission.Hwinfo.Gpu[submission.Hwinfo.SelectedGpu.Value];
-		}
-		if (submission.Hwinfo.SelectedCpu is >= 0)
-		{
-			selectedCpu = submission.Hwinfo.Cpu[submission.Hwinfo.SelectedCpu.Value];
-		}
-
-		if (selectedCpu is null && selectedGpu is null)
-		{
-			return null;
-		}
 		
 		var submissionEntity = new HardwareSurveySubmission()
 		{
 			RawSurveySubmission = rawSubmission,
-			GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
-			CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,
 			Id = Guid.NewGuid(),
 			HardwareSurveyEntry = new List<HardwareSurveyEntry>()
 		};
 		foreach (var fromCodec in submission.Tests)
 		{
-			await foreach (var surveyEntry in GetResolutionTest(db, fromCodec))
+			await foreach (var surveyEntry in GetResolutionTest(db, submission, fromCodec))
 			{
 				submissionEntity.HardwareSurveyEntry.Add(surveyEntry);
 			}
@@ -151,21 +122,40 @@ public class SubmissionService : ISubmissionService
 			.Include(e => e.HardwareSurveyEntry.First().FromResolution)
 			.Include(e => e.HardwareSurveyEntry.First().ToResolution)
 			.Include(e => e.HardwareSurveyEntry.First().HardwareCodec)
-			.Include(e => e.GpuType)
 			.FirstOrDefaultAsync(e => e.Id == id);
 	}
 
 	private async IAsyncEnumerable<HardwareSurveyEntry> GetResolutionTest(HardwareVisualizerDataContext db,
-		CodecTest arg)
+		TranscodeSubmission submission,
+		CodecTest codecTest)
 	{
-		foreach (var resolutionTest in arg.ResolutionMap)
+		Gpu selectedGpu = null;
+		Cpu selectedCpu = null;
+
+		if (codecTest.SelectedGpu is >= 0 && submission.Hwinfo.Gpu.Count >= codecTest.SelectedGpu)
 		{
+			selectedGpu = submission.Hwinfo.Gpu[codecTest.SelectedGpu.Value];
+		}
+		if (codecTest.SelectedCpu is >= 0)
+		{
+			selectedCpu = submission.Hwinfo.Cpu[codecTest.SelectedCpu.Value];
+		}
+
+		if (selectedCpu is null && selectedGpu is null)
+		{
+			yield break;
+		}
+		foreach (var resolutionTest in codecTest.ResolutionMap)
+		{
+		
 			yield return new HardwareSurveyEntry()
 			{
 				FromResolutionId = await GetOrAddResolution(db, resolutionTest.From),
 				ToResolutionId = await GetOrAddResolution(db, resolutionTest.To),
 				MaxStreams = resolutionTest.Results.MaxStreams,
-				HardwareCodecId = await GetOrAddCodec(db, arg.MediaCodec),
+				HardwareCodecId = await GetOrAddCodec(db, codecTest.MediaCodec),
+				GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
+				CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,
 				Id = Guid.NewGuid(),
 			};
 		}

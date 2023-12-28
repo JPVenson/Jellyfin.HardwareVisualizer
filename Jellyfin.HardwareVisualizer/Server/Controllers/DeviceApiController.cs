@@ -1,7 +1,5 @@
-﻿using Jellyfin.HardwareVisualizer.Database;
-using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
+﻿using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
-using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

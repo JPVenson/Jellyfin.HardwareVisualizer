@@ -11,10 +11,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
-using Microsoft.Extensions.DependencyInjection;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
 

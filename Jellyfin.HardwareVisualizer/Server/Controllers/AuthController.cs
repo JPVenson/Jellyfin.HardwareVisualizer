@@ -1,10 +1,8 @@
 ﻿using Jellyfin.HardwareVisualizer.Server.Configuration;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using AspNet.Security.OAuth.GitHub;
 using Jellyfin.HardwareVisualizer.Shared.Internals;

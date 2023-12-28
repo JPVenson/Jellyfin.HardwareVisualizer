@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using Jellyfin.HardwareVisualizer.Database;
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
-using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
