@@ -14,5 +14,7 @@ namespace Jellyfin.HardwareVisualizer.Client.Pages.Admin
 		{
 			UserJson = await HttpClient.GetFromJsonAsync<UserData>("api/Auth/UserData");
 		}
+
+		public UserData UserJson { get; set; }
 	}
 }
