@@ -14,6 +14,10 @@ public partial class Index
 
 	private BarConfig _usageChart;
 
+	[SupplyParameterFromQuery(Name = "device")]
+	[Parameter]
+	public string[]? SelectedDevices { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		_usageChart = new BarConfig();
@@ -27,6 +31,17 @@ public partial class Index
 		
 		DataSelectorService.DeviceAdded += DataSelectorService_DeviceAdded;
 		DataSelectorService.DeviceRemoved += DataSelectorService_DeviceAdded;
+
+		if (SelectedDevices != null)
+		{
+			await DataSelectorService.LoadDevices();
+			foreach (var selectedDevice in SelectedDevices)
+			{
+				var renderDeviceViewModel = DataSelectorService.AllDevices.FirstOrDefault(e =>
+					e.Identifier.Equals(selectedDevice, StringComparison.InvariantCultureIgnoreCase));
+				await DataSelectorService.AddDevice(renderDeviceViewModel);
+			}
+		}
 	}
 
 	private string[] ChartBackgroundColors = new[]

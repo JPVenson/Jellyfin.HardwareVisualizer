@@ -30,6 +30,8 @@ public class DataSelectorService
 
 	public IDictionary<Guid, IEnumerable<HardwareDisplayModel>> DeviceData { get; set; }
 
+	private Task<IEnumerable<RenderDeviceViewModel>?> _devicesTask;
+
 	public async Task LoadDevices()
 	{
 		if (AllDevices.Any())
@@ -37,8 +39,13 @@ public class DataSelectorService
 			return;
 		}
 
-		var devices = _httpClient.GetFromJsonAsync<IEnumerable<RenderDeviceViewModel>>("api/DeviceApi", _jsonSerializerOptions);
-		AllDevices = (await devices).ToArray();
+		if (_devicesTask is not null)
+		{
+			await _devicesTask;
+			return;
+		}
+		_devicesTask = _httpClient.GetFromJsonAsync<IEnumerable<RenderDeviceViewModel>>("api/DeviceApi", _jsonSerializerOptions);
+		AllDevices = (await _devicesTask).ToArray();
 	}
 
 	public async Task AddDevice(RenderDeviceViewModel deviceViewModel)

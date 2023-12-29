@@ -12,6 +12,18 @@ public partial class NavMenu
 	protected override async Task OnInitializedAsync()
 	{
 		await DataSelectorService.LoadDevices();
+		DataSelectorService.DeviceAdded += DataSelectorService_DeviceAdded;
+		DataSelectorService.DeviceRemoved += DataSelectorService_DeviceRemoved;
+	}
+
+	private void DataSelectorService_DeviceRemoved(object? sender, HardwareVisualizer.Shared.Models.RenderDeviceViewModel e)
+	{
+		StateHasChanged();
+	}
+
+	private void DataSelectorService_DeviceAdded(object? sender, HardwareVisualizer.Shared.Models.RenderDeviceViewModel e)
+	{
+		StateHasChanged();
 	}
 
 	public Guid SelectedDevice { get; set; }
@@ -23,8 +35,6 @@ public partial class NavMenu
 		{
 			return;
 		}
-
-		Console.WriteLine(argValue);
 
 		var renderDeviceViewModel = DataSelectorService.AllDevices.First(e => e.Id.ToString() == argValue);
 		await DataSelectorService.AddDevice(renderDeviceViewModel);
