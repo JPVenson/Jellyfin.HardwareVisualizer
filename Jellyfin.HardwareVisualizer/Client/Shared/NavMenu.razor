@@ -2,7 +2,7 @@
 @using Jellyfin.HardwareVisualizer.Shared.Models
 <div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="">Jellyfin.HardwareVisualizer</a>
+		<a class="navbar-brand" href="">Jellyfin Hardware Visualizer</a>
 		@* <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
 			<span class="navbar-toggler-icon"></span>
 		</button> *@
@@ -33,15 +33,18 @@
 		</div>
 
 		<div>
-			<div class="list-group">
+			<div class="list-group list-group-flush">
+				<div class="list-group-item list-group-item-primary">
+					<span>Compare Render Devices</span>
+				</div>
 				@foreach (var selected in DataSelectorService.SelectedDevices)
 				{
 					<div class="list-group-item">
-						@selected.Name
 						<button @onclick="() => RemoveDevice(selected.Id)"
-						        class="form-control">
-							X
+						        class="btn btn-secondary">
+							<i class="oi oi-circle-x"></i>
 						</button>
+						@selected.Name
 					</div>
 				}
 			</div>
