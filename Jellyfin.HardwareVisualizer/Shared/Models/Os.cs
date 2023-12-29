@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Jellyfin.HardwareVisualizer.Shared.Models;
 

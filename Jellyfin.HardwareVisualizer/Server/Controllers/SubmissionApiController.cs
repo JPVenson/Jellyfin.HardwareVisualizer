@@ -40,7 +40,7 @@ public class SubmissionApiController : ControllerBase
 	[EnableRateLimiting("fixed_submit")]
 	public async Task<IActionResult> Submit([FromBody, Required] TranscodeSubmission submission)
 	{
-		return Ok(await _submissionService.SubmitHardwareSurvey(submission));
+		return Ok(await _submissionService.SubmitHardwareSurvey(submission, base.ModelState));
 	}
 	
 	/// <summary>

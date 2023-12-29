@@ -1,4 +1,4 @@
-using Jellyfin.HardwareVisualizer.Client;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ServiceLocator.Discovery.Service;
@@ -14,7 +14,14 @@ namespace Jellyfin.HardwareVisualizer.Client
 			builder.RootComponents.Add<HeadOutlet>("head::after");
 
 			builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
-			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+			builder.Services.AddScoped(sp => new HttpClient
+				{
+					BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+				})
+				.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
+				{
+					PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+				});
 
 			await builder.Build().RunAsync();
 		}

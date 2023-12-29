@@ -7,7 +7,7 @@ namespace Jellyfin.HardwareVisualizer.Database;
 
 public class HardwareVisualizerDataContext : DbContext
 {
-	public HardwareVisualizerDataContext(DbContextOptions contextOptions) : base(contextOptions)
+	public HardwareVisualizerDataContext(DbContextOptions<HardwareVisualizerDataContext> contextOptions) : base(contextOptions)
 	{
 		
 	}

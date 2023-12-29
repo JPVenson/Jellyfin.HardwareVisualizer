@@ -38,7 +38,14 @@ namespace Jellyfin.HardwareVisualizer.Server
 
 			builder.Services.AddResponseCaching();
 			builder.Services.AddResponseCompression();
-			builder.Services.AddControllersWithViews();
+			builder.Services.AddControllersWithViews()
+				.AddJsonOptions(e =>
+				{
+					e.JsonSerializerOptions.AllowTrailingCommas = true;
+					e.JsonSerializerOptions.DictionaryKeyPolicy = null;
+					e.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+					e.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+				});
 			builder.Services.AddRazorPages();
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddHttpContextAccessor();

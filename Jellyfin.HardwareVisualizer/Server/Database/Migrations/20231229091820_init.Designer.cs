@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Jellyfin.HardwareVisualizer.Database.Migrations
+namespace Jellyfin.HardwareVisualizer.Server.Migrations
 {
     [DbContext(typeof(HardwareVisualizerDataContext))]
-    [Migration("20231223225928_Init")]
-    partial class Init
+    [Migration("20231229091820_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,7 +124,13 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CpuTypeId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FromResolutionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("GpuTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("HardwareCodecId")
@@ -141,7 +147,11 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CpuTypeId");
+
                     b.HasIndex("FromResolutionId");
+
+                    b.HasIndex("GpuTypeId");
 
                     b.HasIndex("HardwareCodecId");
 
@@ -158,20 +168,10 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CpuTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("GpuTypeId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("RawSurveySubmissionId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CpuTypeId");
-
-                    b.HasIndex("GpuTypeId");
 
                     b.HasIndex("RawSurveySubmissionId");
 
@@ -214,11 +214,19 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
 
             modelBuilder.Entity("Jellyfin.HardwareVisualizer.Database.HardwareSurveyEntry", b =>
                 {
+                    b.HasOne("Jellyfin.HardwareVisualizer.Database.CpuType", "CpuType")
+                        .WithMany()
+                        .HasForeignKey("CpuTypeId");
+
                     b.HasOne("Jellyfin.HardwareVisualizer.Database.TestResolution", "FromResolution")
                         .WithMany()
                         .HasForeignKey("FromResolutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Jellyfin.HardwareVisualizer.Database.GpuType", "GpuType")
+                        .WithMany()
+                        .HasForeignKey("GpuTypeId");
 
                     b.HasOne("Jellyfin.HardwareVisualizer.Database.HardwareCodec", "HardwareCodec")
                         .WithMany()
@@ -238,7 +246,11 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CpuType");
+
                     b.Navigation("FromResolution");
+
+                    b.Navigation("GpuType");
 
                     b.Navigation("HardwareCodec");
 
@@ -249,23 +261,11 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
 
             modelBuilder.Entity("Jellyfin.HardwareVisualizer.Database.HardwareSurveySubmission", b =>
                 {
-                    b.HasOne("Jellyfin.HardwareVisualizer.Database.CpuType", "CpuType")
-                        .WithMany()
-                        .HasForeignKey("CpuTypeId");
-
-                    b.HasOne("Jellyfin.HardwareVisualizer.Database.GpuType", "GpuType")
-                        .WithMany()
-                        .HasForeignKey("GpuTypeId");
-
                     b.HasOne("Jellyfin.HardwareVisualizer.Database.RawSurveySubmission", "RawSurveySubmission")
                         .WithMany()
                         .HasForeignKey("RawSurveySubmissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CpuType");
-
-                    b.Navigation("GpuType");
 
                     b.Navigation("RawSurveySubmission");
                 });

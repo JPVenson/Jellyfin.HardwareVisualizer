@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Jellyfin.HardwareVisualizer.Database.Migrations
+namespace Jellyfin.HardwareVisualizer.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -99,23 +99,11 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GpuTypeId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CpuTypeId = table.Column<Guid>(type: "uuid", nullable: true),
                     RawSurveySubmissionId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HardwareSurveySubmissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_HardwareSurveySubmissions_CpuTypes_CpuTypeId",
-                        column: x => x.CpuTypeId,
-                        principalTable: "CpuTypes",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_HardwareSurveySubmissions_GpuTypes_GpuTypeId",
-                        column: x => x.GpuTypeId,
-                        principalTable: "GpuTypes",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HardwareSurveySubmissions_RawSurveySubmission_RawSurveySubm~",
                         column: x => x.RawSurveySubmissionId,
@@ -130,6 +118,8 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     HardwareCodecId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GpuTypeId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CpuTypeId = table.Column<Guid>(type: "uuid", nullable: true),
                     HardwareSurveySubmissionId = table.Column<Guid>(type: "uuid", nullable: false),
                     FromResolutionId = table.Column<Guid>(type: "uuid", nullable: false),
                     ToResolutionId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -138,6 +128,16 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HardwareSurveyEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HardwareSurveyEntries_CpuTypes_CpuTypeId",
+                        column: x => x.CpuTypeId,
+                        principalTable: "CpuTypes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HardwareSurveyEntries_GpuTypes_GpuTypeId",
+                        column: x => x.GpuTypeId,
+                        principalTable: "GpuTypes",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HardwareSurveyEntries_HardwareCodecs_HardwareCodecId",
                         column: x => x.HardwareCodecId,
@@ -165,9 +165,19 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_HardwareSurveyEntries_CpuTypeId",
+                table: "HardwareSurveyEntries",
+                column: "CpuTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HardwareSurveyEntries_FromResolutionId",
                 table: "HardwareSurveyEntries",
                 column: "FromResolutionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HardwareSurveyEntries_GpuTypeId",
+                table: "HardwareSurveyEntries",
+                column: "GpuTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HardwareSurveyEntries_HardwareCodecId",
@@ -185,16 +195,6 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 column: "ToResolutionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HardwareSurveySubmissions_CpuTypeId",
-                table: "HardwareSurveySubmissions",
-                column: "CpuTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_HardwareSurveySubmissions_GpuTypeId",
-                table: "HardwareSurveySubmissions",
-                column: "GpuTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HardwareSurveySubmissions_RawSurveySubmissionId",
                 table: "HardwareSurveySubmissions",
                 column: "RawSurveySubmissionId");
@@ -210,6 +210,12 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
                 name: "HardwareSurveyEntries");
 
             migrationBuilder.DropTable(
+                name: "CpuTypes");
+
+            migrationBuilder.DropTable(
+                name: "GpuTypes");
+
+            migrationBuilder.DropTable(
                 name: "HardwareCodecs");
 
             migrationBuilder.DropTable(
@@ -217,12 +223,6 @@ namespace Jellyfin.HardwareVisualizer.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "TestResolutions");
-
-            migrationBuilder.DropTable(
-                name: "CpuTypes");
-
-            migrationBuilder.DropTable(
-                name: "GpuTypes");
 
             migrationBuilder.DropTable(
                 name: "RawSurveySubmission");

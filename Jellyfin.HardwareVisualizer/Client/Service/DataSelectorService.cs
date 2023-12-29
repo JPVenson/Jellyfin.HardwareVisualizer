@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json;
 using System.Web;
 using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
@@ -10,10 +11,12 @@ namespace Jellyfin.HardwareVisualizer.Client.Service;
 public class DataSelectorService
 {
 	private readonly HttpClient _httpClient;
+	private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-	public DataSelectorService(HttpClient httpClient)
+	public DataSelectorService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
 	{
 		_httpClient = httpClient;
+		_jsonSerializerOptions = jsonSerializerOptions;
 		SelectedDevices = new List<RenderDeviceViewModel>();
 		AllDevices = new List<RenderDeviceViewModel>();
 		DeviceData = new Dictionary<Guid, IEnumerable<HardwareDisplayModel>>();
@@ -34,7 +37,7 @@ public class DataSelectorService
 			return;
 		}
 
-		var devices = _httpClient.GetFromJsonAsync<IEnumerable<RenderDeviceViewModel>>("api/DeviceApi");
+		var devices = _httpClient.GetFromJsonAsync<IEnumerable<RenderDeviceViewModel>>("api/DeviceApi", _jsonSerializerOptions);
 		AllDevices = (await devices).ToArray();
 	}
 
@@ -47,7 +50,7 @@ public class DataSelectorService
 			return;
 		}
 
-		var deviceInfo = await _httpClient.GetFromJsonAsync<IEnumerable<HardwareDisplayModel>>($"api/SubmissionApi?deviceId={HttpUtility.UrlEncode(deviceViewModel.Name)}");
+		var deviceInfo = await _httpClient.GetFromJsonAsync<IEnumerable<HardwareDisplayModel>>($"api/SubmissionApi?deviceId={HttpUtility.UrlEncode(deviceViewModel.Name)}", _jsonSerializerOptions);
 		DeviceData[deviceViewModel.Id] = deviceInfo.ToArray();
 		OnDeviceAdded(deviceViewModel);
 	}

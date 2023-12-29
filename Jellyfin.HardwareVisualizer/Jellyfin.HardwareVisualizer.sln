@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Shared", "Shared\Jellyfin.HardwareVisualizer.Shared.csproj", "{9DDF8756-77D8-4698-9C14-15F07458B63D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Database", "Jellyfin.HardwareVisualizer.Database\Jellyfin.HardwareVisualizer.Database.csproj", "{1AF48922-37DC-49E8-90FF-EA031DE77842}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.HardwareVisualizer.Shared.Internals", "SharedInternal\Jellyfin.HardwareVisualizer.Shared.Internals.csproj", "{D3BCD835-3D15-4F31-A341-747270C47C79}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DDF8756-77D8-4698-9C14-15F07458B63D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AF48922-37DC-49E8-90FF-EA031DE77842}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D3BCD835-3D15-4F31-A341-747270C47C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3BCD835-3D15-4F31-A341-747270C47C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3BCD835-3D15-4F31-A341-747270C47C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
