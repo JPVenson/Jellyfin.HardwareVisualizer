@@ -64,45 +64,57 @@ namespace Jellyfin.HardwareVisualizer.Server
 				options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
 				options.QueueLimit = 10;
 			}));
-			builder.Services
+			var authenticationBuilder = builder.Services
 				.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-				.AddCookie()
-				.AddGitHub(options =>
-				{
-					var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
-					options.ClientId = oauthSettings.ClientId;
-					options.ClientSecret = oauthSettings.ClientSecret;
-					options.Scope.Add("user:email");
-					options.Scope.Add("read:org");
-
-					options.SaveTokens = true;
-					options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-					options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-					options.ClaimActions.MapJsonKey("urn:github:login", "login");
-					options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
-					options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
-
-
-					options.Events.OnCreatingTicket = async context =>
+				.AddCookie();
+			var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
+			if (oauthSettings != null)
+			{
+				Console.WriteLine("Add Github Authentication.");
+				authenticationBuilder.AddGitHub(options =>
 					{
-						var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-						request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-						request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-						var response = await context.Backchannel.SendAsync(request,
-							HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
-						response.EnsureSuccessStatusCode();
-						var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-						context.RunClaimActions(json.RootElement);
-						var octClient =
-							new GitHubClient(new ProductHeaderValue("Jellyfin.HardwareSurvey.Server"), new InMemoryCredentialStore(new Credentials(context.AccessToken)));
-						var organizations = await octClient.Organization.GetAllForCurrent();
-						if (organizations.All(e => e.Id != 45698031))
+						var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
+						options.ClientId = oauthSettings.ClientId;
+						options.ClientSecret = oauthSettings.ClientSecret;
+						options.Scope.Add("user:email");
+						options.Scope.Add("read:org");
+
+						options.SaveTokens = true;
+						options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+						options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+						options.ClaimActions.MapJsonKey("urn:github:login", "login");
+						options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
+						options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
+
+
+						options.Events.OnCreatingTicket = async context =>
 						{
-							context.Fail("Not part of the Jellyfin Organization");
-							return;
-						}
-					};
-				});
+							var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+							request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+							request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+							var response = await context.Backchannel.SendAsync(request,
+								HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+							response.EnsureSuccessStatusCode();
+							var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+							context.RunClaimActions(json.RootElement);
+							var octClient =
+								new GitHubClient(new ProductHeaderValue("Jellyfin.HardwareSurvey.Server"), new InMemoryCredentialStore(new Credentials(context.AccessToken)));
+							var organizations = await octClient.Organization.GetAllForCurrent();
+							if (organizations.All(e => e.Id != 45698031))
+							{
+								context.Fail("Not part of the Jellyfin Organization");
+								return;
+							}
+						};
+					})
+					;
+			}
+			else
+			{
+				Console.WriteLine("Github Authentication is not enabled.");
+			}
+
+				
 
 			builder.Services.AddSwaggerGen(options =>
 			{
