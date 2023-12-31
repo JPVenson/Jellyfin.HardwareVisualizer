@@ -1,0 +1,21 @@
+﻿@inherits UnauthorizedTopBar
+
+<div class="top-row d-flex flex-row justify-content-between">
+	@if (NavigationManager.Uri == "/")
+	{
+		<div class="float-left">
+			<a href="?@SelectedDevicesQuery" target="_blank">Perma Link</a>
+		</div>
+	}
+	@if (UserJson is not null)
+	{
+		<div>
+			Hello @UserJson.Username
+		</div>
+	}
+
+	<div class="float-right">
+		<a href="https://jellyfin.org/docs/" target="_blank">Docs</a>
+	</div>
+</div>
+

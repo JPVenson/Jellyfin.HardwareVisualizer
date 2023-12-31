@@ -1,0 +1,11 @@
+﻿<div class="top-row d-flex flex-row justify-content-between">
+	@if (NavigationManager.ToBaseRelativePath(NavigationManager.Uri) == "survey")
+	{
+		<div class="float-left">
+			<a href="?@SelectedDevicesQuery" target="_blank">Perma Link</a>
+		</div>
+	}
+	<div class="float-right ">
+		<a href="https://jellyfin.org/docs/" target="_blank">Docs</a>
+	</div>
+</div>

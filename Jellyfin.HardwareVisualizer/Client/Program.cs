@@ -13,7 +13,7 @@ public class Program
 		builder.RootComponents.Add<App>("#app");
 		builder.RootComponents.Add<HeadOutlet>("head::after");
 
-		builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
+
 		builder.Services.AddScoped(sp => new HttpClient
 			{
 				BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
@@ -22,6 +22,8 @@ public class Program
 			{
 				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
 			});
+		//builder.Services.AddAuthorizationCore();
+		builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
 
 		await builder.Build().RunAsync();
 	}

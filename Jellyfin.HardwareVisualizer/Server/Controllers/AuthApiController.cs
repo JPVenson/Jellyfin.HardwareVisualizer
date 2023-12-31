@@ -13,12 +13,12 @@ namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("fixed_metadata")]
-public class AuthController : Controller
+public class AuthApiController : Controller
 {
 	private readonly IOptions<LocalAuthenticationOptions> _authOptions;
 	private readonly IHttpContextAccessor _context;
 
-	public AuthController(IOptions<LocalAuthenticationOptions> authOptions, IHttpContextAccessor context)
+	public AuthApiController(IOptions<LocalAuthenticationOptions> authOptions, IHttpContextAccessor context)
 	{
 		_authOptions = authOptions;
 		_context = context;

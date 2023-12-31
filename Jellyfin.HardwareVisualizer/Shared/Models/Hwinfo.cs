@@ -11,6 +11,7 @@ public class Hwinfo
 
 	[Required]
 	[MinLength(1)]
+	
 	public List<Cpu> Cpu { get; set; } = null!;
 
 	[Required]

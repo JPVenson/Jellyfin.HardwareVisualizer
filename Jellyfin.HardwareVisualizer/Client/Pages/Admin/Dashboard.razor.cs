@@ -12,8 +12,5 @@ public partial class Dashboard
 
 	protected override async Task OnInitializedAsync()
 	{
-		UserJson = await HttpClient.GetFromJsonAsync<UserData>("api/Auth/UserData");
 	}
-
-	public UserData UserJson { get; set; }
 }

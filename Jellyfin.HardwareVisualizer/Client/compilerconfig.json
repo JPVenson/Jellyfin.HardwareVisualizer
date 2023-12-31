@@ -6,5 +6,9 @@
   {
     "outputFile": "wwwroot/css/themes/dark/site-theme.css",
     "inputFile": "wwwroot/css/themes/dark/site-theme.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/monacco-editor.css",
+    "inputFile": "wwwroot/css/monacco-editor.scss"
   }
 ]

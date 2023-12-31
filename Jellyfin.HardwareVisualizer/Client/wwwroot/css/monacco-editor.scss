@@ -1,0 +1,17 @@
+
+.monacco-edtior-container {
+    min-height: 400px;
+    //width: calc(100vw - #{$width-desktop-sidebar-expanded});
+
+    .monacco-edtior {
+        min-height: 400px;
+    }
+
+    &.small-editor-container {
+        min-height: 100px;
+
+        .monacco-editor {
+            min-height: 100px;
+        }
+    }
+}
