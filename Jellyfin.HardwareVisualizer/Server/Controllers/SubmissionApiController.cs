@@ -6,6 +6,10 @@ using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Newtonsoft.Json.Schema.Generation;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -42,7 +46,20 @@ public class SubmissionApiController : ControllerBase
 	{
 		return Ok(await _submissionService.SubmitHardwareSurvey(submission, base.ModelState));
 	}
-	
+
+	[HttpGet("submitSchema")]
+	[ProducesResponseType<string>(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetJsonSubmitSchema()
+	{
+		var jSchemaGenerator = new JSchemaGenerator();
+		jSchemaGenerator.DefaultRequired = Required.DisallowNull;
+		jSchemaGenerator.ContractResolver = new DefaultContractResolver()
+		{
+			NamingStrategy = new SnakeCaseNamingStrategy(true, true, true)
+		};
+		return Ok(jSchemaGenerator.Generate(typeof(TranscodeSubmission)).ToString());
+	}
+
 	/// <summary>
 	///		[Internal] 
 	/// </summary>

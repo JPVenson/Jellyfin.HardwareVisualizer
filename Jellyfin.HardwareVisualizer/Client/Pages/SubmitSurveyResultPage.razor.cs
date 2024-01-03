@@ -18,14 +18,6 @@ public partial class SubmitSurveyResultPage
 	public SubmitSurveyResultPage()
 	{
 		ValidationErrors = new List<Error>();
-
-		var jSchemaGenerator = new JSchemaGenerator();
-		jSchemaGenerator.DefaultRequired = Required.DisallowNull;
-		jSchemaGenerator.ContractResolver = new DefaultContractResolver()
-		{
-			NamingStrategy = new SnakeCaseNamingStrategy(true, true, true)
-		};
-		_jsonSchema = jSchemaGenerator.Generate(typeof(TranscodeSubmission));
 	}
 
 	[Inject]
@@ -40,7 +32,7 @@ public partial class SubmitSurveyResultPage
 	public List<Error> ValidationErrors { get; set; }
 
 	private StandaloneCodeEditor _editor;
-	private readonly JSchema _jsonSchema;
+	private JSchema _jsonSchema;
 
 	public bool IsSchemaValid { get; set; }
 
@@ -57,9 +49,9 @@ public partial class SubmitSurveyResultPage
 		};
 	}
 
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
-		return base.OnInitializedAsync();
+		_jsonSchema = JSchema.Parse(await HttpClient.GetStringAsync("api/SubmissionApi/submitSchema"));
 	}
 
 	public async Task SubmitResults()

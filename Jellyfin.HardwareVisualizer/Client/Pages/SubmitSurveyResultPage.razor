@@ -7,12 +7,16 @@
 <fieldset>
 	<div class="form-group monacco-edtior-container">
 		<label for="submit_value" class="label">JSON Result from the Survey Tool.</label>
-		<StandaloneCodeEditor Id="my-editor-instance-id" 
-		                      @ref="_editor"
-		                      CssClass="h-100 monacco-edtior"
-		                      OnDidInit="OnEditorInitialized"
-		                      OnDidChangeModelContent="OnValueChanged"
-		                      ConstructionOptions="EditorConstructionOptions" />
+		@if (_jsonSchema is not null)
+		{
+			<StandaloneCodeEditor Id="my-editor-instance-id" 
+			                      @ref="_editor"
+			                      CssClass="h-100 monacco-edtior"
+			                      OnDidInit="OnEditorInitialized"
+			                      OnDidChangeModelContent="OnValueChanged"
+			                      ConstructionOptions="EditorConstructionOptions" />
+		}
+		
 	</div>
 	<div>
 		@if (IsSchemaValid)
