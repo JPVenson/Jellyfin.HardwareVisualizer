@@ -1,0 +1,31 @@
+﻿@if (WaiterService.IsWaiting)
+{
+	var showBadges = WaiterService.Badges.Any();
+	<div class="waiter-container @When(showBadges, "ok-message") @When(!showBadges, "full-sized-block")"
+	     style="z-index: @(1000 + _currentIndex)">
+		@if (showBadges)
+		{
+			<div class="d-flex justify-content-center align-items-center">
+				@foreach (var badge in WaiterService.Badges)
+				{
+					<div class="ok-message-container">
+						<i class="@badge.Icon show p-3"></i>
+
+						@if (badge.Text != null)
+						{
+							<h2 class="m-0 px-3">
+								<Translatable Loc="badge.Text"/>
+							</h2>
+						}
+					</div>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="d-flex justify-content-center">
+				<img class="waiter-img" src="Icons/waiter-icon.svg"/>
+			</div>
+		}
+	</div>
+}

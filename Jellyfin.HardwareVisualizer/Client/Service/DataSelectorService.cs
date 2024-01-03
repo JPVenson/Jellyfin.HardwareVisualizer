@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
-using Jellyfin.HardwareVisualizer.Shared;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using ServiceLocator.Attributes;
 

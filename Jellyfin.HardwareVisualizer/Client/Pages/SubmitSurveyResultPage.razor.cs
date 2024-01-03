@@ -1,8 +1,10 @@
-﻿using BlazorMonaco.Editor;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using BlazorMonaco.Editor;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
-using System.Reflection.Emit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
@@ -15,7 +17,7 @@ public partial class SubmitSurveyResultPage
 {
 	public SubmitSurveyResultPage()
 	{
-		ValidationErrors = new List<ValidationError>();
+		ValidationErrors = new List<Error>();
 
 		var jSchemaGenerator = new JSchemaGenerator();
 		jSchemaGenerator.DefaultRequired = Required.DisallowNull;
@@ -29,7 +31,13 @@ public partial class SubmitSurveyResultPage
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; }
 
-	public List<ValidationError> ValidationErrors { get; set; }
+	[Inject]
+	public HttpClient HttpClient { get; set; }
+
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
+
+	public List<Error> ValidationErrors { get; set; }
 
 	private StandaloneCodeEditor _editor;
 	private readonly JSchema _jsonSchema;
@@ -54,6 +62,33 @@ public partial class SubmitSurveyResultPage
 		return base.OnInitializedAsync();
 	}
 
+	public async Task SubmitResults()
+	{
+		var textModel = await this._editor.GetModel();
+		var value = await textModel.GetValue(EndOfLinePreference.TextDefined, false);
+		ValidateSubmission(value);
+		if (!IsSchemaValid)
+		{
+			return;
+		}
+
+		var postAsync = await HttpClient.PostAsync("/api/SubmissionApi", new StringContent(value, MediaTypeHeaderValue.Parse("application/json")));
+		if (postAsync.StatusCode == HttpStatusCode.OK)
+		{
+			var id = await postAsync.Content.ReadAsStringAsync();
+			NavigationManager.NavigateTo($"/survey?submission={WebUtility.UrlDecode(id)}");
+		}
+		else if (postAsync.StatusCode == HttpStatusCode.BadRequest)
+		{
+			var problemDetails = await postAsync.Content.ReadFromJsonAsync<ProblemDetails>();
+			ValidationErrors.AddRange(problemDetails.Errors.SelectMany(e => e.Value.Select(f => new Error()
+			{
+				Path = e.Key,
+				Message = f
+			})));
+		}
+	}
+
 	private async Task OnEditorInitialized()
 	{
 		var model = await this._editor.GetModel();
@@ -64,17 +99,41 @@ public partial class SubmitSurveyResultPage
 	private async Task OnValueChanged(ModelContentChangedEvent arg)
 	{
 		var textModel = await this._editor.GetModel();
+		var value = await textModel.GetValue(EndOfLinePreference.TextDefined, false);
+		ValidateSubmission(value);
+	}
+
+	private void ValidateSubmission(string value)
+	{
 		ValidationErrors.Clear();
 		try
 		{
-			var jObject = JObject.Parse(await textModel.GetValue(EndOfLinePreference.TextDefined, false));
+			var jObject = JObject.Parse(value);
 			IsSchemaValid = jObject.IsValid(_jsonSchema, out IList<ValidationError> errors);
-			
-			ValidationErrors.AddRange(errors);
+
+			ValidationErrors.AddRange(errors.Select(e => new Error()
+			{
+				Message = e.Message,
+				Column = e.LinePosition,
+				Line = e.LineNumber,
+				Path = e.Path,
+			}));
 		}
 		catch (Exception e)
 		{
 			IsSchemaValid = false;
+			ValidationErrors.Add(new Error()
+			{
+				Message = "Unknown issue occurred while validating the input."
+			});
 		}
+	}
+
+	public class Error
+	{
+		public int Line { get; set; }
+		public int Column { get; set; }
+		public string Message { get; set; }
+		public string Path { get; set; }
 	}
 }

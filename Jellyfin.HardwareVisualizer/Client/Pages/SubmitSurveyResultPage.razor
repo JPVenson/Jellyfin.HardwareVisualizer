@@ -1,6 +1,4 @@
-﻿@using BlazorMonaco
-@using BlazorMonaco.Editor
-@using BlazorMonaco.Languages
+﻿@using BlazorMonaco.Editor
 
 @page "/submit"
 
@@ -19,7 +17,7 @@
 	<div>
 		@if (IsSchemaValid)
 		{
-			<button class="btn btn-primary">
+			<button class="btn btn-primary" @onclick="SubmitResults">
 				Submit Results.
 			</button>
 		}

@@ -1,6 +1,7 @@
 ﻿using ChartJs.Blazor.BarChart;
 using ChartJs.Blazor.Common;
 using Jellyfin.HardwareVisualizer.Client.Service;
+using Jellyfin.HardwareVisualizer.Client.Service.ResLoaded;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -11,6 +12,9 @@ public partial class HardwareSurveyChartsPage
 	[Inject]
 	public DataSelectorService DataSelectorService { get; set; }
 
+	[Inject]
+	public ResourceLoaderService ResourceLoaderService { get; set; }
+
 	private BarConfig _usageChart;
 
 	[SupplyParameterFromQuery(Name = "device")]
@@ -19,15 +23,20 @@ public partial class HardwareSurveyChartsPage
 
 	protected override async Task OnInitializedAsync()
 	{
-		_usageChart = new BarConfig();
-		_usageChart.Options = new BarOptions();
-		_usageChart.Options.Responsive = true;
-		_usageChart.Options.Title = new OptionsTitle();
-		_usageChart.Options.Title.Display = true;
-		_usageChart.Options.Title.Text = "Maximum Concurrent Streams";
-		_usageChart.Options.Legend = new Legend();
-		_usageChart.Options.Legend.Display = true;
+		await ResourceLoaderService.AddResource(
+			new ScriptLinkResource("_content/ChartJs.Blazor.Fork/ChartJsBlazorInterop.js"));
 
+		var usageChart = new BarConfig();
+		usageChart.Options = new BarOptions();
+		usageChart.Options.Responsive = true;
+		usageChart.Options.Title = new OptionsTitle();
+		usageChart.Options.Title.Display = true;
+		usageChart.Options.Title.Text = "Maximum Concurrent Streams";
+		usageChart.Options.Legend = new Legend();
+		usageChart.Options.Legend.Display = true;
+
+		_usageChart = usageChart;
+		StateHasChanged();
 		DataSelectorService.DeviceAdded += DataSelectorService_DeviceAdded;
 		DataSelectorService.DeviceRemoved += DataSelectorService_DeviceAdded;
 

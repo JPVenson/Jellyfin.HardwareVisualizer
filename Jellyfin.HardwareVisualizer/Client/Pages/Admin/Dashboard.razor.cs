@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using Jellyfin.HardwareVisualizer.Shared.Internals;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Jellyfin.HardwareVisualizer.Client.Pages.Admin;
 
