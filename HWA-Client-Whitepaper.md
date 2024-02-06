@@ -37,12 +37,12 @@ content-type: application/json; charset=utf-8
   "token": "string",
   "ffmpeg_hashs": [
     {
-      type: "md5",
-      hash: "string"
+      "type": "md5",
+      "hash": "string"
     },
     {
-      type: "sha256",
-      hash: "string"
+      "type": "sha256",
+      "hash": "string"
     }
   ],
   "tests": [
