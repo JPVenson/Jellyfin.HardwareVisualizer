@@ -1,15 +1,11 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using BlazorMonaco.Editor;
-using Jellyfin.HardwareVisualizer.Shared.Models;
-using Newtonsoft.Json.Schema.Generation;
-using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using Jellyfin.HardwareVisualizer.Client.Service.Http;
+using Jellyfin.HardwareVisualizer.Client.Service.Http.Base;
 
 namespace Jellyfin.HardwareVisualizer.Client.Pages;
 
@@ -24,7 +20,7 @@ public partial class SubmitSurveyResultPage
 	public IJSRuntime JsRuntime { get; set; }
 
 	[Inject]
-	public HttpClient HttpClient { get; set; }
+	public HttpService HttpService { get; set; }
 
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }
@@ -51,7 +47,7 @@ public partial class SubmitSurveyResultPage
 
 	protected override async Task OnInitializedAsync()
 	{
-		_jsonSchema = JSchema.Parse(await HttpClient.GetStringAsync("api/SubmissionApi/submitSchema"));
+		_jsonSchema = JSchema.Parse(await HttpService.SubmissionApiAccessor.GetSubmitSchema().Unpack());
 	}
 
 	public async Task SubmitResults()
@@ -64,15 +60,15 @@ public partial class SubmitSurveyResultPage
 			return;
 		}
 
-		var postAsync = await HttpClient.PostAsync("/api/SubmissionApi", new StringContent(value, MediaTypeHeaderValue.Parse("application/json")));
+		var postAsync = await HttpService.SubmissionApiAccessor.SubmitResults(value);
 		if (postAsync.StatusCode == HttpStatusCode.OK)
 		{
-			var id = await postAsync.Content.ReadAsStringAsync();
+			var id = postAsync.Object;
 			NavigationManager.NavigateTo($"/survey?submission={WebUtility.UrlDecode(id)}");
 		}
 		else if (postAsync.StatusCode == HttpStatusCode.BadRequest)
 		{
-			var problemDetails = await postAsync.Content.ReadFromJsonAsync<ProblemDetails>();
+			var problemDetails = postAsync.ErrorResult;
 			ValidationErrors.AddRange(problemDetails.Errors.SelectMany(e => e.Value.Select(f => new Error()
 			{
 				Path = e.Key,

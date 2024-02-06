@@ -17,7 +17,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 ///		Api Controller for submitting or getting the results of an Hardware Survey.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class SubmissionApiController : ControllerBase
 {
 	private readonly ISubmissionService _submissionService;

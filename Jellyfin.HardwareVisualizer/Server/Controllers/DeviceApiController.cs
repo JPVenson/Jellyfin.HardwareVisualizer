@@ -10,7 +10,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 ///		Provides lookup values for device data.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [EnableRateLimiting("fixed_metadata")]
 public class DeviceApiController : ControllerBase
 {

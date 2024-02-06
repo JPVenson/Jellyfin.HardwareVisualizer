@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Polly;
+using Polly.Extensions.Http;
 using ServiceLocator.Discovery.Service;
 
 namespace Jellyfin.HardwareVisualizer.Client;
@@ -14,11 +16,18 @@ public class Program
 		builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-		builder.Services.AddScoped(sp => new HttpClient
+		builder.Services
+			.AddHttpClient()
+			.ConfigureHttpClientDefaults((sp) =>
 			{
-				BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
-			})
-			.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
+				sp.ConfigureHttpClient(client =>
+				{
+					client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+				}).AddPolicyHandler(GetRetryPolicy());
+			});
+
+
+		builder.Services.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
 			{
 				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
 			});
@@ -26,5 +35,13 @@ public class Program
 		builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
 
 		await builder.Build().RunAsync();
+	}
+
+	static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+	{
+		return HttpPolicyExtensions
+			.HandleTransientHttpError()
+			.OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+			.WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 	}
 }

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [EnableRateLimiting("fixed_metadata")]
 public class AuthApiController : Controller
 {
