@@ -188,7 +188,7 @@ The Testing loop **must** be constructed as followed:
 
 After each run, add one process to run in parallel until either:
 - The difference in speed between runs with more then 3 workers is less then 5 frames/sec 
-- The average speed is below 1 frame/sec
+- The average speed is below 1x speed
 - Any process returns an process `ExitCode` between (inclusive) 1-255
 - Any process runs for more then 120sec
 
