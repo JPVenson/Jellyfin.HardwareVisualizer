@@ -1,5 +1,6 @@
 ﻿using ChartJs.Blazor.BarChart;
 using ChartJs.Blazor.Common;
+using ChartJs.Blazor.Common.Enums;
 using Jellyfin.HardwareVisualizer.Client.Service;
 using Jellyfin.HardwareVisualizer.Client.Service.ResLoaded;
 using Jellyfin.HardwareVisualizer.Shared.Models;
@@ -21,19 +22,29 @@ public partial class HardwareSurveyChartsPage
 	[Parameter]
 	public string[]? SelectedDevices { get; set; }
 
+	private static bool _horizontalChart = true;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await ResourceLoaderService.AddResource(
 			new ScriptLinkResource("_content/ChartJs.Blazor.Fork/ChartJsBlazorInterop.js"));
 
-		var usageChart = new BarConfig();
-		usageChart.Options = new BarOptions();
-		usageChart.Options.Responsive = true;
-		usageChart.Options.Title = new OptionsTitle();
-		usageChart.Options.Title.Display = true;
-		usageChart.Options.Title.Text = "Maximum Concurrent Streams";
-		usageChart.Options.Legend = new Legend();
-		usageChart.Options.Legend.Display = true;
+		var usageChart = new BarConfig(_horizontalChart);
+		
+		usageChart.Options = new BarOptions
+		{
+			Responsive = true,
+			Title = new OptionsTitle
+			{
+				Display = true,
+				Text = "Maximum Concurrent Streams"
+			},
+			Legend = new Legend
+			{
+				Display = true,
+				Position = Position.Top
+			}
+		};
 
 		_usageChart = usageChart;
 		StateHasChanged();
@@ -68,8 +79,10 @@ public partial class HardwareSurveyChartsPage
 	{
 		_usageChart.Data.Labels.Clear();
 		_usageChart.Data.Datasets.Clear();
+
 		var labelData = new Dictionary<string, IList<HardwareDisplayModel>>();
 
+		var lastCodecAdded = "";
 		foreach (var deviceData in DataSelectorService
 					 .SelectedDevices
 					 .Select(f => (f, DataSelectorService.DeviceData[f.Id])))
@@ -81,7 +94,12 @@ public partial class HardwareSurveyChartsPage
 				{
 					valuesForCodec = new List<HardwareDisplayModel>();
 					labelData[label] = valuesForCodec;
+					if (lastCodecAdded == hardwareDisplayModel.HardwareCodec)
+					{
+						label = $"{hardwareDisplayModel.FromResolution} -> {hardwareDisplayModel.ToResolution}";
+					}
 					_usageChart.Data.Labels.Add(label);
+					lastCodecAdded = hardwareDisplayModel.HardwareCodec;
 				}
 				valuesForCodec.Add(hardwareDisplayModel);
 			}
@@ -101,7 +119,7 @@ public partial class HardwareSurveyChartsPage
 				values[index] = hasData;
 			}
 
-			_usageChart.Data.Datasets.Add(new BarDataset<int>(values)
+			_usageChart.Data.Datasets.Add(new BarDataset<int>(values, _horizontalChart)
 			{
 				Label = renderDeviceViewModel.Name,
 				BackgroundColor = ChartBackgroundColors[i % ChartBackgroundColors.Length]
