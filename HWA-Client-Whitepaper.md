@@ -32,18 +32,21 @@ accept: application/json
 ---
 content-type: application/json; charset=utf-8
 {
-  "ffmpeg_source": "string",
-  "ffmpeg_version": "string",
   "token": "string",
-  "ffmpeg_hashs": [
-    {
-      "type": "md5",
-      "hash": "string"
-    },
-    {
-      "type": "sha256",
-      "hash": "string"
-    }
+  ffmpeg: [
+    "ffmpeg_source": "string",
+    "ffmpeg_version": "string",
+    "platform": "windows", "linux", "mac"
+    "ffmpeg_hashs": [
+      {
+        "type": "md5",
+        "hash": "string"
+      },
+      {
+        "type": "sha256",
+        "hash": "string"
+      }
+    ]
   ],
   "tests": [
     {
