@@ -33,7 +33,7 @@ accept: application/json
 content-type: application/json; charset=utf-8
 {
   "token": "string",
-  ffmpeg: [
+  "ffmpeg": [
     "ffmpeg_source": "string",
     "ffmpeg_version": "string",
     "platform": "windows", "linux", "mac"
