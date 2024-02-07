@@ -147,7 +147,7 @@ DISTRIB_RELEASE=22.04
 
 ### Hardware specifics
 
-A Cpu _should_ report its canonical name in the product field such as `11th Gen Intel(R) Core(TM) i7-11700B @ 3.20GHz`. 
+A Cpu **must** report its canonical name in the product field such as `11th Gen Intel(R) Core(TM) i7-11700B @ 3.20GHz`. 
 Further all variations of "Intel" or "Amd" product names _should_ be reduced to the short name of "Intel" and "Amd", e.g the HWA-Client _should_ trim an input such as "Intel Corp." to just "Intel".
 
 Memory may be reported as either `b`, `mb` or `gb` for `bytes`, `megabytes` or `gigabytes`. Other denominations _should_ be converted to the corresponding expected values.
