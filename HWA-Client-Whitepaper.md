@@ -17,6 +17,13 @@ All references to the HWA-Server are assumed to target the current running http 
 All http calls are assumed to be requested from the same IP. 
 All http results can be requested as `application/json` as well as `application/xml`, for the sake of this document; all return values are shown as JSON.
 
+The JSON displayed in this document is a variation on the JSON structure format as described at https://www.newtonsoft.com/jsonschema/help/html/Introduction.htm
+Notable variation is that whereever fixed values can be asserted or are required, they are displayed as values of properties with a constant value. 
+If a single property may accept multiple static values they will be displayed delimitered by a xOr operator `|` so that for example `"prop" : "valueA" | "valueB"` means that `prop` will accept a value that is of type 
+`string` and must be either `valueA` or `valueB`.   
+If a property values constant values is appended by a type definition such as `"string"`, the constant values are recommended values instead of required ones. 
+For example `"prop" : "valueA" | "valueB" | "string"` means that `prop` will accept any string but its recommended to provide either `"valueA"` or `"valueB"`.   
+
 # HWA testing flow
 
 A HWA client _must_ obtain a list of media files from the HWA server and only test the files that are returned by the server. 
