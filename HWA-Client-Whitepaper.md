@@ -99,6 +99,7 @@ The user _should_ be able to select this folder invidiually and a note _should_ 
 After downloading all media files, the HWA client **must** check for file integrity using one of the provided values in the `source_hash` list.
 
 After obtaining all media files, the provided `ffmpeg_source` **must** be downloaded into a folder that is provided by the user. 
+You have to use the appropriate list element from the list of provided ffmpeg values based on the `platform` property.
 If an ffmpeg binary is already present or the binary was downloaded, a hash validation **must** be done.
 
 If any hash validation fails, the user **must** be notified and the application **must** stop.
