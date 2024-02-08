@@ -5,7 +5,7 @@ The goal is to provide all nessesary informations on how to obtain test data, pr
 
 ## Version
 - 0.00 Draft, 06.02.2024, JPVenson
-- 0.01 Draft, 08.02.2024, JPVenson
+- 0.01 Draft, 08.02.2024, JPVenson  
   Added Platform api, fixed several typos, refactored response type.
 
 # Abstract
