@@ -36,10 +36,11 @@ The list of media files returned are comprised of a Source url of where to downl
 To obtain a list of supported Platforms and versions you may call:
 
 ```http
+--- Request
 GET /api/v1/TestData/Platforms
 accept: application/json
 
----
+--- Response
 content-type: application/json; charset=utf-8
 {
   "platforms": [
@@ -79,10 +80,11 @@ So you can match them directly. You **must** always try to select the exact matc
 The media api can be expected to look like this:
 
 ```http
+--- Request
 GET /api/v1/TestData?platform_id={PLATFORM_ID}
 accept: application/json
 
----
+--- Response
 content-type: application/json; charset=utf-8
 {
   "token": "string",
