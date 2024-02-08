@@ -5,6 +5,8 @@ The goal is to provide all nessesary informations on how to obtain test data, pr
 
 ## Version
 - 0.00 Draft, 06.02.2024, JPVenson
+- 0.01 Draft, 08.02.2024, JPVenson
+  Added Platform api, fixed several typos, refactored response type.
 
 # Abstract
 
@@ -30,21 +32,63 @@ A HWA client _must_ obtain a list of media files from the HWA server and only te
 The list of media files returned are comprised of a Source url of where to download the test media file in question as well as a matrix of resolutions to test.
 
 ## Obtaining Data
+
+To obtain a list of supported Platforms and versions you may call:
+
+```http
+GET /api/v1/TestData/Platforms
+accept: application/json
+
+---
+content-type: application/json; charset=utf-8
+{
+  "platforms": [
+    {
+      "id": "string",
+      "name": "string",
+      "type": "windows" | "linux" | "mac",
+      "version": "string",      
+      "version_id": "string",
+      "display_name": "string",
+      "replacement_id": "string",
+      "supported": "boolean"
+    }
+  ]
+}
+
+```
+
+### Windows specific values
+For all windows versions,
+- the `version_id` will contain the windows build number, such as `22631`.
+- `version` will contain the canonical version number, such as `Windows 11 version 23H2`
+
+### Linux specific values
+For all linux distributions,
+- the `version_id` will contain the build number of the used distribution
+- the `version` will contain the Distributions name
+
+For example a Ubuntu version 22.04 will contain those values within the `/etc/*-release` file in the form of
+```conf
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=22.04
+```
+
+So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
+
 The media api can be expected to look like this:
 
 ```http
-GET /api/v1/TestData
+GET /api/v1/TestData?platform_id={PLATFORM_ID}
 accept: application/json
 
 ---
 content-type: application/json; charset=utf-8
 {
   "token": "string",
-  "ffmpeg": [
-   {
-    "ffmpeg_source": "string",
+  "ffmpeg": {
+    "ffmpeg_source_url": "string",
     "ffmpeg_version": "string",
-    "platform": "windows" | "linux" | "mac",
     "ffmpeg_hashs": [
       {
         "type": "md5",
@@ -55,8 +99,7 @@ content-type: application/json; charset=utf-8
         "hash": "string"
       }
     ]
-   }
-  ],
+  },
   "tests": [
     {
       "name": "string",
@@ -92,7 +135,9 @@ content-type: application/json; charset=utf-8
 }
 ```
 
-> You may only obtain one valid set of TestData within a 1 hour timeframe. Once used to submit data, the endpoint will return a 429 status code with a Retry-after header indicating when to get new test data. You can call the endpoint 5 times within an 1 Hour timeframe without submitting data, obtaining the same token.
+Use the `platforms.id` value of your matching operatingsystem as the argument for the endpoint to obtain the correct ffmpeg version.
+
+> You may only obtain one valid set of TestData within a 2 hour timeframe. Once used to submit data, the endpoint will return a 429 status code with a Retry-after header indicating when to get new test data. You can call the endpoint 5 times within an 2 Hour timeframe without submitting data, obtaining the same token.
 
 > Hint: in the future, the `test_type` might contain other values such as `Tonemap` or `remux` with alternating data structures. Your script should be aware and discard non supported values in an optimistic way.
 
@@ -100,8 +145,7 @@ after obtaining the list of media files, all media files **must** be downloaded 
 The user _should_ be able to select this folder invidiually and a note _should_ be printed that the fastest storage that is available to the user _should_ be used.
 After downloading all media files, the HWA client **must** check for file integrity using one of the provided values in the `source_hash` list.
 
-After obtaining all media files, the provided `ffmpeg_source` **must** be downloaded into a folder that is provided by the user. 
-You have to use the appropriate list element from the list of provided ffmpeg values based on the `platform` property.
+After obtaining all media files, the provided `ffmpeg.ffmpeg_source_url` **must** be downloaded into a folder that is provided by the user. 
 If an ffmpeg binary is already present or the binary was downloaded, a hash validation **must** be done.
 
 If any hash validation fails, the user **must** be notified and the application **must** stop.
@@ -139,21 +183,8 @@ The HWA client **must** provide at least obtain and provide the following data:
   }
 
 ```
-### Windows specific values
-For all windows versions,
-- the `os.version_id` **must** contain the windows build number, such as `22631`.
-- `os.version` _should_ contain the canonical version number, such as `Windows 11 version 23H2`
 
-### Linux specific values
-For all linux distributions,
-- the `os.version_id` **must** contain the build number of the used distribution
-- the `os.version` **must** contain the Distributions name
-
-For example a Ubuntu version 22.04 will contain those values within the `/etc/*-release` file in the form of
-```conf
-DISTRIB_ID=Ubuntu
-DISTRIB_RELEASE=22.04
-```
+> The `os` property values are only _required_ when using the `UnkownOperatingSystem` platform key to obtain the test data from the `GET /api/v1/TestData?platform_id={PLATFORM_ID}` endpoint.
 
 ### Hardware specifics
 
