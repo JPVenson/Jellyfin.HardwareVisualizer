@@ -75,7 +75,7 @@ DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=22.04
 ```
 
-So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
+So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** use the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
 
 The media api can be expected to look like this:
 
