@@ -44,7 +44,7 @@ content-type: application/json; charset=utf-8
    {
     "ffmpeg_source": "string",
     "ffmpeg_version": "string",
-    "platform": "windows", "linux", "mac"
+    "platform": "windows" | "linux" | "mac",
     "ffmpeg_hashs": [
       {
         "type": "md5",
