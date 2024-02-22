@@ -213,7 +213,7 @@ Virtual enviroments may report different product and vendors for CPU and GPU val
 To run the HWA tests, both the CPU and any GPU that is present in the system must be evaluated. Optionally the HWA client _should_ provide a method to only test either or selectivly one.
 The HWA client **must** run each provided test returned from the `/api/v1/TestData` endpoint.
 The HWA client **must** use a subprocess to run the specified ffmpeg binary with the provided `arguments` from the tests `data` properties that matches the tested hardware. 
-Before executing the ffmpeg binary, the client **must** replace the `{video_file}` placeholder present in the `arguments` string with a path to the persisted media file. 
+Before executing the ffmpeg binary, the client **must** replace the `{video_file}` placeholder present in the `arguments` string with a path to the persisted media file as well as the `{gpu}` variable for the n'th GPU that the user wants to select in the system. 
 
 ### Testing Selectors
 
