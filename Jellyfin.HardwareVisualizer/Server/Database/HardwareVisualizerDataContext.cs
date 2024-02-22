@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Jellyfin.HardwareVisualizer.Database;
+namespace Jellyfin.HardwareVisualizer.Server.Database;
 
 public class HardwareVisualizerDataContext : DbContext
 {
-	public HardwareVisualizerDataContext(DbContextOptions<HardwareVisualizerDataContext> contextOptions) : base(contextOptions)
+	public HardwareVisualizerDataContext(DbContextOptions<HardwareVisualizerDataContext> contextOptions) : base(
+		contextOptions)
 	{
-		
 	}
 
 	public DbSet<GpuType> GpuTypes { get; set; }
@@ -19,6 +16,12 @@ public class HardwareVisualizerDataContext : DbContext
 	public DbSet<HardwareSurveySubmission> HardwareSurveySubmissions { get; set; }
 	public DbSet<HardwareDisplay> HardwareDisplays { get; set; }
 	public DbSet<TestResolution> TestResolutions { get; set; }
+
+	public DbSet<FfmpegVersion> FfmpegVersions { get; set; }
+	public DbSet<MediaTestFile> MediaTestFiles { get; set; }
+	public DbSet<TestCase> TestCases { get; set; }
+	public DbSet<TestCaseArgument> TestCaseArguments { get; set; }
+	public DbSet<Platform> Platform { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -30,98 +33,543 @@ public class HardwareVisualizerDataContext : DbContext
 		base.OnModelCreating(modelBuilder);
 		modelBuilder.Entity<HardwareDisplay>()
 			.HasKey(e => new { e.HardwareCodec, e.ToResolution, e.FromResolution, e.DeviceType, e.DeviceName });
+
+		modelBuilder.Entity<Platform>()
+			.HasData(new Platform[]
+			{
+				new Platform()
+				{
+					Id = new Guid("2C361BE8-C0EC-4020-984B-66C620DAD840"),
+					Name = "Windows 11",
+					Type = PlatformType.Windows,
+					Version = "Windows 11 version 23H2",
+					VersionId = "22631",
+					DisplayName = "Windows 11",
+					Supported = true
+				},
+				new Platform()
+				{
+					Id = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
+					Name = "Ubuntu",
+					Type = PlatformType.Linux,
+					Version = "Ubuntu",
+					VersionId = "22.04",
+					DisplayName = "Ubuntu Focal",
+					Supported = true
+				}
+			});
+
+		modelBuilder.Entity<FfmpegVersion>()
+			.HasData(new FfmpegVersion[]
+			{
+				new FfmpegVersion()
+				{
+					Id = new Guid("A3F734BE-FB92-4A1F-BD8C-B6701E0F7E9F"),
+					PlatformId = new Guid("2C361BE8-C0EC-4020-984B-66C620DAD840"),
+					Source =
+						"https://repo.jellyfin.org/releases/server/windows/versions/jellyfin-ffmpeg/5.1.4-3/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
+					Version = "5.1.6-3",
+					HashSha256 = "47f4ea0da73f7835748c4549004877eb9abc6070",
+					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
+				},
+				new FfmpegVersion()
+				{
+					Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
+					PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
+					Source =
+						"https://repo.jellyfin.org/releases/server/ubuntu/versions/jellyfin-ffmpeg/6.0.1-2/jellyfin-ffmpeg6_6.0.1-2-focal_amd64.deb",
+					Version = "6.0.1-2",
+					HashSha256 = "dbe5bf6d194abfec209e8ec3d25d526d12b1d51638902535fb2df233aedb62c2",
+					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
+				}
+			});
+
+		modelBuilder.Entity<HardwareCodec>()
+			.HasData(new HardwareCodec[]
+			{
+				new HardwareCodec()
+				{
+					Id = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					Identifier = "h264",
+					Name = "H264"
+				},
+				new HardwareCodec()
+				{
+					Id = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					Identifier = "h265",
+					Name = "HVEC"
+				},
+			});
+
+		modelBuilder.Entity<MediaTestFile>()
+			.HasData(new MediaTestFile[]
+			{
+				new MediaTestFile()
+				{
+					Id = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					Name = "jellyfish-120-mbps-4k-uhd-hevc-10bit",
+					SourceUrl = "https://repo.jellyfin.org/jellyfish/media/jellyfish-120-mbps-4k-uhd-hevc-10bit.mkv",
+					Bitrate = 120,
+					Size = 429,
+					VideoCodec = "HEVC",
+					AudioCodec = "",
+					HashSha256 = "",
+					HashMd5 = "",
+				},
+				new MediaTestFile()
+				{
+					Id = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					Name = "jellyfish-120-mbps-4k-uhd-h264",
+					SourceUrl = "https://repo.jellyfin.org/jellyfish/media/jellyfish-120-mbps-4k-uhd-h264.mkv",
+					Bitrate = 120,
+					Size = 431,
+					VideoCodec = "h264",
+					AudioCodec = "",
+					HashSha256 = "",
+					HashMd5 = "",
+				},
+				new MediaTestFile()
+				{
+					Id = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					Name = "jellyfish-40-mbps-hd-hevc-10bit",
+					SourceUrl = "https://repo.jellyfin.org/jellyfish/media/jellyfish-40-mbps-hd-hevc-10bit.mkv",
+					Bitrate = 40,
+					Size = 143,
+					VideoCodec = "HEVC",
+					AudioCodec = "",
+					HashSha256 = "",
+					HashMd5 = "",
+				},
+				new MediaTestFile()
+				{
+					Id = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					Name = "jellyfish-40-mbps-hd-h264",
+					SourceUrl = "https://repo.jellyfin.org/jellyfish/media/jellyfish-40-mbps-hd-h264.mkv",
+					Bitrate = 40,
+					Size = 142,
+					VideoCodec = "h264",
+					AudioCodec = "",
+					HashSha256 = "",
+					HashMd5 = "",
+				}
+			});
+
+		modelBuilder.Entity<TestCase>()
+			.HasData(new TestCase[]
+			{
+				#region File E8A75E65-A3F3-4D92-A45B-84E71A13EFAB
+
+				
+
+				new TestCase()
+				{
+					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				#endregion
+
+				#region File E1E58B15-6664-454C-868A-20442DB30557
+				
+				new TestCase()
+				{
+					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				#endregion
+
+				#region File 70DAEBE7-C9FC-4E02-A524-2FC825A49355
+
+				
+
+				new TestCase()
+				{
+					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				#endregion
+				#region File 1D943D13-586D-4562-A968-EB1D0FFAE947
+
+				
+
+				new TestCase()
+				{
+					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+				},
+				new TestCase()
+				{
+					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+				},
+				#endregion
+			});
+
+		modelBuilder.Entity<TestCaseArgument>()
+			.HasData(new TestCaseArgument[]
+			{
+				new TestCaseArgument()
+				{
+					Id = new Guid("1C76B8CC-7A23-4C9D-8ED7-9CBF2D741631"),
+					FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("26B70D55-42E0-4DEF-8288-F00B562C0D6D"),
+					FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("5535EFBB-BCEE-4196-961D-7C7358C1C232"),
+					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("A3AF8E6A-456A-41C2-91C6-F1A4CDE9C7F4"),
+					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("4FF85976-2046-4560-94FD-A79AF116F154"),
+					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v h264_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("2A255052-3128-4E2A-A511-BEF273F4889C"),
+					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v hevc_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("49463914-C696-4DCA-8F62-C041EC2D8200"),
+					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+				},
+				new TestCaseArgument()
+				{
+					Id = new Guid("EC73EEB5-E095-40F5-8B84-4D2307F13BFD"),
+					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
+					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
+					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+				}
+			});
 	}
-}
-
-public class DeviceBase
-{
-	[Key]
-	public Guid Id { get; set; }
-	public string Name { get; set; }
-	public string Identifier { get; set; }
-	public string Vendor { get; set; }
-}
-
-public class GpuType : DeviceBase
-{
-}
-
-public class CpuType : DeviceBase
-{
-}
-
-public class HardwareCodec
-{
-	[Key]
-	public Guid Id { get; set; }
-	public string Name { get; set; }
-	public string Identifier { get; set; }
-}
-
-public class TestResolution
-{
-	[Key]
-	public Guid Id { get; set; }
-	public string Name { get; set; }
-	public string Identifier { get; set; }
-}
-
-public class HardwareSurveyEntry
-{
-	[Key]
-	public Guid Id { get; set; }
-	public Guid HardwareCodecId { get; set; }
-	public HardwareCodec HardwareCodec { get; set; }
-
-
-	public Guid? GpuTypeId { get; set; }
-	public GpuType? GpuType { get; set; } = null!;
-
-	public Guid? CpuTypeId { get; set; }
-	public CpuType? CpuType { get; set; } = null!;
-
-	public Guid HardwareSurveySubmissionId { get; set; }
-	public HardwareSurveySubmission HardwareSurveySubmission { get; set; } = null!;
-
-	public Guid FromResolutionId { get; set; }
-	public TestResolution FromResolution { get; set; } = null!;
-	public Guid ToResolutionId { get; set; }
-	public TestResolution ToResolution { get; set; } = null!;
-
-	public int MaxStreams { get; set; }
-}
-
-public class HardwareSurveySubmission
-{
-	[Key]
-	public Guid Id { get; set; }
-
-	public ICollection<HardwareSurveyEntry> HardwareSurveyEntry { get; set; } = null!;
-
-	public Guid RawSurveySubmissionId { get; set; }
-	public RawSurveySubmission RawSurveySubmission { get; set; }
-}
-
-public class RawSurveySubmission
-{
-	public Guid Id { get; set; }
-	public string Json { get; set; }
-}
-
-public class HardwareDisplay
-{
-	public DeviceType DeviceType { get; set; }
-	public string DeviceName { get; set; }
-	public string HardwareCodec { get; set; }
-	public string FromResolution { get; set; } = null!;
-	public string ToResolution { get; set; } = null!;
-
-	public double MaxStreams { get; set; }
-	public float Diviation { get; set; }
-}
-
-public enum DeviceType
-{
-	Cpu,
-	Gpu,
 }

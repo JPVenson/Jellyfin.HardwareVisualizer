@@ -11,7 +11,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+	        migrationBuilder.CreateTable(
                 name: "CpuTypes",
                 columns: table => new
                 {

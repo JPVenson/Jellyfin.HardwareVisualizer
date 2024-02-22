@@ -1,4 +1,3 @@
-using Jellyfin.HardwareVisualizer.Database;
 using Jellyfin.HardwareVisualizer.Server.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -11,6 +10,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
+using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
@@ -45,6 +46,7 @@ namespace Jellyfin.HardwareVisualizer.Server
 					e.JsonSerializerOptions.DictionaryKeyPolicy = null;
 					e.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 					e.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+					e.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false));
 				});
 			builder.Services.AddRazorPages();
 			builder.Services.AddEndpointsApiExplorer();

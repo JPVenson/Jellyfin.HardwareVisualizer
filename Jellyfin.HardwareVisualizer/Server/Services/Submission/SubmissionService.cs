@@ -1,10 +1,10 @@
-﻿using Jellyfin.HardwareVisualizer.Database;
+﻿using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ServiceLocator.Attributes;
-using DeviceType = Jellyfin.HardwareVisualizer.Database.DeviceType;
+using DeviceType = Jellyfin.HardwareVisualizer.Server.Database.DeviceType;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.Submission;
 

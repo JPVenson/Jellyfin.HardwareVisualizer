@@ -1,4 +1,4 @@
-﻿using Jellyfin.HardwareVisualizer.Database;
+﻿using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

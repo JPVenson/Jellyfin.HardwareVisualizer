@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Polly;
@@ -29,7 +30,8 @@ public class Program
 
 		builder.Services.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
 			{
-				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+				Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false) }
 			});
 		//builder.Services.AddAuthorizationCore();
 		builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
