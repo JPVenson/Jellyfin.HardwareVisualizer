@@ -5,6 +5,8 @@ The goal is to provide all nessesary informations on how to obtain test data, pr
 
 ## Version
 - 0.00 Draft, 06.02.2024, JPVenson
+- 0.01 Draft, 08.02.2024, JPVenson  
+  Added Platform api, fixed several typos, refactored response type.
 
 # Abstract
 
@@ -17,34 +19,89 @@ All references to the HWA-Server are assumed to target the current running http 
 All http calls are assumed to be requested from the same IP. 
 All http results can be requested as `application/json` as well as `application/xml`, for the sake of this document; all return values are shown as JSON.
 
+The JSON displayed in this document is a variation on the JSON structure format as described at https://www.newtonsoft.com/jsonschema/help/html/Introduction.htm
+Notable variation is that whereever fixed values can be asserted or are required, they are displayed as values of properties with a constant value. 
+If a single property may accept multiple static values they will be displayed delimitered by a xOr operator `|` so that for example `"prop" : "valueA" | "valueB"` means that `prop` will accept a value that is of type 
+`string` and must be either `valueA` or `valueB`.   
+If a property values constant values is appended by a type definition such as `"string"`, the constant values are recommended values instead of required ones. 
+For example `"prop" : "valueA" | "valueB" | "string"` means that `prop` will accept any string but its recommended to provide either `"valueA"` or `"valueB"`.   
+
 # HWA testing flow
 
 A HWA client _must_ obtain a list of media files from the HWA server and only test the files that are returned by the server. 
 The list of media files returned are comprised of a Source url of where to download the test media file in question as well as a matrix of resolutions to test.
 
 ## Obtaining Data
+
+To obtain a list of supported Platforms and versions you may call:
+
+```http
+--- Request
+GET /api/v1/TestData/Platforms
+accept: application/json
+
+--- Response
+content-type: application/json; charset=utf-8
+{
+  "platforms": [
+    {
+      "id": "string",
+      "name": "string",
+      "type": "windows" | "linux" | "mac",
+      "version": "string",      
+      "version_id": "string",
+      "display_name": "string",
+      "replacement_id": "string",
+      "supported": "boolean"
+    }
+  ]
+}
+
+```
+
+### Windows specific values
+For all windows versions,
+- the `version_id` will contain the windows build number, such as `22631`.
+- `version` will contain the canonical version number, such as `Windows 11 version 23H2`
+
+### Linux specific values
+For all linux distributions,
+- the `version_id` will contain the build number of the used distribution
+- the `version` will contain the Distributions name
+
+For example a Ubuntu version 22.04 will contain those values within the `/etc/*-release` file in the form of
+```conf
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=22.04
+```
+
+So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** use the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
+
 The media api can be expected to look like this:
 
 ```http
-GET /api/v1/TestData
+--- Request
+GET /api/v1/TestData?platform_id={PLATFORM_ID}
 accept: application/json
 
----
+--- Response
 content-type: application/json; charset=utf-8
 {
-  "ffmpeg_source": "string",
-  "ffmpeg_version": "string",
   "token": "string",
-  "ffmpeg_hashs": [
-    {
-      "type": "md5",
-      "hash": "string"
-    },
-    {
-      "type": "sha256",
-      "hash": "string"
-    }
-  ],
+  "ffmpeg": {
+    "ffmpeg_source_url": "string",
+    "ffmpeg_version": "string",
+    "ffmpeg_hashs": [
+      {
+        "type": "md5",
+        "hash": "string"
+      },
+      {
+        "type": "sha256",
+        "hash": "string"
+      }
+    ]
+  },
   "tests": [
     {
       "name": "string",
@@ -80,15 +137,17 @@ content-type: application/json; charset=utf-8
 }
 ```
 
-> You may only obtain one valid set of TestData within a 1 hour timeframe. Once used to submit data, the endpoint will return a 429 status code with a Retry-after header indicating when to get new test data. You can call the endpoint 5 times within an 1 Hour timeframe without submitting data, obtaining the same token.
+Use the `platforms.id` value of your matching operatingsystem as the argument for the endpoint to obtain the correct ffmpeg version.
+
+> You may only obtain one valid set of TestData within a 2 hour timeframe. Once used to submit data, the endpoint will return a 429 status code with a Retry-after header indicating when to get new test data. You can call the endpoint 5 times within an 2 Hour timeframe without submitting data, obtaining the same token.
 
 > Hint: in the future, the `test_type` might contain other values such as `Tonemap` or `remux` with alternating data structures. Your script should be aware and discard non supported values in an optimistic way.
 
-after obtaining the list of media files, all media files **must** be downloaded invidvidually onto the persistent storage of the systems drive _or_ if a file with the same name is already present the download step can be skipped and only a hash validation **must** be done.
+after obtaining the list of media files, all media files **must** be downloaded invidvidually onto the persistent storage of the systems permanent filesystem _or_ if a file with the same name is already present at the specified location, the download step for that media file _may_ be skipped and only a hash validation **shall** be done.
 The user _should_ be able to select this folder invidiually and a note _should_ be printed that the fastest storage that is available to the user _should_ be used.
 After downloading all media files, the HWA client **must** check for file integrity using one of the provided values in the `source_hash` list.
 
-After obtaining all media files, the provided `ffmpeg_source` **must** be downloaded into a folder that is provided by the user. 
+After obtaining all media files, the provided `ffmpeg.ffmpeg_source_url` **must** be downloaded into a folder that is provided by the user. 
 If an ffmpeg binary is already present or the binary was downloaded, a hash validation **must** be done.
 
 If any hash validation fails, the user **must** be notified and the application **must** stop.
@@ -126,26 +185,13 @@ The HWA client **must** provide at least obtain and provide the following data:
   }
 
 ```
-### Windows specific values
-For all windows versions,
-- the `os.version_id` **must** contain the windows build number, such as `22631`.
-- `os.version` _should_ contain the canonical version number, such as `Windows 11 version 23H2`
 
-### Linux specific values
-For all linux distributions,
-- the `os.version_id` **must** contain the build number of the used distribution
-- the `os.version` **must** contain the Distributions name
-
-For example a Ubuntu version 22.04 will contain those values within the `/etc/*-release` file in the form of
-```conf
-DISTRIB_ID=Ubuntu
-DISTRIB_RELEASE=22.04
-```
+> The `os` property values are only _required_ when using the `UnkownOperatingSystem` platform key to obtain the test data from the `GET /api/v1/TestData?platform_id={PLATFORM_ID}` endpoint.
 
 ### Hardware specifics
 
-A Cpu _should_ report its canonical name in the product field such as `11th Gen Intel(R) Core(TM) i7-11700B @ 3.20GHz`. 
-Further _should_ all variations of "Intel" or "Amd" product names be reduced to the short name of "Intel" and "Amd", e.g the HWA-Client _should_ trim an input such as "Intel Corp." to just "Intel".
+A Cpu **must** report its canonical name in the product field such as `11th Gen Intel(R) Core(TM) i7-11700B @ 3.20GHz`. 
+Further all variations of "Intel" or "Amd" product names _should_ be reduced to the short name of "Intel" and "Amd", e.g the HWA-Client _should_ trim an input such as "Intel Corp." to just "Intel".
 
 Memory may be reported as either `b`, `mb` or `gb` for `bytes`, `megabytes` or `gigabytes`. Other denominations _should_ be converted to the corresponding expected values.
 
@@ -167,7 +213,7 @@ Virtual enviroments may report different product and vendors for CPU and GPU val
 To run the HWA tests, both the CPU and any GPU that is present in the system must be evaluated. Optionally the HWA client _should_ provide a method to only test either or selectivly one.
 The HWA client **must** run each provided test returned from the `/api/v1/TestData` endpoint.
 The HWA client **must** use a subprocess to run the specified ffmpeg binary with the provided `arguments` from the tests `data` properties that matches the tested hardware. 
-Before executing the ffmpeg binary, the client **must** replace the `{video_file}` placeholder present in the `arguments` string with a path to the persisted media file. 
+Before executing the ffmpeg binary, the client **must** replace the `{video_file}` placeholder present in the `arguments` string with a path to the persisted media file as well as the `{gpu}` variable for the n'th GPU that the user wants to select in the system. 
 
 ### Testing Selectors
 
@@ -185,7 +231,7 @@ The Testing loop **must** be constructed as followed:
 
 After each run, add one process to run in parallel until either:
 - The difference in speed between runs with more then 3 workers is less then 5 frames/sec 
-- The average speed is below 1 frame/sec
+- The average speed is below 1x speed
 - Any process returns an process `ExitCode` between (inclusive) 1-255
 - Any process runs for more then 120sec
 
