@@ -240,7 +240,15 @@ In case of the average framerate dropping below 1, note the failure reason as: `
 In case of an `ExitCode` of an process that is between (inclusive) 1-255: look into the stderr of the process in question and search for all lines that match `failed -> (.*): (.*)` and use the reported values as failure reasons.  
 In case of an timeout, note failure reason as: `failed_timeout`  
 
-> Note: NVidia consumer GPUs have an build in limit on the number of concurrent NVENC streams. This has changed over the years from 2-3-5-8 streams depending on the driver. When detecting an Nvidia GPU and any transcode attempt fails at any of those threasholds and the error code is `out of memory (10): (no details)` you _may_ either discard the run and display an appropriate disclaimer; or you **must** use the `failed_nvenc_limit` error reason.  
+> Note: NVidia consumer GPUs have an build in limit on the number of concurrent NVENC streams. This has changed over the years from 2-3-5-8 streams depending on the driver. When detecting an Nvidia GPU and any transcode attempt fails at any of those threasholds and the error code is `out of memory (10): (no details)` you _may_ either discard the run and display an appropriate disclaimer; or you **must** use the `failed_nvenc_limit` error reason.
+> You may display a message indicating that those limits exist based on the driver version:
+
+| NVIDIA driver  | NVENC concurrent sessions |
+| -------------- | ------------------------- |
+| 550 and newer  | Up to 8 encoding sessions |
+| 530 to 546     | Up to 5 encoding sessions |
+| pre-530        | Up to 3 encoding sessions |
+  
 
 If multiple failure reasons apply, add all of them to the result.
 
