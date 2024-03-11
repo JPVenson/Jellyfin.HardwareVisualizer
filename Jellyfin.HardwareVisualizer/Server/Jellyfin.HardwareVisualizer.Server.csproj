@@ -40,4 +40,8 @@
 		<ProjectReference Include="..\SharedInternal\Jellyfin.HardwareVisualizer.Shared.Internals.csproj" />
 		<ProjectReference Include="..\Shared\Jellyfin.HardwareVisualizer.Shared.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Database\Migrations\" />
+	</ItemGroup>
 </Project>

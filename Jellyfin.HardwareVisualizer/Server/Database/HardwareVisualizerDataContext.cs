@@ -154,16 +154,25 @@ public class HardwareVisualizerDataContext : DbContext
 				}
 			});
 
+		var caseCounter = 0;
+		var random = new Random(1337);
+
+		Guid GetNext()
+		{
+			var bytes = new byte[16];
+			random.NextBytes(bytes);
+			return new Guid(bytes);
+		}
+
 		modelBuilder.Entity<TestCase>()
 			.HasData(new TestCase[]
 			{
 				#region File E8A75E65-A3F3-4D92-A45B-84E71A13EFAB
-
-				
+							
 
 				new TestCase()
 				{
-					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -172,7 +181,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -181,7 +190,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -190,7 +199,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -199,7 +208,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -208,7 +217,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -217,7 +226,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -226,7 +235,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -235,7 +244,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -248,7 +257,7 @@ public class HardwareVisualizerDataContext : DbContext
 				
 				new TestCase()
 				{
-					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -257,7 +266,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -266,7 +275,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -275,7 +284,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -284,7 +293,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -293,7 +302,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -302,7 +311,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -311,7 +320,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -320,7 +329,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -335,7 +344,7 @@ public class HardwareVisualizerDataContext : DbContext
 
 				new TestCase()
 				{
-					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -344,7 +353,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -353,7 +362,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -362,7 +371,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -371,7 +380,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -380,7 +389,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -389,7 +398,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -398,7 +407,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -407,7 +416,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -421,7 +430,7 @@ public class HardwareVisualizerDataContext : DbContext
 
 				new TestCase()
 				{
-					Id = new Guid("F024A101-1748-48C3-A363-C7319C908AF6"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -430,7 +439,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("93664B93-4B26-48AC-87DF-C11BF781700C"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -439,7 +448,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6D5A1CB8-CAE9-4F42-9531-38770F1842E1"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "2160p",
@@ -448,7 +457,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4E42E35C-6B04-497C-8E3A-E1A559D7FE21"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -457,7 +466,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("6EA0CED7-B484-4F36-ADB2-CB9E31CFA69B"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -466,7 +475,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("8CD41078-F7B6-4F8A-9A14-05988136D920"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "1080p",
@@ -475,7 +484,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("362C0F37-8198-427C-BA51-D1BA96F9C596"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -484,7 +493,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("4474E738-42E7-47FD-BD72-EB90ABE21DF5"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
@@ -493,7 +502,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new TestCase()
 				{
-					Id = new Guid("81EC0C23-4B92-42E5-BC73-E84EB8C7CF54"),
+					Id = GetNext(),
 					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
 					TestCaseType = TestCaseType.Transcode,
 					FromResolution = "720p",
