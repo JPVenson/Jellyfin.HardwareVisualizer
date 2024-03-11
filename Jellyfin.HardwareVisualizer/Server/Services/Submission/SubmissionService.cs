@@ -144,6 +144,12 @@ public class SubmissionService : ISubmissionService
 
 		var testReference = await db.TestCases.Include(testCase => testCase.MediaTestFile).FirstOrDefaultAsync(e => e.Id == codecTest.TestId);
 
+		if (testReference is null)
+		{
+			modelStateDictionary.AddModelError($"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.TestId)}", "The provided Test ID does not relate to any known test id.");
+			yield break;
+		}
+
 		yield return new HardwareSurveyEntry()
 		{
 			FromResolutionId = await GetOrAddResolution(db, testReference.FromResolution),

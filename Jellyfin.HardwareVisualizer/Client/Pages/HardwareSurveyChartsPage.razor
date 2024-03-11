@@ -1,10 +1,56 @@
 ﻿@page "/survey"
 @using ChartJs.Blazor;
+@using Jellyfin.HardwareVisualizer.Shared.Models
 
 <PageTitle>Jellyfin Hardware Survey</PageTitle>
 
+<div class="flex flex-row">
+	@foreach (var selectedDevice in this.DataSelectorService.SelectedDevices)
+	{
+		<div class="card" style="max-width: 16rem">
+			<div class="card-body">
+				<h5>@selectedDevice.Name</h5>
+				<h6>@selectedDevice.Vendor</h6>
+			</div>
+			<button class="btn btn-link" @onclick="() => this.DataSelectorService.RemoveDevice(selectedDevice)">Remove</button>
+		</div>
+	}
+
+	<div class="card" style="max-width: 16rem">
+		<div class="card-body">
+			<p>Select GPU/CPU</p>
+
+			<select @bind:after="@AddDevice" class="form-control" @bind="SelectedDevice">
+				<option value="@Guid.Empty">Please select an Render Device.</option>
+				@if (!DataSelectorService.SelectedDevices.Any() || DataSelectorService.SelectedDevices.All(e => e.DeviceType == DeviceType.Cpu))
+				{
+					<optgroup label="Cpus">
+						@foreach (var cpu in DataSelectorService.AllDevices
+							          .Where(e => DataSelectorService.SelectedDevices.All(f => f.Id != e.Id))
+							          .Where(e => e.DeviceType == DeviceType.Cpu))
+						{
+							<option value="@cpu.Id">@cpu.Name</option>
+						}
+					</optgroup>
+				}
+				@if (!DataSelectorService.SelectedDevices.Any() || DataSelectorService.SelectedDevices.All(e => e.DeviceType == DeviceType.Gpu))
+				{
+					<optgroup label="Gpus">
+						@foreach (var gpu in DataSelectorService.AllDevices
+							          .Where(e => DataSelectorService.SelectedDevices.All(f => f.Id != e.Id))
+							          .Where(e => e.DeviceType == DeviceType.Gpu))
+						{
+							<option value="@gpu.Id">@gpu.Name</option>
+						}
+					</optgroup>
+				}
+			</select>
+		</div>
+	</div>
+</div>
+
 <fieldset>
-	<div>
+	<div style="max-width: calc(100vw - 5rem);">
 		@if (_usageChart != null)
 		{
 			<Chart Config="_usageChart"></Chart>

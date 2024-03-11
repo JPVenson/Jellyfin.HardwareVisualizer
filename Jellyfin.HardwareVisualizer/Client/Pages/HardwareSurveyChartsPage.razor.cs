@@ -22,6 +22,21 @@ public partial class HardwareSurveyChartsPage
 	[Parameter]
 	public string[]? SelectedDevices { get; set; }
 
+	public Guid SelectedDevice { get; set; }
+
+	private async Task AddDevice()
+	{
+		var argValue = SelectedDevice.ToString();
+		if (string.IsNullOrWhiteSpace(argValue))
+		{
+			return;
+		}
+
+		var renderDeviceViewModel = DataSelectorService.AllDevices.First(e => e.Id.ToString() == argValue);
+		await DataSelectorService.AddDevice(renderDeviceViewModel);
+		SelectedDevice = Guid.Empty;
+	}
+
 	private static bool _horizontalChart = true;
 
 	protected override async Task OnInitializedAsync()

@@ -1,11 +1,39 @@
 ﻿<header class="top-row d-flex flex-row justify-content-between">
+	<NavMenu />
 	@if (NavigationManager.ToBaseRelativePath(NavigationManager.Uri) == "survey")
 	{
-		<div class="float-left">
-			<a href="?@SelectedDevicesQuery" target="_blank" class="btn btn-link">Perma Link</a>
+		<div class="nav-link">
+			<a href="?@SelectedDevicesQuery" target="_blank" class="nav-link">Perma Link</a>
 		</div>
 	}
-	<div class="float-right ">
-		<a href="https://jellyfin.org/docs/" target="_blank">Docs</a>
+	
+	<div class="nav-item">
+		<NavLink class="nav-link" href="/survey" Match="NavLinkMatch.All">
+			<span class="oi oi-home" aria-hidden="true"></span> Survey Results
+		</NavLink>
+	</div>
+	<div class="nav-item">
+		<NavLink class="nav-link" href="https://github.com/joshuaboniface/hwatest" target="__blank" Match="NavLinkMatch.All">
+			<span class="oi oi-cloud-download" aria-hidden="true"></span> Survey Tool
+		</NavLink>
+	</div>
+	<div class="nav-item">
+		<NavLink class="nav-link" href="/submit" Match="NavLinkMatch.All">
+			<span class="oi oi-home" aria-hidden="true"></span> Submit Results
+		</NavLink>
+	</div>
+	<div class="nav-item">
+		<NavLink class="nav-link" href="/swagger" target="__blank" Match="NavLinkMatch.All">
+			<span class="oi oi-list" aria-hidden="true"></span> Swagger
+		</NavLink>
+	</div>
+	<div class="nav-item">
+		<NavLink class="nav-link" href="/Admin/Dashboard" target="__blank" Match="NavLinkMatch.All">
+			<span class="oi oi-spreadsheet" aria-hidden="true"></span> Admin
+		</NavLink>
+	</div>
+
+	<div class="nav-item">
+		<a href="https://jellyfin.org/docs/" target="_blank" class="nav-link">Docs</a>
 	</div>
 </header>
