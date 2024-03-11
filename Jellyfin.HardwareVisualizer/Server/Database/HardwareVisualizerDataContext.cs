@@ -425,9 +425,7 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				#endregion
 				#region File 1D943D13-586D-4562-A968-EB1D0FFAE947
-
 				
-
 				new TestCase()
 				{
 					Id = GetNext(),

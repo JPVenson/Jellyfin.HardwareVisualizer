@@ -141,19 +141,19 @@ public class SubmissionService : ISubmissionService
 			modelStateDictionary.AddModelError($"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.SelectedCpu)}", "Either selected_cpu or selected_gpu must be set and reference an index in the list of cpus or gpus.");
 			yield break;
 		}
-		foreach (var resolutionTest in codecTest.ResolutionMap)
+
+		var testReference = await db.TestCases.Include(testCase => testCase.MediaTestFile).FirstOrDefaultAsync(e => e.Id == codecTest.TestId);
+
+		yield return new HardwareSurveyEntry()
 		{
-			yield return new HardwareSurveyEntry()
-			{
-				FromResolutionId = await GetOrAddResolution(db, resolutionTest.From),
-				ToResolutionId = await GetOrAddResolution(db, resolutionTest.To),
-				MaxStreams = resolutionTest.Results.MaxStreams,
-				HardwareCodecId = await GetOrAddCodec(db, codecTest.MediaCodec),
-				GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
-				CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,
-				Id = Guid.NewGuid(),
-			};
-		}
+			FromResolutionId = await GetOrAddResolution(db, testReference.FromResolution),
+			ToResolutionId = await GetOrAddResolution(db, testReference.ToResolution),
+			MaxStreams = codecTest.Results.MaxStreams,
+			HardwareCodecId = await GetOrAddCodec(db, testReference.MediaTestFile.VideoCodec),
+			GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
+			CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,
+			Id = Guid.NewGuid(),
+		};
 	}
 
 	private async Task<Guid> GetOrAddCodec(HardwareVisualizerDataContext db, string codecName)
