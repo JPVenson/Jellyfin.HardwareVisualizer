@@ -230,7 +230,7 @@ The Testing loop **must** be constructed as followed:
 - Then calculate an average over all processes for the calculated `speed` and the last reported `time` values. For frame and rss-kb take the maximum values of any process.
 
 After each run, add one process to run in parallel until either:
-- The difference in speed between runs with more then 3 workers is less then 5 frames/sec 
+- The difference in speed between runs with more then 3 workers is less then a factor of .5 so that if the previous run reports an average of `2.50`, `2.48` and `2.47` speed and the current one reports `2.46` speed an abort should be considered
 - The average speed is below 1x speed
 - Any process returns an process `ExitCode` between (inclusive) 1-255
 - Any process runs for more then 120sec
