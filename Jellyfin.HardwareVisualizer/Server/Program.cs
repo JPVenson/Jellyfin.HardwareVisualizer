@@ -49,6 +49,7 @@ namespace Jellyfin.HardwareVisualizer.Server
 				.FromAssembly(typeof(Program).Assembly)
 				.LocateServices();
 
+			builder.Services.AddMemoryCache();
 			builder.Services.AddResponseCaching();
 			builder.Services.AddResponseCompression();
 			builder.Services.AddControllersWithViews()
@@ -67,7 +68,7 @@ namespace Jellyfin.HardwareVisualizer.Server
 				e.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
 					.UseSimpleAssemblyNameTypeSerializer()
 					.UseRecommendedSerializerSettings()
-					.UsePostgreSqlStorage(f => f.UseNpgsqlConnection(() => builder.Configuration.GetConnectionString(GetConnectionString())))
+					.UsePostgreSqlStorage(f => f.UseNpgsqlConnection(() => GetConnectionString()))
 				);
 			builder.Services.AddHangfireServer();
 
