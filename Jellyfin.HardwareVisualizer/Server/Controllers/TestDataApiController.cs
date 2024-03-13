@@ -54,7 +54,7 @@ public class TestDataApiController : ControllerBase
 		var testDataToken = _submitTokenService.GenerateToken();
 		if (testDataToken is null)
 		{
-			return new StatusCodeResult(503);
+			return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
 		}
 
 		var testData = await _testDataService.GetTestDataFor(platformId, cancellationToken);
