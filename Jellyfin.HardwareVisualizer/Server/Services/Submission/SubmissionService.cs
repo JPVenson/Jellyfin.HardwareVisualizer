@@ -1,4 +1,6 @@
-﻿using Jellyfin.HardwareVisualizer.Server.Database;
+﻿using System.Transactions;
+using Hangfire;
+using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -18,33 +20,54 @@ public class SubmissionService : ISubmissionService
 		_dbContextFactory = dbContextFactory;
 	}
 
-	public async Task RecalcHardwareStats()
+	public static async Task RecalcHardwareStats(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory,
+		Guid deviceId)
 	{
-		await using var db = await _dbContextFactory.CreateDbContextAsync();
-		var submissionsByGpu =
-			await db.HardwareSurveyEntries.GroupBy(e => new
-				{
-					DeviceType = e.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
-					DeviceName = e.GpuType!.Name ?? e.CpuType!.Name,
-					CodecName = e.HardwareCodec.Name,
-					From = e.FromResolution.Name,
-					To = e.ToResolution.Name,
-				})
-				.Select(e => new HardwareDisplay()
-				{
-					HardwareCodec = e.Key.CodecName,
-					Diviation = 0,
-					FromResolution = e.Key.From,
-					ToResolution = e.Key.To,
-					DeviceType = e.Key.DeviceType,
-					DeviceName = e.Key.DeviceName,
-					MaxStreams = e.Average(f => f.MaxStreams)
-				})
-				.ToArrayAsync();
+		await using var db = await dbContextFactory.CreateDbContextAsync();
+		using (new TransactionScope())
+		{
+			var submissionsByGpu =
+				await db.HardwareSurveyEntries.Where(e => e.GpuType.Id == deviceId || e.CpuType.Id == deviceId).GroupBy(
+						e => new
+						{
+							DeviceType = e.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
+							DeviceName = e.GpuType!.Name ?? e.CpuType!.Name,
+							CodecName = e.HardwareCodec.Name,
+							From = e.FromResolution.Name,
+							To = e.ToResolution.Name,
+						})
+					.Select(e => new HardwareDisplay()
+					{
+						HardwareCodec = e.Key.CodecName,
+						Diviation = 0,
+						FromResolution = e.Key.From,
+						ToResolution = e.Key.To,
+						DeviceType = e.Key.DeviceType,
+						DeviceName = e.Key.DeviceName,
+						MaxStreams = e.Average(f => f.MaxStreams)
+					})
+					.ToArrayAsync();
 
-		await db.HardwareDisplays.ExecuteDeleteAsync();
-		await db.HardwareDisplays.AddRangeAsync(submissionsByGpu);
-		await db.SaveChangesAsync();
+			await db.HardwareDisplays
+				.Where(e => submissionsByGpu.Any(f => f.DeviceName == e.DeviceName))
+				.ExecuteDeleteAsync()
+				.ConfigureAwait(false);
+			await db.HardwareDisplays
+				.AddRangeAsync(submissionsByGpu)
+				.ConfigureAwait(false);
+			await db.HardwareSurveyEntries
+				.Where(e => !e.Processed)
+				.Where(e => e.GpuType.Id == deviceId || e.CpuType.Id == deviceId)
+				.ExecuteUpdateAsync(e => e.SetProperty(f => f.Processed, true))
+				.ConfigureAwait(false);
+			await db.SaveChangesAsync();
+		}
+	}
+
+	public void BeginRecalcHardwareStats(Guid group)
+	{
+		BackgroundJob.Enqueue<IDbContextFactory<HardwareVisualizerDataContext>>(service =>
+			RecalcHardwareStats(service, group));
 	}
 
 	public async Task<string> SubmitHardwareSurvey(TranscodeSubmission submission,
@@ -57,7 +80,7 @@ public class SubmissionService : ISubmissionService
 			Id = Guid.NewGuid(),
 			Json = JsonConvert.SerializeObject(submission)
 		};
-		
+
 		var submissionEntity = new HardwareSurveySubmission()
 		{
 			RawSurveySubmission = rawSubmission,
@@ -83,7 +106,13 @@ public class SubmissionService : ISubmissionService
 		db.HardwareSurveySubmissions.Add(submissionEntity);
 
 		await db.SaveChangesAsync(true);
-		Task.Run(RecalcHardwareStats);
+
+		foreach (var entry in submissionEntity.HardwareSurveyEntry.GroupBy(e => e.CpuType?.Id ?? e.GpuType?.Id)
+			         .Where(e => e.Key.HasValue).Select(f => f.Key))
+		{
+			BeginRecalcHardwareStats(entry.Value);
+		}
+
 		return submissionEntity.Id.ToString();
 	}
 
@@ -131,6 +160,7 @@ public class SubmissionService : ISubmissionService
 		{
 			selectedGpu = submission.Hwinfo.Gpu[codecTest.SelectedGpu.Value];
 		}
+
 		if (codecTest.SelectedCpu is >= 0)
 		{
 			selectedCpu = submission.Hwinfo.Cpu[codecTest.SelectedCpu.Value];
@@ -138,15 +168,20 @@ public class SubmissionService : ISubmissionService
 
 		if (selectedCpu is null && selectedGpu is null)
 		{
-			modelStateDictionary.AddModelError($"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.SelectedCpu)}", "Either selected_cpu or selected_gpu must be set and reference an index in the list of cpus or gpus.");
+			modelStateDictionary.AddModelError(
+				$"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.SelectedCpu)}",
+				"Either selected_cpu or selected_gpu must be set and reference an index in the list of cpus or gpus.");
 			yield break;
 		}
 
-		var testReference = await db.TestCases.Include(testCase => testCase.MediaTestFile).FirstOrDefaultAsync(e => e.Id == codecTest.TestId);
+		var testReference = await db.TestCases.Include(testCase => testCase.MediaTestFile)
+			.FirstOrDefaultAsync(e => e.Id == codecTest.TestId);
 
 		if (testReference is null)
 		{
-			modelStateDictionary.AddModelError($"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.TestId)}", "The provided Test ID does not relate to any known test id.");
+			modelStateDictionary.AddModelError(
+				$"{nameof(TranscodeSubmission.Tests)}[{index}].{nameof(CodecTest.TestId)}",
+				"The provided Test ID does not relate to any known test id.");
 			yield break;
 		}
 
@@ -164,31 +199,34 @@ public class SubmissionService : ISubmissionService
 
 	private async Task<Guid> GetOrAddCodec(HardwareVisualizerDataContext db, string codecName)
 	{
-		var findCodec = db.HardwareCodecs.Local.FirstOrDefault(e => e.Identifier == codecName) 
+		var findCodec = db.HardwareCodecs.Local.FirstOrDefault(e => e.Identifier == codecName)
 		                ?? await db.HardwareCodecs.FirstOrDefaultAsync(e => e.Identifier == codecName);
 		if (findCodec == null)
 		{
 			findCodec = new HardwareCodec() { Id = Guid.NewGuid(), Identifier = codecName, Name = codecName };
 			db.HardwareCodecs.Add(findCodec);
 		}
+
 		return findCodec.Id;
 	}
 
 	private async Task<Guid> GetOrAddResolution(HardwareVisualizerDataContext db, string resolutionName)
 	{
 		var findResolution = db.TestResolutions.Local.FirstOrDefault(e => e.Identifier == resolutionName) ??
-			await db.TestResolutions.FirstOrDefaultAsync(e => e.Identifier == resolutionName);
+		                     await db.TestResolutions.FirstOrDefaultAsync(e => e.Identifier == resolutionName);
 		if (findResolution == null)
 		{
-			findResolution = new TestResolution() { Id = Guid.NewGuid(), Identifier = resolutionName, Name = resolutionName };
+			findResolution = new TestResolution()
+				{ Id = Guid.NewGuid(), Identifier = resolutionName, Name = resolutionName };
 			db.TestResolutions.Add(findResolution);
 		}
+
 		return findResolution.Id;
 	}
 
 	private async Task<Guid> GetOrAddGpuType(HardwareVisualizerDataContext db, Gpu gpu)
 	{
-		var findGpu = db.GpuTypes.Local.FirstOrDefault(e => e.Identifier == gpu.Product) ?? 
+		var findGpu = db.GpuTypes.Local.FirstOrDefault(e => e.Identifier == gpu.Product) ??
 		              await db.GpuTypes.FirstOrDefaultAsync(e => e.Identifier == gpu.Product);
 		if (findGpu is null)
 		{
@@ -201,12 +239,13 @@ public class SubmissionService : ISubmissionService
 			};
 			db.GpuTypes.Add(findGpu);
 		}
+
 		return findGpu.Id;
 	}
 
 	private async Task<Guid?> GetOrAddCpuType(HardwareVisualizerDataContext db, Cpu selectedCpu)
 	{
-		var findCpu = db.CpuTypes.Local.FirstOrDefault(e => e.Identifier == selectedCpu.Product) ?? 
+		var findCpu = db.CpuTypes.Local.FirstOrDefault(e => e.Identifier == selectedCpu.Product) ??
 		              await db.CpuTypes.FirstOrDefaultAsync(e => e.Identifier == selectedCpu.Product);
 		if (findCpu is null)
 		{
@@ -219,6 +258,7 @@ public class SubmissionService : ISubmissionService
 			};
 			db.CpuTypes.Add(findCpu);
 		}
+
 		return findCpu.Id;
 	}
 }

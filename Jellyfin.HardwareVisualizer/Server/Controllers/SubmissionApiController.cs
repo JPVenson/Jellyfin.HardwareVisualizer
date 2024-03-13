@@ -60,18 +60,6 @@ public class SubmissionApiController : ControllerBase
 		return Ok(jSchemaGenerator.Generate(typeof(TranscodeSubmission)).ToString());
 	}
 
-	/// <summary>
-	///		[Internal] 
-	/// </summary>
-	/// <returns></returns>
-	[HttpPost("Recalc")]
-	[ProducesResponseType(StatusCodes.Status200OK)]
-	[Authorize]
-	public async Task<IActionResult> Recalc()
-	{
-		await _submissionService.RecalcHardwareStats();
-		return Ok();
-	}
 
 	/// <summary>
 	///		Gets the Hardware Survey result of a single submission.

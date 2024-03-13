@@ -24,4 +24,6 @@ public class HardwareSurveyEntry
 	public TestResolution ToResolution { get; set; } = null!;
 
 	public int MaxStreams { get; set; }
+
+	public bool Processed { get; set; }
 }
