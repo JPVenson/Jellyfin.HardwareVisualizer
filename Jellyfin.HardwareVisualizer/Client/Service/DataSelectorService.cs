@@ -1,7 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-using System.Web;
-using Jellyfin.HardwareVisualizer.Client.Service.Http;
+﻿using Jellyfin.HardwareVisualizer.Client.Service.Http;
 using Jellyfin.HardwareVisualizer.Client.Service.Http.Base;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using ServiceLocator.Attributes;

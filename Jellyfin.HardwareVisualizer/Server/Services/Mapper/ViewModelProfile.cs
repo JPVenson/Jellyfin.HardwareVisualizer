@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Shared.Models;
-using System.Collections.Generic;
 using DeviceType = Jellyfin.HardwareVisualizer.Shared.Models.DeviceType;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.Mapper;

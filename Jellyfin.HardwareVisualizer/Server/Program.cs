@@ -13,13 +13,11 @@ using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Hangfire;
 using Hangfire.PostgreSql;
-using Hangfire.PostgreSql.Factories;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
-using Microsoft.Extensions.Configuration;
 
 namespace Jellyfin.HardwareVisualizer.Server
 {
