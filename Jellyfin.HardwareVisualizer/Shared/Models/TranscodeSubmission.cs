@@ -9,4 +9,6 @@ public class TranscodeSubmission
 	[Required]
 	[MinLength(1)]
 	public ICollection<CodecTest> Tests { get; set; }
+
+	public string Token { get; set; }
 }

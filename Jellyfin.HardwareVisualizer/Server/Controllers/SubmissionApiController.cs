@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json.Schema.Generation;
-using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -23,14 +23,20 @@ public class SubmissionApiController : ControllerBase
 	private readonly ISubmissionService _submissionService;
 	private readonly ILogger<SubmissionApiController> _logger;
 	private readonly IMapperService _mapperService;
+	private readonly ISubmitTokenService _submitTokenService;
+	private readonly IHttpContextAccessor _httpContextAccessor;
 
 	public SubmissionApiController(ISubmissionService submissionService,
 		ILogger<SubmissionApiController> logger,
-		IMapperService mapperService)
+		IMapperService mapperService,
+		ISubmitTokenService submitTokenService,
+		IHttpContextAccessor httpContextAccessor)
 	{
 		_submissionService = submissionService;
 		_logger = logger;
 		_mapperService = mapperService;
+		_submitTokenService = submitTokenService;
+		_httpContextAccessor = httpContextAccessor;
 	}
 	
 	/// <summary>
@@ -41,10 +47,35 @@ public class SubmissionApiController : ControllerBase
 	/// <returns>The ID of the single hardware survey.</returns>
 	[HttpPost()]
 	[ProducesResponseType<string>(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[EnableRateLimiting("fixed_submit")]
 	public async Task<IActionResult> Submit([FromBody, Required] TranscodeSubmission submission)
 	{
-		return Ok(await _submissionService.SubmitHardwareSurvey(submission, base.ModelState));
+		var token = _submitTokenService.ReadToken(submission.Token);
+
+		if (token is null)
+		{
+			return BadRequest("No valid submit token provided");
+		}
+
+		if (token.ValidTo >= DateTime.UtcNow)
+		{
+			return Unauthorized();
+		}
+
+		if (token.Claims.FirstOrDefault(e => e.Type == "ip")?.Value !=
+		    _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString())
+		{
+			return Unauthorized();
+		}
+
+		var submitHardwareSurvey = await _submissionService.SubmitHardwareSurvey(submission, base.ModelState);
+		if (submitHardwareSurvey is not null)
+		{
+			_submitTokenService.RedeemToken(token);
+		}
+		return Ok(submitHardwareSurvey);
 	}
 
 	[HttpGet("submitSchema")]
