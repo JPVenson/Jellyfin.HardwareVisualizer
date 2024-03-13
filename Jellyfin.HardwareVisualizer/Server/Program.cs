@@ -11,11 +11,15 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Hangfire.PostgreSql.Factories;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
+using Microsoft.Extensions.Configuration;
 
 namespace Jellyfin.HardwareVisualizer.Server
 {
@@ -29,6 +33,14 @@ namespace Jellyfin.HardwareVisualizer.Server
 				.AddEnvironmentVariables("JF_")
 				.AddEnvironmentVariables("GH_");
 			// Add services to the container.
+			
+
+			string GetConnectionString()
+			{
+				var efCoreOptions = builder.Configuration.Get<EFCoreOptions>();
+				var s = $"User ID={efCoreOptions.User};Password={efCoreOptions.Password};Host={efCoreOptions.Host};Port={efCoreOptions.Port};Database={efCoreOptions.Database};Pooling=true;";
+				return s;
+			}
 
 			builder.Services
 				.UseServiceDiscovery()
@@ -51,6 +63,13 @@ namespace Jellyfin.HardwareVisualizer.Server
 			builder.Services.AddRazorPages();
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddHttpContextAccessor();
+			builder.Services.AddHangfire(e => 
+				e.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+					.UseSimpleAssemblyNameTypeSerializer()
+					.UseRecommendedSerializerSettings()
+					.UsePostgreSqlStorage(f => f.UseNpgsqlConnection(() => builder.Configuration.GetConnectionString(GetConnectionString())))
+				);
+			builder.Services.AddHangfireServer();
 
 			builder.Services.AddRateLimiter(_ => _.AddFixedWindowLimiter("fixed_submit", options =>
 			{
@@ -164,10 +183,11 @@ namespace Jellyfin.HardwareVisualizer.Server
 				var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 				options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 			});
+
 			builder.Services.AddDbContextFactory<HardwareVisualizerDataContext>(opt =>
 			{
-				var efCoreOptions = builder.Configuration.Get<EFCoreOptions>();
-				opt.UseNpgsql($"User ID={efCoreOptions.User};Password={efCoreOptions.Password};Host={efCoreOptions.Host};Port={efCoreOptions.Port};Database={efCoreOptions.Database};Pooling=true;");
+				var connectionString = GetConnectionString();
+				opt.UseNpgsql(connectionString);
 			});
 
 			var app = builder.Build();
