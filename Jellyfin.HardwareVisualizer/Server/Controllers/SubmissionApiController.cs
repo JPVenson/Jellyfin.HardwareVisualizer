@@ -5,9 +5,6 @@ using Jellyfin.HardwareVisualizer.Server.Services.Submission;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Newtonsoft.Json.Schema.Generation;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
@@ -24,18 +21,21 @@ public class SubmissionApiController : ControllerBase
 	private readonly IMapperService _mapperService;
 	private readonly ISubmitTokenService _submitTokenService;
 	private readonly IHttpContextAccessor _httpContextAccessor;
+	private readonly IJsonSubmitSchemaService _jsonSubmitSchemaService;
 
 	public SubmissionApiController(ISubmissionService submissionService,
 		ILogger<SubmissionApiController> logger,
 		IMapperService mapperService,
 		ISubmitTokenService submitTokenService,
-		IHttpContextAccessor httpContextAccessor)
+		IHttpContextAccessor httpContextAccessor,
+		IJsonSubmitSchemaService jsonSubmitSchemaService)
 	{
 		_submissionService = submissionService;
 		_logger = logger;
 		_mapperService = mapperService;
 		_submitTokenService = submitTokenService;
 		_httpContextAccessor = httpContextAccessor;
+		_jsonSubmitSchemaService = jsonSubmitSchemaService;
 	}
 	
 	/// <summary>
@@ -77,17 +77,16 @@ public class SubmissionApiController : ControllerBase
 		return Ok(submitHardwareSurvey);
 	}
 
+	/// <summary>
+	///		Gets the JSON schema to submit data.
+	/// </summary>
+	/// <returns></returns>
 	[HttpGet("submitSchema")]
 	[ProducesResponseType<string>(StatusCodes.Status200OK)]
+	[ResponseCache(Duration = 3600)]
 	public async Task<IActionResult> GetJsonSubmitSchema()
 	{
-		var jSchemaGenerator = new JSchemaGenerator();
-		jSchemaGenerator.DefaultRequired = Required.DisallowNull;
-		jSchemaGenerator.ContractResolver = new DefaultContractResolver()
-		{
-			NamingStrategy = new SnakeCaseNamingStrategy(true, true, true)
-		};
-		return Ok(jSchemaGenerator.Generate(typeof(TranscodeSubmission)).ToString());
+		return Ok(_jsonSubmitSchemaService.GetSubmitSchema());
 	}
 
 
