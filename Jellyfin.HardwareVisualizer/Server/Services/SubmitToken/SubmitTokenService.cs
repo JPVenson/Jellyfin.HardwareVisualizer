@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -31,36 +32,61 @@ public class SubmitTokenService : ISubmitTokenService
 		}
 	}
 
+	private class TokenStore
+	{
+		public JwtPayload JwtPayload { get; set; }
+
+		public bool Expired { get; set; }
+	}
+
 	public void RedeemToken(JwtPayload token)
 	{
 		var cacheKey = "ip-token-" + token.Claims.FirstOrDefault(e => e.Type == "ip")!.Value;
 		_memoryCache.Remove(cacheKey);
-		_memoryCache.CreateEntry(cacheKey).SetAbsoluteExpiration(DateTimeOffset.Now.AddDays(1)).SetValue(null);
+		_memoryCache.CreateEntry(cacheKey).SetAbsoluteExpiration(DateTimeOffset.Now.AddDays(1)).SetValue(new TokenStore()
+		{
+			Expired = true,
+			JwtPayload = token
+		}).Dispose();
 	}
 
-	public string? GenerateToken()
+	public bool CheckToken(JwtPayload token)
+	{
+		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+		var cacheKey = "ip-token-" + ipAddress;
+		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore))
+		{
+			if (tokenStore.Expired)
+			{
+				return false;
+			}
+		}
+
+		return tokenStore.JwtPayload.ValidTo > DateTime.UtcNow;
+	}
+
+	public (string? token, TimeSpan? retryAfter) GenerateToken()
 	{
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
 		var cacheKey = "ip-token-" + ipAddress;
-		if (_memoryCache.TryGetValue<JwtPayload>(cacheKey, out var jwtPayload))
+		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) && tokenStore.JwtPayload.ValidTo > DateTime.UtcNow)
 		{
-			if (jwtPayload is null)
+			if (tokenStore.Expired)
 			{
-				return null;
+				return (null, tokenStore.JwtPayload.ValidTo - DateTime.UtcNow);
 			}
 
-			return Encrypt(jwtPayload);
+			return (Encrypt(tokenStore.JwtPayload), null);
 		}
 
 		var expiresAt = DateTime.Now.AddHours(4);
-		jwtPayload = new JwtPayload("jhwa/server", "jhwa/client", [new Claim("ip", ipAddress)],
+		tokenStore = new TokenStore();
+		tokenStore.JwtPayload = new JwtPayload("jhwa/server", "jhwa/client", [new Claim("ip", ipAddress)],
 			DateTime.Now, expiresAt, DateTime.Now);
 
-		_memoryCache.Set(cacheKey, jwtPayload, expiresAt);
-		//_memoryCache.CreateEntry(cacheKey).SetAbsoluteExpiration(expiresAt).SetValue(jwtPayload);
-
-		return Encrypt(jwtPayload);
+		_memoryCache.Set(cacheKey, tokenStore, expiresAt);
+		return (Encrypt(tokenStore.JwtPayload), null);
 	}
 
 	private string? Encrypt(JwtPayload jwtPayload)

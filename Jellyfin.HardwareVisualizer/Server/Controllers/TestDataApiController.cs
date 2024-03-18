@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.TestData;
 using Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
+using Microsoft.Extensions.Primitives;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -52,15 +53,16 @@ public class TestDataApiController : ControllerBase
 	public async Task<IActionResult> GetTestData([Required, FromQuery]Guid platformId, CancellationToken cancellationToken)
 	{
 		var testDataToken = _submitTokenService.GenerateToken();
-		if (testDataToken is null)
+		if (testDataToken.retryAfter is not null)
 		{
+			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.Seconds.ToString());
 			return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
 		}
 
 		var testData = await _testDataService.GetTestDataFor(platformId, cancellationToken);
 		if (testData != null)
 		{
-			testData.Token = testDataToken;
+			testData.Token = testDataToken.token;
 			return Ok(testData);
 		}
 

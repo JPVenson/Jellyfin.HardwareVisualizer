@@ -14,13 +14,11 @@ using System.Text.Json.Serialization;
 using Hangfire;
 using Hangfire.AspNetCore;
 using Hangfire.PostgreSql;
-using Hangfire.Server;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
-using Jellyfin.HardwareVisualizer.Server.Services.HangfireServices;
 
 namespace Jellyfin.HardwareVisualizer.Server;
 
@@ -203,10 +201,6 @@ public class Program
 				Activator = new AspNetCoreJobActivator(serviceScopeFactory)
 			});
 		});
-
-
-		GlobalConfiguration.Configuration.UseActivator(
-			new Hangfire.AspNetCore.AspNetCoreJobActivator(serviceScopeFactory));
 
 		// Configure the HTTP request pipeline.
 		if (app.Environment.IsDevelopment())

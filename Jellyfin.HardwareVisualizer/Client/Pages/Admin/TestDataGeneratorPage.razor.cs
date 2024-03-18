@@ -80,7 +80,7 @@ public partial class TestDataGeneratorPage
 		submission.Tests = new List<CodecTest>();
 		foreach (var test in testData.Tests)
 		{
-			var next = random.Next(7);
+			var next = random.Next(1, 7);
 
 			foreach (var testCaseDataModel in test.Data)
 			{
@@ -104,7 +104,7 @@ public partial class TestDataGeneratorPage
 						Worker = next
 					}).ToArray()
 				});
-				next = random.Next(next, next * 2);
+				next = random.Next(Math.Min(1, next), next * 2);
 				submission.Tests.Add(new CodecTest()
 				{
 					TestId = testCaseDataModel.Id,
