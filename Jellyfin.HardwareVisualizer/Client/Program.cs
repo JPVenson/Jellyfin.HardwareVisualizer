@@ -33,7 +33,7 @@ public class Program
 				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
 				Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false) }
 			});
-		//builder.Services.AddAuthorizationCore();
+		builder.Services.AddAuthorizationCore();
 		builder.Services.UseServiceDiscovery().FromAppDomain().LocateServices();
 
 		await builder.Build().RunAsync();

@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Formatting;
 using System.Net.Http.Json;
 using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Web;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Components.Forms;
@@ -305,16 +306,27 @@ public abstract class HttpAccessBase
 	{
 		return Post<TIn, TOut>(url, data, null);
 	}
+
 	protected async ValueTask<ApiResult<TOut>> Post<TIn, TOut>(string url, TIn data, string mediaType = null)
 	{
 		var skipCheck = SkipUnauthorisedCheck;
 		SkipUnauthorisedCheck = false;
 		HttpResponseMessage content = null;
+		HttpContent jsonContent;
 		try
 		{
+			if (data is string json)
+			{
+				jsonContent = new StringContent(json, Encoding.UTF8, mediaType);
+			}
+			else
+			{
+				jsonContent = JsonContent.Create(data, data?.GetType() ?? typeof(object), null, HttpService.GetJsonSerializerSettings());
+			}
+			
 			using (content = await HttpService.Client()
-				       .PostAsync(url, JsonContent.Create(data, data?.GetType() ?? typeof(object), null, HttpService.GetJsonSerializerSettings()))
-					   .ConfigureAwait(false))
+				       .PostAsync(url, jsonContent)
+				       .ConfigureAwait(false))
 			{
 				CheckForUnauthorizedAccess(content, skipCheck);
 				if (!content.IsSuccessStatusCode)
@@ -337,6 +349,7 @@ public abstract class HttpAccessBase
 		}
 
 	}
+	
 
 	protected async ValueTask<ApiResult<string>> PostGetString<T>(string url, T data)
 	{

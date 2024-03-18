@@ -12,12 +12,15 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Hangfire;
+using Hangfire.AspNetCore;
 using Hangfire.PostgreSql;
+using Hangfire.Server;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
+using Jellyfin.HardwareVisualizer.Server.Services.HangfireServices;
 
 namespace Jellyfin.HardwareVisualizer.Server;
 
@@ -56,6 +59,7 @@ public class Program
 				e.JsonSerializerOptions.AllowTrailingCommas = true;
 				e.JsonSerializerOptions.DictionaryKeyPolicy = null;
 				e.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+				e.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 				e.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 				e.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false));
 			});
@@ -68,7 +72,6 @@ public class Program
 				.UseRecommendedSerializerSettings()
 				.UsePostgreSqlStorage(f => f.UseNpgsqlConnection(() => GetConnectionString()))
 		);
-		builder.Services.AddHangfireServer();
 
 		builder.Services.AddRateLimiter(_ => _.AddFixedWindowLimiter("fixed_submit", options =>
 		{
@@ -190,6 +193,20 @@ public class Program
 		});
 
 		var app = builder.Build();
+
+		var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+
+		app.UseHangfireServer(() =>
+		{
+			return new BackgroundJobServer(new BackgroundJobServerOptions()
+			{
+				Activator = new AspNetCoreJobActivator(serviceScopeFactory)
+			});
+		});
+
+
+		GlobalConfiguration.Configuration.UseActivator(
+			new Hangfire.AspNetCore.AspNetCoreJobActivator(serviceScopeFactory));
 
 		// Configure the HTTP request pipeline.
 		if (app.Environment.IsDevelopment())

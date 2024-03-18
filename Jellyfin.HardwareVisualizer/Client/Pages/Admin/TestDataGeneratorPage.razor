@@ -1,0 +1,12 @@
+﻿@attribute [Authorize]
+@page "/Admin/TestTestData"
+
+<h3>Test Data Generator</h3>
+
+<button @onclick="GenerateTestData" class="btn btn-primary">Generate</button>
+
+
+
+<p>
+	@TestData
+</p>

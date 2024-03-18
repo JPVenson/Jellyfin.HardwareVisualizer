@@ -46,7 +46,7 @@ public class TestCaseModel
 
 public class TestCaseDataModel
 {
-	public string Id { get; set; }
+	public Guid Id { get; set; }
 	public string FromResolution { get; set; }
 	public string ToResolution { get; set; }
 	public long Bitrate { get; set; }

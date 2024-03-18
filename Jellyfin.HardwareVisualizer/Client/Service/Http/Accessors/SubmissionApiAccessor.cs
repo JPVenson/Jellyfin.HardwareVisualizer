@@ -40,3 +40,23 @@ public class DeviceApiAccessor : HttpAccessBase
 		return Get<IEnumerable<RenderDeviceViewModel>>(BuildApi(""));
 	}
 }
+
+public class TestDataApiAccessor : HttpAccessBase
+{
+	public TestDataApiAccessor(HttpService httpService) : base(httpService, "v1/TestDataApi")
+	{
+	}
+
+	public ValueTask<ApiResult<PlatformData>> GetPlatforms()
+	{
+		return Get<PlatformData>(BuildApi("Platforms"));
+	}
+
+	public ValueTask<ApiResult<TestDataRequestModel>> GetTestData(Guid platformId)
+	{
+		return Get<TestDataRequestModel>(BuildApi("", new
+		{
+			platformId
+		}));
+	}
+}

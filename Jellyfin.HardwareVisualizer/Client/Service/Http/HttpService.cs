@@ -34,6 +34,7 @@ public class HttpService
 
 	public SubmissionApiAccessor SubmissionApiAccessor { get; set; }
 	public DeviceApiAccessor DeviceApiAccessor { get; set; }
+	public TestDataApiAccessor TestDataApiAccessor { get; set; }
 
 
 	public HttpClient Client()

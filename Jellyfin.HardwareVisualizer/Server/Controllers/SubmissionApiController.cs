@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
@@ -49,7 +50,7 @@ public class SubmissionApiController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[EnableRateLimiting("fixed_submit")]
-	public async Task<IActionResult> Submit([FromBody, Required] TranscodeSubmission submission)
+	public async Task<IActionResult> Submit([Required, FromBody]TranscodeSubmission submission)
 	{
 		var token = _submitTokenService.ReadToken(submission.Token);
 
@@ -58,7 +59,7 @@ public class SubmissionApiController : ControllerBase
 			return BadRequest("No valid submit token provided");
 		}
 
-		if (token.ValidTo >= DateTime.UtcNow)
+		if (token.ValidTo <= DateTime.UtcNow)
 		{
 			return Unauthorized();
 		}

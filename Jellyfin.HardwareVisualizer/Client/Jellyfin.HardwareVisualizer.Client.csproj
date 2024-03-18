@@ -40,4 +40,12 @@
 	  <None Include="compilerconfig.json" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Pages\Admin\TestDataGeneratorPage.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Pages\Admin\TestDataGeneratorPage.razor" />
+	</ItemGroup>
+
 </Project>

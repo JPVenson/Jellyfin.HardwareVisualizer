@@ -1,6 +1,7 @@
 ﻿using System.Transactions;
 using Hangfire;
 using Jellyfin.HardwareVisualizer.Server.Database;
+using Jellyfin.HardwareVisualizer.Server.Services.HangfireServices;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -14,60 +15,21 @@ namespace Jellyfin.HardwareVisualizer.Server.Services.Submission;
 public class SubmissionService : ISubmissionService
 {
 	private readonly IDbContextFactory<HardwareVisualizerDataContext> _dbContextFactory;
+	private readonly IBackgroundJobClientFactory _backgroundJobClientFactory;
 
-	public SubmissionService(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory)
+	public SubmissionService(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory,
+		IBackgroundJobClientFactory backgroundJobClientFactory)
 	{
 		_dbContextFactory = dbContextFactory;
+		_backgroundJobClientFactory = backgroundJobClientFactory;
 	}
 
-	public static async Task RecalcHardwareStats(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory,
-		Guid deviceId)
-	{
-		await using var db = await dbContextFactory.CreateDbContextAsync();
-		using (new TransactionScope())
-		{
-			var submissionsByGpu =
-				await db.HardwareSurveyEntries.Where(e => e.GpuType.Id == deviceId || e.CpuType.Id == deviceId).GroupBy(
-						e => new
-						{
-							DeviceType = e.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
-							DeviceName = e.GpuType!.Name ?? e.CpuType!.Name,
-							CodecName = e.HardwareCodec.Name,
-							From = e.FromResolution.Name,
-							To = e.ToResolution.Name,
-						})
-					.Select(e => new HardwareDisplay()
-					{
-						HardwareCodec = e.Key.CodecName,
-						Diviation = 0,
-						FromResolution = e.Key.From,
-						ToResolution = e.Key.To,
-						DeviceType = e.Key.DeviceType,
-						DeviceName = e.Key.DeviceName,
-						MaxStreams = e.Average(f => f.MaxStreams)
-					})
-					.ToArrayAsync();
-
-			await db.HardwareDisplays
-				.Where(e => submissionsByGpu.Any(f => f.DeviceName == e.DeviceName))
-				.ExecuteDeleteAsync()
-				.ConfigureAwait(false);
-			await db.HardwareDisplays
-				.AddRangeAsync(submissionsByGpu)
-				.ConfigureAwait(false);
-			await db.HardwareSurveyEntries
-				.Where(e => !e.Processed)
-				.Where(e => e.GpuType.Id == deviceId || e.CpuType.Id == deviceId)
-				.ExecuteUpdateAsync(e => e.SetProperty(f => f.Processed, true))
-				.ConfigureAwait(false);
-			await db.SaveChangesAsync();
-		}
-	}
+	
 
 	public void BeginRecalcHardwareStats(Guid group)
 	{
-		BackgroundJob.Enqueue<IDbContextFactory<HardwareVisualizerDataContext>>(service =>
-			RecalcHardwareStats(service, group));
+		_backgroundJobClientFactory.GetClient(JobStorage.Current)
+			.Enqueue<RecalculateHardwareInfoJob>((job) => job.RecalcHardwareStats(group));
 	}
 
 	public async Task<string> SubmitHardwareSurvey(TranscodeSubmission submission,

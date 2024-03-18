@@ -67,26 +67,46 @@ public class SubmitTokenService : ISubmitTokenService
 	{
 		var serializeToJson = jwtPayload.SerializeToJson();
 
-		using DES des = DES.Create();
-		using ICryptoTransform encryptor = des.CreateEncryptor(_key, _iv);
-		using var dStream = new MemoryStream();
-		using var cStream = new CryptoStream(dStream, encryptor, CryptoStreamMode.Write);
-		var token = Encoding.UTF8.GetBytes(serializeToJson);
-		cStream.Write(token, 0, token.Length);
-
-		return Convert.ToBase64String(dStream.ToArray());
+		using (DES des = DES.Create())
+		{
+			des.Padding = PaddingMode.PKCS7;
+			using (ICryptoTransform encryptor = des.CreateEncryptor(_key, _iv))
+			{
+				using var dStream = new MemoryStream();
+				{
+					using (var cStream = new CryptoStream(dStream, encryptor, CryptoStreamMode.Write))
+					{
+						var token = Encoding.UTF8.GetBytes(serializeToJson);
+						cStream.Write(token, 0, token.Length);
+					}
+					return Convert.ToBase64String(dStream.ToArray());
+				}
+			}
+		}
 	}
 
 	public JwtPayload? ReadToken(string tokenJson)
 	{
 		try
 		{
-			using var dStream = new MemoryStream(Convert.FromBase64String(tokenJson));
-			using DES des = DES.Create();
-			using ICryptoTransform decryptor = des.CreateDecryptor(_key, _iv);
-			using var cStream = new CryptoStream(dStream, decryptor, CryptoStreamMode.Read);
-			using StreamReader reader = new StreamReader(cStream, Encoding.UTF8);
-			return JwtPayload.Deserialize(reader.ReadToEnd());
+			using (var dStream = new MemoryStream(Convert.FromBase64String(tokenJson)))
+			{
+				dStream.Seek(0, SeekOrigin.Begin);
+				using (DES des = DES.Create())
+				{
+					des.Padding = PaddingMode.PKCS7;
+					using (ICryptoTransform decryptor = des.CreateDecryptor(_key, _iv))
+					{
+						using (var cStream = new CryptoStream(dStream, decryptor, CryptoStreamMode.Read))
+						{
+							using (StreamReader reader = new StreamReader(cStream, Encoding.UTF8))
+							{
+								return JwtPayload.Deserialize(reader.ReadToEnd());
+							}
+						}
+					}
+				}
+			}
 		}
 		catch (Exception e)
 		{
