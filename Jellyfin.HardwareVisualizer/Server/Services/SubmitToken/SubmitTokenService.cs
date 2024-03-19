@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -50,7 +49,7 @@ public class SubmitTokenService : ISubmitTokenService
 		}).Dispose();
 	}
 
-	public bool CheckToken(JwtPayload token)
+	public bool Validate(JwtPayload token, out TimeSpan? retryAfter)
 	{
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 		var cacheKey = "ip-token-" + ipAddress;
@@ -58,10 +57,15 @@ public class SubmitTokenService : ISubmitTokenService
 		{
 			if (tokenStore.Expired)
 			{
+				retryAfter = tokenStore.JwtPayload.ValidTo - DateTime.UtcNow;
 				return false;
 			}
+
+			retryAfter = null;
+			return true;
 		}
 
+		retryAfter = null;
 		return tokenStore.JwtPayload.ValidTo > DateTime.UtcNow;
 	}
 

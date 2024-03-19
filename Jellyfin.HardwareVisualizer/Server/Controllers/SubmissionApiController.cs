@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.Submission;
@@ -68,6 +67,12 @@ public class SubmissionApiController : ControllerBase
 		if (token.Claims.FirstOrDefault(e => e.Type == "ip")?.Value !=
 		    _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString())
 		{
+			return Unauthorized();
+		}
+
+		if (!_submitTokenService.Validate(token, out var retry))
+		{
+			Response.Headers.RetryAfter = new StringValues(retry.Value.Seconds.ToString());
 			return Unauthorized();
 		}
 
