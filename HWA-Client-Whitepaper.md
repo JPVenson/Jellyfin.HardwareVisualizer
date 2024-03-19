@@ -147,8 +147,11 @@ after obtaining the list of media files, all media files **must** be downloaded 
 The user _should_ be able to select this folder invidiually and a note _should_ be printed that the fastest storage that is available to the user _should_ be used.
 After downloading all media files, the HWA client **must** check for file integrity using one of the provided values in the `source_hash` list.
 
-After obtaining all media files, the provided `ffmpeg.ffmpeg_source_url` **must** be downloaded into a folder that is provided by the user. 
-If an ffmpeg binary is already present or the binary was downloaded, a hash validation **must** be done.
+After obtaining all media files, the provided `ffmpeg.ffmpeg_source_url` **must** be downloaded into a folder that is provided by the user. The ffmpeg source url might point to an platform related archive type, like `zip` for Windows or `deb` for Ubuntu.
+If an ffmpeg binary is already present or the binary was downloaded, a hash validation **must** be done on the archive downloaded.
+After downloading the HWA client **must** extract the contents of the downloaded archive type file and extract all included files into the same folder as it was downloaded.
+
+> Hint: This is done because on some platforms, there might be additional dependencies delivered for function with ffmpeg.
 
 If any hash validation fails, the user **must** be notified and the application **must** stop.
 
