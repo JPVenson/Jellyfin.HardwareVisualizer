@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Launch (console)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Jellyfin.HardwareVisualizer/Server/bin/Debug/net8.0/Jellyfin.HardwareVisualizer.Server.dll",
+            "cwd": "${workspaceFolder}/Jellyfin.HardwareVisualizer",
+            "internalConsoleOptions": "openOnSessionStart",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "PG_USER": "postgres",
+                "PG_PASSWORD": "jellyfin",
+                "PG_HOST": "localhost",
+                "PG_PORT": "5432",
+                "PG_DATABASE": "Jellyfin.HardwareVisualizer"
+            },
+            "url": "https://localhost:5001"
+        },
+        {
+            "name": ".NET Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ],
+    "env": {
+        "DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+    }
+}

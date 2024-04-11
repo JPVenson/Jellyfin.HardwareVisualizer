@@ -195,9 +195,8 @@ public class Program
 		using (var scope = app.Services.CreateScope())
 		{
 			var services = scope.ServiceProvider;
-
+			DbSetupHelper.SetupDbIfNotExist(GetConnectionString());
 			var context = services.GetRequiredService<HardwareVisualizerDataContext>();
-			context.Database.EnsureCreated();
 			context.Database.Migrate();
 		}
 

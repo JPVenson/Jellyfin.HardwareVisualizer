@@ -14,7 +14,9 @@
                 "ms-dotnettools.csdevkit"
             ]
         }
-    }
+    },
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "dotnet restore; dotnet workload install wasm-tools-net8; dotnet dev-certs https --trust",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -23,7 +25,7 @@
 	// "customizations": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001, 5432],
+	"forwardPorts": [5000, 5001],
 	// "portsAttributes": {
 	//		"5001": {
 	//			"protocol": "https"
