@@ -192,6 +192,15 @@ public class Program
 
 		var app = builder.Build();
 
+		using (var scope = app.Services.CreateScope())
+		{
+			var services = scope.ServiceProvider;
+
+			var context = services.GetRequiredService<HardwareVisualizerDataContext>();
+			context.Database.EnsureCreated();
+			context.Database.Migrate();
+		}
+
 		var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
 		app.UseHangfireServer(() =>
@@ -234,15 +243,6 @@ public class Program
 		app.MapControllers();
 		app.MapFallbackToFile("index.html");
 		app.MapSwagger();
-
-		using (var scope = app.Services.CreateScope())
-		{
-			var services = scope.ServiceProvider;
-
-			var context = services.GetRequiredService<HardwareVisualizerDataContext>();
-			context.Database.EnsureCreated();
-			context.Database.Migrate();
-		}
 
 
 		app.Run();
