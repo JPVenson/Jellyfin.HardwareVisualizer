@@ -240,6 +240,7 @@ public class Program
 			var services = scope.ServiceProvider;
 
 			var context = services.GetRequiredService<HardwareVisualizerDataContext>();
+			context.Database.EnsureCreated();
 			context.Database.Migrate();
 		}
 
