@@ -230,7 +230,7 @@ The Testing loop **must** be constructed as followed:
 - Wait until all processes exit
 - Process all lines captured that match any `frame=(\d*)` where the frame is bigger then 500
 - Obtain the `frame`, `speed`, `time` and `rss-kb` values that match the condition and calculate an average for the `speed` value over any single process
-- Then calculate an average over all processes for the calculated `speed` and the last reported `time` values. For frame and rss-kb take the maximum values of any process.
+- Then calculate an average over all processes for the calculated `speed` and the last reported `utime` values. For frame and rss-kb take the maximum values of any process.
 
 After each run, add one process to run in parallel until either:
 - The difference in speed between runs with more then 3 workers is less then a factor of .5 so that if the previous run reports an average of `2.50`, `2.48` and `2.47` speed and the current one reports `2.46` speed an abort should be considered
