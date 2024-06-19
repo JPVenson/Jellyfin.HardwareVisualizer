@@ -3,6 +3,7 @@ using System;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jellyfin.HardwareVisualizer.Server.Migrations
 {
     [DbContext(typeof(HardwareVisualizerDataContext))]
-    partial class HardwareVisualizerDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240619191238_UpdatedReproAddedGenericLinux")]
+    partial class UpdatedReproAddedGenericLinux
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,7 +89,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             PlatformId = new Guid("2c361be8-c0ec-4020-984b-66c620dad840"),
                             Source = "https://repo.jellyfin.org/files/ffmpeg/windows/latest-5.x/amd64/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
                             Version = "5.1.6-3",
-                            VersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512")
+                            VersionGroup = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f")
                         },
                         new
                         {
@@ -876,70 +879,6 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("ec73eeb5-e095-40f5-8b84-4d2307f13bfd"),
                             FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
-                            HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
-                            TestCaseArgumentDeviceType = 3
-                        },
-                        new
-                        {
-                            Id = new Guid("ec18dd27-1243-47ae-a639-e037ae992ab7"),
-                            FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
-                            TestCaseArgumentDeviceType = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("dd920765-e078-474c-8e39-5e1a3d8857ef"),
-                            FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
-                            TestCaseArgumentDeviceType = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("f24ca383-2d7b-4188-a906-1a6e93391d2f"),
-                            FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
-                            TestCaseArgumentDeviceType = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("40a624a3-5df0-4ad9-a81e-5faa3f29df17"),
-                            FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
-                            TestCaseArgumentDeviceType = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("e9258a1d-0b54-44ff-881f-133d89eac405"),
-                            FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v h264_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
-                            TestCaseArgumentDeviceType = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("34888563-6946-4eb1-92b6-a3a7a79ed981"),
-                            FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v hevc_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
-                            TestCaseArgumentDeviceType = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("ec598d96-372e-45c3-82c3-a39a0f4b86b8"),
-                            FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-                            HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
-                            TestCaseArgumentDeviceType = 3
-                        },
-                        new
-                        {
-                            Id = new Guid("183375a4-8d8e-44da-a32f-8bde2df1a89f"),
-                            FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                            FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             TestCaseArgumentDeviceType = 3
                         });
