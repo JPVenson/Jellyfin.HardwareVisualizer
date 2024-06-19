@@ -56,6 +56,16 @@ public class HardwareVisualizerDataContext : DbContext
 					VersionId = "22.04",
 					DisplayName = "Ubuntu Focal",
 					Supported = true
+				},
+				new Platform()
+				{
+					Id = new Guid("3657b420-2f2a-4940-8ed3-ee70b9b3720d"),
+					Name = "Linux Generic",
+					Type = PlatformType.Linux,
+					Version = "Linux",
+					VersionId = "Generic",
+					DisplayName = "Linux Generic",
+					Supported = false
 				}
 			});
 
@@ -67,9 +77,10 @@ public class HardwareVisualizerDataContext : DbContext
 					Id = new Guid("A3F734BE-FB92-4A1F-BD8C-B6701E0F7E9F"),
 					PlatformId = new Guid("2C361BE8-C0EC-4020-984B-66C620DAD840"),
 					Source =
-						"https://repo.jellyfin.org/releases/server/windows/versions/jellyfin-ffmpeg/5.1.4-3/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
+						"https://repo.jellyfin.org/files/ffmpeg/windows/latest-5.x/amd64/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
 					Version = "5.1.6-3",
-					HashSha256 = "47f4ea0da73f7835748c4549004877eb9abc6070",
+					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
+					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
 					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
 				},
 				new FfmpegVersion()
@@ -77,11 +88,23 @@ public class HardwareVisualizerDataContext : DbContext
 					Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
 					PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
 					Source =
-						"https://repo.jellyfin.org/releases/server/ubuntu/versions/jellyfin-ffmpeg/6.0.1-2/jellyfin-ffmpeg6_6.0.1-2-focal_amd64.deb",
+						"https://repo.jellyfin.org/files/ffmpeg/ubuntu/latest-6.x/amd64/jellyfin-ffmpeg6_6.0.1-7-focal_amd64.deb",
 					Version = "6.0.1-2",
-					HashSha256 = "dbe5bf6d194abfec209e8ec3d25d526d12b1d51638902535fb2df233aedb62c2",
+					HashSha256 = "a01b7d556f69941041e3265f916c22613b2f58fd39a062ccf8a3104b3c99350d",
+					HashMd5 = "183e22d865e9d99ab86506f4313b3bae",
 					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
-				}
+				},
+				// new FfmpegVersion()
+				// {
+				// 	Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
+				// 	PlatformId = new Guid("3657b420-2f2a-4940-8ed3-ee70b9b3720d"),
+				// 	Source =
+				// 		"https://repo.jellyfin.org/files/ffmpeg/linux/6.x/6.0.1-7/amd64/jellyfin-ffmpeg_6.0.1-7_portable_linux64-gpl.tar.xz",
+				// 	Version = "6.0.1-7",
+				// 	HashSha256 = "",
+				// 	HashMd5 = "",
+				// 	VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
+				// }
 			});
 
 		modelBuilder.Entity<HardwareCodec>()
