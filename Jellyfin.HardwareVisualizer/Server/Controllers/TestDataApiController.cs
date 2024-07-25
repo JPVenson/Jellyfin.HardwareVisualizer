@@ -35,7 +35,7 @@ public class TestDataApiController : ControllerBase
 	/// <returns>A model that contains all nesseary data for testing hardware performance.</returns>
 	[HttpGet("Platforms")]
 	[ProducesResponseType<PlatformData>(StatusCodes.Status200OK)]
-	[EnableRateLimiting("fixed_start_testing")]
+	//[EnableRateLimiting("fixed_start_testing")]
 	public async Task<IActionResult> GetPlatforms(CancellationToken cancellationToken)
 	{
 		return Ok(_mapperService.ViewModelMapper.Map<PlatformData>(await _testDataService.GetPlatforms(cancellationToken)));
@@ -49,7 +49,7 @@ public class TestDataApiController : ControllerBase
 	[ProducesResponseType<TestDataRequestModel>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-	[EnableRateLimiting("fixed_start_testing")]
+	//[EnableRateLimiting("fixed_start_testing")]
 	public async Task<IActionResult> GetTestData([Required, FromQuery]Guid platformId, CancellationToken cancellationToken)
 	{
 		var testDataToken = _submitTokenService.GenerateToken();

@@ -49,7 +49,7 @@ public class SubmissionApiController : ControllerBase
 	[ProducesResponseType<string>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	[EnableRateLimiting("fixed_submit")]
+	//[EnableRateLimiting("fixed_submit")]
 	public async Task<IActionResult> Submit([Required, FromBody]TranscodeSubmission submission)
 	{
 		var token = _submitTokenService.ReadToken(submission.Token);
@@ -105,7 +105,7 @@ public class SubmissionApiController : ControllerBase
 	[HttpGet("single/{Id}")]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<HardwareSurveySubmission>(StatusCodes.Status200OK)]
-	[EnableRateLimiting("fixed_metadata")]
+	//[EnableRateLimiting("fixed_metadata")]
 	public async Task<IActionResult> GetSingleData([FromQuery] Guid id)
 	{
 		var data = await _submissionService.GetSingleSubmission(id);
@@ -123,7 +123,7 @@ public class SubmissionApiController : ControllerBase
 	/// <returns></returns>
 	[HttpGet("")]
 	[ProducesResponseType<IEnumerable<HardwareDisplayModel>>(StatusCodes.Status200OK)]
-	[EnableRateLimiting("fixed_metadata")]
+	//[EnableRateLimiting("fixed_metadata")]
 	public async Task<IActionResult> GetData([FromQuery, Required]string deviceId)
 	{
 		var data = await _submissionService.GetSubmissions(deviceId);
