@@ -56,6 +56,7 @@ public class TestDataApiController : ControllerBase
 		if (testDataToken.retryAfter is not null)
 		{
 			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.Seconds.ToString());
+
 			return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
 		}
 

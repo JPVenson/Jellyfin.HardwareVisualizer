@@ -84,10 +84,10 @@ public class SubmitTokenService : ISubmitTokenService
 			return (Encrypt(tokenStore.JwtPayload), null);
 		}
 
-		var expiresAt = DateTime.Now.AddHours(4);
+		var expiresAt = DateTime.UtcNow.AddHours(4);
 		tokenStore = new TokenStore();
 		tokenStore.JwtPayload = new JwtPayload("jhwa/server", "jhwa/client", [new Claim("ip", ipAddress)],
-			DateTime.Now, expiresAt, DateTime.Now);
+			DateTime.UtcNow, expiresAt, DateTime.UtcNow);
 
 		_memoryCache.Set(cacheKey, tokenStore, expiresAt);
 		return (Encrypt(tokenStore.JwtPayload), null);
