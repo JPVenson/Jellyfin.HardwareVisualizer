@@ -129,4 +129,21 @@ public class SubmissionApiController : ControllerBase
 		var data = await _submissionService.GetSubmissions(deviceId);
 		return Ok(_mapperService.ViewModelMapper.Map<IEnumerable<HardwareDisplayModel>>(data));
 	}
+
+	
+#if DEBUG
+/// <summary>
+	///		Gets a set of aggregated data points of all submissions for the given <see cref="deviceId"/>
+	/// </summary>
+	/// <param name="deviceId"></param>
+	/// <returns></returns>
+	[HttpGet("Recalc")]
+	//[EnableRateLimiting("fixed_metadata")]
+	public IActionResult Recalc([FromQuery, Required]Guid groupId)
+	{
+		_submissionService.BeginRecalcHardwareStats(groupId);
+		return Ok();
+	}	
+#endif
+	
 }

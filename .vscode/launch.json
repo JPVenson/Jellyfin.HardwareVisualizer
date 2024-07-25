@@ -6,7 +6,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "preLaunchTask": "build",
+            "preLaunchTask": "build dotnet",
             "program": "${workspaceFolder}/Jellyfin.HardwareVisualizer/Server/bin/Debug/net8.0/Jellyfin.HardwareVisualizer.Server.dll",
             "cwd": "${workspaceFolder}/Jellyfin.HardwareVisualizer",
             "internalConsoleOptions": "openOnSessionStart",

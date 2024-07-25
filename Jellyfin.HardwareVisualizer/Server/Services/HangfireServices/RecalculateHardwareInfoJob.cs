@@ -20,28 +20,48 @@ public class RecalculateHardwareInfoJob
 		try
 		{
 			await using var db = await _dbContextFactory.CreateDbContextAsync();
-			var submissionsByGpu =
-				await db.HardwareSurveyEntries.Where(e => e.GpuType.Id == deviceId || e.CpuType.Id == deviceId).GroupBy(
-						e => new
+			var cpuDevice = await db.CpuTypes.FirstOrDefaultAsync(e => e.Id == deviceId);
+			var gpuDevice = await db.GpuTypes.FirstOrDefaultAsync(e => e.Id == deviceId);
+
+			if(cpuDevice is null && gpuDevice is null)
+			{
+				throw new Exception("Cannot determine device type");
+			}
+
+			IQueryable<HardwareSurveyEntry> query = db.HardwareSurveyEntries;
+
+			if(cpuDevice is not null)
+			{
+				query = query.Where(e => e.CpuType.Id == deviceId);
+			}
+			else
+			{
+				query = query.Where(e => e.GpuType.Id == deviceId);
+			}
+
+			var submissions = await query
+					.GroupBy(e => new
 						{
-							DeviceType = e.GpuType == null ? DeviceType.Cpu : DeviceType.Gpu,
-							DeviceName = e.GpuType!.Name ?? e.CpuType!.Name,
 							CodecName = e.HardwareCodec.Name,
 							From = e.FromResolution.Name,
 							To = e.ToResolution.Name,
 						})
+						.ToArrayAsync()
+					.ConfigureAwait(true);
+
+			var submissionsByGpu =
+					submissions
 					.Select(e => new HardwareDisplay()
 					{
 						HardwareCodec = e.Key.CodecName,
 						Diviation = 0,
 						FromResolution = e.Key.From,
 						ToResolution = e.Key.To,
-						DeviceType = e.Key.DeviceType,
-						DeviceName = e.Key.DeviceName,
+						DeviceType = cpuDevice == null ? DeviceType.Gpu : DeviceType.Cpu,
+						DeviceName = gpuDevice?.Name ?? cpuDevice!.Name,
 						MaxStreams = e.Average(f => f.MaxStreams)
 					})
-					.ToArrayAsync()
-					.ConfigureAwait(true);
+					.ToArray();
 
 			var changedDevices = submissionsByGpu.Select(e => e.DeviceName).Distinct().ToArray();
 

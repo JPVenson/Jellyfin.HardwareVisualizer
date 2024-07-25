@@ -74,7 +74,8 @@ public class SubmitTokenService : ISubmitTokenService
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
 		var cacheKey = "ip-token-" + ipAddress;
-		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) && tokenStore.JwtPayload.ValidTo > DateTime.UtcNow)
+		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) 
+			&& tokenStore.JwtPayload.ValidTo > DateTime.UtcNow)
 		{
 			if (tokenStore.Expired)
 			{
@@ -84,12 +85,12 @@ public class SubmitTokenService : ISubmitTokenService
 			return (Encrypt(tokenStore.JwtPayload), null);
 		}
 
-		var expiresAt = DateTime.UtcNow.AddHours(4);
+		var expiresAt = DateTime.UtcNow.AddHours(10);
 		tokenStore = new TokenStore();
 		tokenStore.JwtPayload = new JwtPayload("jhwa/server", "jhwa/client", [new Claim("ip", ipAddress)],
 			DateTime.UtcNow, expiresAt, DateTime.UtcNow);
 
-		_memoryCache.Set(cacheKey, tokenStore, expiresAt);
+		_memoryCache.Set(cacheKey, tokenStore, DateTime.Now.AddMinutes(10));
 		return (Encrypt(tokenStore.JwtPayload), null);
 	}
 
