@@ -1,6 +1,10 @@
 ﻿using ChartJs.Blazor.BarChart;
+using ChartJs.Blazor.BarChart.Axes;
 using ChartJs.Blazor.Common;
+using ChartJs.Blazor.Common.Axes;
+using ChartJs.Blazor.Common.Axes.Ticks;
 using ChartJs.Blazor.Common.Enums;
+using ChartJs.Blazor.LineChart;
 using Jellyfin.HardwareVisualizer.Client.Service;
 using Jellyfin.HardwareVisualizer.Client.Service.ResLoaded;
 using Jellyfin.HardwareVisualizer.Shared.Models;
@@ -21,6 +25,10 @@ public partial class HardwareSurveyChartsPage
 	[SupplyParameterFromQuery(Name = "device")]
 	[Parameter]
 	public string[]? SelectedDevices { get; set; }
+	
+	[SupplyParameterFromQuery(Name = "submission")]
+	[Parameter]
+	public Guid Submission { get; set; }
 
 	public Guid SelectedDevice { get; set; }
 
@@ -45,7 +53,7 @@ public partial class HardwareSurveyChartsPage
 			new ScriptLinkResource("_content/ChartJs.Blazor.Fork/ChartJsBlazorInterop.js"));
 
 		var usageChart = new BarConfig(_horizontalChart);
-		
+
 		usageChart.Options = new BarOptions
 		{
 			Responsive = true,
@@ -58,6 +66,16 @@ public partial class HardwareSurveyChartsPage
 			{
 				Display = true,
 				Position = Position.Top
+			},
+			Scales = new BarScales
+			{
+				XAxes = new List<CartesianAxis>(){
+					new BarLinearCartesianAxis (){	
+						Ticks = new LinearCartesianTicks(){
+							BeginAtZero = true
+						}
+					}
+				}
 			}
 		};
 
@@ -137,7 +155,7 @@ public partial class HardwareSurveyChartsPage
 			_usageChart.Data.Datasets.Add(new BarDataset<int>(values, _horizontalChart)
 			{
 				Label = renderDeviceViewModel.Name,
-				BackgroundColor = ChartBackgroundColors[i % ChartBackgroundColors.Length]
+				BackgroundColor = ChartBackgroundColors[i % ChartBackgroundColors.Length],
 			});
 		}
 

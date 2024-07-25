@@ -52,11 +52,42 @@ public partial class SubmitSurveyResultPage
 
 	public async Task SubmitResults()
 	{
-		var textModel = await this._editor.GetModel();
-		var value = await textModel.GetValue(EndOfLinePreference.TextDefined, false);
-		ValidateSubmission(value);
-		if (!IsSchemaValid)
+		string value;
+		try
 		{
+			var textModel = await this._editor.GetModel();
+			value = await textModel.GetValue(EndOfLinePreference.TextDefined, false);
+		}
+		catch (Exception ex)
+		{
+			ValidationErrors.Add(new Error()
+			{
+				Column = 0,
+				Line = 0,
+				Message = $"Could not get text from editor. Please try again: {ex.Message}",
+				Path = ""
+			});
+			Console.WriteLine(ex);
+			return;
+		}
+		try
+		{
+			ValidateSubmission(value);
+			if (!IsSchemaValid)
+			{
+				return;
+			}
+		}
+		catch (Exception ex)
+		{
+			ValidationErrors.Add(new Error()
+			{
+				Column = 0,
+				Line = 0,
+				Message = $"Could not validate submission. Please try again: {ex.Message}",
+				Path = ""
+			});
+			Console.WriteLine(ex);
 			return;
 		}
 
@@ -74,6 +105,16 @@ public partial class SubmitSurveyResultPage
 				Path = e.Key,
 				Message = f
 			})));
+		}
+		else if (postAsync.StatusCode == HttpStatusCode.GatewayTimeout)
+		{			
+			ValidationErrors.Add(new Error()
+			{
+				Column = 0,
+				Line = 0,
+				Message = $"You are currently rate limited. Please try again in {postAsync.StatusMessage}",
+				Path = ""
+			});
 		}
 	}
 

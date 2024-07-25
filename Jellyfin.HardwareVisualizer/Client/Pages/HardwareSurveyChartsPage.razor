@@ -4,6 +4,13 @@
 
 <PageTitle>Jellyfin Hardware Survey</PageTitle>
 
+@if(Submission != Guid.Empty)
+{
+	<div>
+		<p>Your submission was received and is currently been processed. Please check in a few Minutes and reload the website.</p>
+	</div>
+}
+
 <div class="d-inline-flex p-2 flex-row">
 	@foreach (var selectedDevice in this.DataSelectorService.SelectedDevices)
 	{
