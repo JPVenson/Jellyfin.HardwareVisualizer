@@ -97,7 +97,7 @@ public partial class SubmitSurveyResultPage
 			var id = postAsync.Object;
 			NavigationManager.NavigateTo($"/survey?submission={WebUtility.UrlDecode(id)}");
 		}
-		else if (postAsync.StatusCode == HttpStatusCode.BadRequest)
+		else if (postAsync.StatusCode == HttpStatusCode.BadRequest && postAsync.ErrorResult is not null)
 		{
 			var problemDetails = postAsync.ErrorResult;
 			ValidationErrors.AddRange(problemDetails.Errors.SelectMany(e => e.Value.Select(f => new Error()
@@ -113,6 +113,16 @@ public partial class SubmitSurveyResultPage
 				Column = 0,
 				Line = 0,
 				Message = $"You are currently rate limited. Please try again in {postAsync.StatusMessage}",
+				Path = ""
+			});
+		}
+		else
+		{	
+			ValidationErrors.Add(new Error()
+			{
+				Column = 0,
+				Line = 0,
+				Message = $"Unkown error submitting the result: {postAsync.StatusMessage} - {postAsync.Object}",
 				Path = ""
 			});
 		}
