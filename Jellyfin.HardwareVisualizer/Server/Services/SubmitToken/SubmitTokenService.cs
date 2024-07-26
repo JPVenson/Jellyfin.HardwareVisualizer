@@ -66,7 +66,7 @@ public class SubmitTokenService : ISubmitTokenService
 		}
 
 		retryAfter = null;
-		return tokenStore.JwtPayload.ValidTo > DateTime.UtcNow;
+		return token.ValidTo > DateTime.UtcNow;
 	}
 
 	public (string? token, TimeSpan? retryAfter) GenerateToken()
