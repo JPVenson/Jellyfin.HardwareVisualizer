@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
+using System.Net;
 
 namespace Jellyfin.HardwareVisualizer.Server;
 
@@ -30,7 +31,8 @@ public class Program
 		builder.Configuration
 			.AddEnvironmentVariables("PG_")
 			.AddEnvironmentVariables("JF_")
-			.AddEnvironmentVariables("GH_");
+			.AddEnvironmentVariables("GH_")
+			.AddEnvironmentVariables("HOSTING_");
 		// Add services to the container.
 			
 
@@ -70,6 +72,23 @@ public class Program
 				.UseRecommendedSerializerSettings()
 				.UsePostgreSqlStorage(f => f.UseNpgsqlConnection(() => GetConnectionString()))
 		);
+
+		builder.Services.Configure<ForwardedHeadersOptions>(options =>
+		{		
+			var envVar = Environment.GetEnvironmentVariables();
+			var hostingOptions = builder.Configuration.Get<HostingOptions>();
+
+			options.ForwardLimit = 2;
+			foreach(var proxy in hostingOptions.KnownProxies ?? [])
+			{
+				options.KnownProxies.Add(IPAddress.Parse(proxy));
+			}
+			
+			// 	options.KnownProxies.Add(IPAddress.Parse("172.18.0.2"));
+			// options.KnownProxies.Add(IPAddress.Parse("172.19.0.9"));
+			options.ForwardedForHeaderName = "X-Forwarded-For";
+		});
+		
 
 		builder.Services.AddRateLimiter(_ => _.AddFixedWindowLimiter("fixed_submit", options =>
 		{
@@ -191,7 +210,8 @@ public class Program
 		});
 
 		var app = builder.Build();
-
+		app.UseForwardedHeaders();
+		
 		using (var scope = app.Services.CreateScope())
 		{
 			var services = scope.ServiceProvider;

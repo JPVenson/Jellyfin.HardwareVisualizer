@@ -9,7 +9,8 @@
         "PG_PASSWORD": "jellyfin",
         "PG_HOST": "localhost",
         "PG_PORT": "5432",
-        "PG_DATABASE": "Jellyfin.HardwareVisualizer"
+        "PG_DATABASE": "Jellyfin.HardwareVisualizer",
+        "HOSTING_KnownProxies__0": "172.18.0.2"
       },
       "dotnetRunMessages": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
@@ -24,7 +25,8 @@
         "PG_PASSWORD": "jellyfin",
         "PG_HOST": "localhost",
         "PG_PORT": "5432",
-        "PG_DATABASE": "Jellyfin.HardwareVisualizer"
+        "PG_DATABASE": "Jellyfin.HardwareVisualizer",
+        "HOSTING_KnownProxies": "172.18.0.2"
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     },

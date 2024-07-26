@@ -11,3 +11,9 @@ public class EFCoreOptions
 	public int Port { get; set; }
 	public string Database { get; set; }
 }
+
+[FromConfig("HOSTING")]
+public class HostingOptions
+{
+	public List<string> KnownProxies { get; set; } = new();
+}

@@ -40,7 +40,10 @@ public class TestDataService
 		}
 
 		var testFiles = await db.MediaTestFiles.Include(e => e.TestCases).ToArrayAsync(cancellationToken);
-		var testArguments = await db.TestCaseArguments.Include(testCaseArgument => testCaseArgument.HardwareCodec).ToArrayAsync(cancellationToken);
+		var testArguments = await db.TestCaseArguments
+			.Include(testCaseArgument => testCaseArgument.HardwareCodec)
+			.Where(e => e.FfmpegVersionGroupId == ffmpegForPlatform.VersionGroup)
+			.ToArrayAsync(cancellationToken);
 
 		var model = new TestDataRequestModel();
 		model.Ffmpeg = _mapperService.ViewModelMapper.Map<FfmpegModel>(ffmpegForPlatform);
