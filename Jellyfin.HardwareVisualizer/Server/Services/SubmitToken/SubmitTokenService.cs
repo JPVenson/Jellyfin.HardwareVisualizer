@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Jellyfin.HardwareVisualizer.Client.Shared.ViewUtil;
 using Microsoft.Extensions.Caching.Memory;
 using ServiceLocator.Attributes;
 
@@ -72,8 +73,9 @@ public class SubmitTokenService : ISubmitTokenService
 	public (string? token, TimeSpan? retryAfter) GenerateToken()
 	{
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+		 _httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var value);
 
-		_logger.LogInformation($"Ip {ipAddress} requested a new Token.");
+		_logger.LogInformation($"Ip {ipAddress} requested a new Token with {value}.");
 
 		var cacheKey = "ip-token-" + ipAddress;
 		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) 

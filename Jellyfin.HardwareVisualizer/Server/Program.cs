@@ -75,18 +75,16 @@ public class Program
 		);
 
 		builder.Services.Configure<ForwardedHeadersOptions>(options =>
-		{		
-			var envVar = Environment.GetEnvironmentVariables();
+		{				
 			var hostingOptions = builder.Configuration.Get<HostingOptions>();
-
 			options.ForwardLimit = 2;
 			options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+			Console.WriteLine("Add Proxy Settings.");
 			foreach(var proxy in hostingOptions.KnownProxies ?? [])
 			{
+				Console.WriteLine($"Add Proxy: {proxy}");
 				options.KnownProxies.Add(IPAddress.Parse(proxy));
 			}
-
-			options.ForwardedForHeaderName = "X-Forwarded-For";
 		});
 		
 
