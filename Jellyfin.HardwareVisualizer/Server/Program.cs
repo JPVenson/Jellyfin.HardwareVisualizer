@@ -20,6 +20,7 @@ using Octokit;
 using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
 using System.Net;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Jellyfin.HardwareVisualizer.Server;
 
@@ -79,13 +80,12 @@ public class Program
 			var hostingOptions = builder.Configuration.Get<HostingOptions>();
 
 			options.ForwardLimit = 2;
+			options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
 			foreach(var proxy in hostingOptions.KnownProxies ?? [])
 			{
 				options.KnownProxies.Add(IPAddress.Parse(proxy));
 			}
-			
-			// 	options.KnownProxies.Add(IPAddress.Parse("172.18.0.2"));
-			// options.KnownProxies.Add(IPAddress.Parse("172.19.0.9"));
+
 			options.ForwardedForHeaderName = "X-Forwarded-For";
 		});
 		
