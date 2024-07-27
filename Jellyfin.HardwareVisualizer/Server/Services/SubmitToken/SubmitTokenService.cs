@@ -12,19 +12,19 @@ public class SubmitTokenService : ISubmitTokenService
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 	private readonly IMemoryCache _memoryCache;
-
-	private readonly byte[] _key;
+    private readonly ILogger<SubmitTokenService> _logger;
+    private readonly byte[] _key;
 	private readonly byte[] _iv;
 
-	public SubmitTokenService(IHttpContextAccessor httpContextAccessor, IMemoryCache memoryCache)
+	public SubmitTokenService(IHttpContextAccessor httpContextAccessor, IMemoryCache memoryCache, ILogger<SubmitTokenService> logger)
 	{
 		_httpContextAccessor = httpContextAccessor;
 		_memoryCache = memoryCache;
+        _logger = logger;
 
-
-		// Create a new DES object to generate a random _key
-		// and initialization vector (IV).
-		using (DES des = DES.Create())
+        // Create a new DES object to generate a random _key
+        // and initialization vector (IV).
+        using (DES des = DES.Create())
 		{
 			_key = des.Key;
 			_iv = des.IV;
@@ -73,6 +73,8 @@ public class SubmitTokenService : ISubmitTokenService
 	{
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
+		_logger.LogInformation($"Ip {ipAddress} requested a new Token.");
+
 		var cacheKey = "ip-token-" + ipAddress;
 		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) 
 			&& tokenStore.JwtPayload.ValidTo > DateTime.UtcNow)
@@ -85,7 +87,7 @@ public class SubmitTokenService : ISubmitTokenService
 			return (Encrypt(tokenStore.JwtPayload), null);
 		}
 
-		var expiresAt = DateTime.UtcNow.AddHours(10);
+		var expiresAt = DateTime.UtcNow.AddHours(4);
 		tokenStore = new TokenStore();
 		tokenStore.JwtPayload = new JwtPayload("jhwa/server", "jhwa/client", [new Claim("ip", ipAddress)],
 			DateTime.UtcNow, expiresAt, DateTime.UtcNow);
