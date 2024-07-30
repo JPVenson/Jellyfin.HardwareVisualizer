@@ -55,7 +55,7 @@ public class TestDataApiController : ControllerBase
 		var testDataToken = _submitTokenService.GenerateToken();
 		if (testDataToken.retryAfter is not null)
 		{
-			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.Seconds.ToString());
+			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.TotalSeconds.ToString());
 
 			return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
 		}
