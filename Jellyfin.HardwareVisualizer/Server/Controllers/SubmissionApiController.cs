@@ -72,7 +72,7 @@ public class SubmissionApiController : ControllerBase
 
 		if (!_submitTokenService.Validate(token, out var retry))
 		{
-			Response.Headers.RetryAfter = new StringValues(retry.Value.Seconds.ToString());
+			Response.Headers.RetryAfter = new StringValues(retry.Value.TotalSeconds.ToString());
 			return Unauthorized();
 		}
 
