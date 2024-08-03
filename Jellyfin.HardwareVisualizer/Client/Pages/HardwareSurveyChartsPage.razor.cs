@@ -4,8 +4,8 @@ using ChartJs.Blazor.Common;
 using ChartJs.Blazor.Common.Axes;
 using ChartJs.Blazor.Common.Axes.Ticks;
 using ChartJs.Blazor.Common.Enums;
-using ChartJs.Blazor.LineChart;
 using Jellyfin.HardwareVisualizer.Client.Service;
+using Jellyfin.HardwareVisualizer.Client.Service.Http;
 using Jellyfin.HardwareVisualizer.Client.Service.ResLoaded;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -28,7 +28,7 @@ public partial class HardwareSurveyChartsPage
 	
 	[SupplyParameterFromQuery(Name = "submission")]
 	[Parameter]
-	public Guid Submission { get; set; }
+	public Guid? Submission { get; set; }
 
 	public Guid SelectedDevice { get; set; }
 

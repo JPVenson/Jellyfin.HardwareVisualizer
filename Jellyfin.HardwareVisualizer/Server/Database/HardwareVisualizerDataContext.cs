@@ -88,7 +88,7 @@ public class HardwareVisualizerDataContext : DbContext
 					Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
 					PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
 					Source =
-						"https://repo.jellyfin.org/files/ffmpeg/ubuntu/latest-6.x/amd64/jellyfin-ffmpeg6_6.0.1-7-focal_amd64.deb",
+						"https://repo.jellyfin.org/files/ffmpeg/ubuntu/6.x/6.0.1-8/amd64/jellyfin-ffmpeg6_6.0.1-8-focal_amd64.deb",
 					Version = "6.0.1-2",
 					HashSha256 = "a01b7d556f69941041e3265f916c22613b2f58fd39a062ccf8a3104b3c99350d",
 					HashMd5 = "183e22d865e9d99ab86506f4313b3bae",
