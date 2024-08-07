@@ -49,6 +49,16 @@ public class HardwareVisualizerDataContext : DbContext
 				},
 				new Platform()
 				{
+					Id = new Guid("79191671-CAA0-4B52-8A9E-EAA2F040A1CC"),
+					Name = "Windows 10",
+					Type = PlatformType.Windows,
+					Version = "Windows 10 version 22H2",
+					VersionId = "19045",
+					DisplayName = "Windows 10",
+					Supported = true
+				},
+				new Platform()
+				{
 					Id = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
 					Name = "Ubuntu",
 					Type = PlatformType.Linux,
@@ -76,6 +86,17 @@ public class HardwareVisualizerDataContext : DbContext
 				{
 					Id = new Guid("A3F734BE-FB92-4A1F-BD8C-B6701E0F7E9F"),
 					PlatformId = new Guid("2C361BE8-C0EC-4020-984B-66C620DAD840"),
+					Source =
+						"https://repo.jellyfin.org/files/ffmpeg/windows/latest-5.x/amd64/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
+					Version = "5.1.6-3",
+					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
+					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
+					VersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512")
+				},
+				new FfmpegVersion()
+				{
+					Id = new Guid("7F9E0BB6-7346-400F-881C-33C3C1558D78"),
+					PlatformId = new Guid("79191671-CAA0-4B52-8A9E-EAA2F040A1CC"),
 					Source =
 						"https://repo.jellyfin.org/files/ffmpeg/windows/latest-5.x/amd64/jellyfin-ffmpeg_5.1.4-3-portable_win64.zip",
 					Version = "5.1.6-3",
