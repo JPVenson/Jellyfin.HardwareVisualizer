@@ -163,7 +163,7 @@ The HWA client **must** provide at least obtain and provide the following data:
 ```json
 {
     "os": {
-      "name": "Windows" | "Linux" | "Mac",
+      "name": "windows" | "linux" | "mac",
       "version_id": "string",
       "version": "string",
     },
@@ -182,7 +182,7 @@ The HWA client **must** provide at least obtain and provide the following data:
     "gpu": [
       {
         "product": "string",
-        "vendor": "Nvidia" | "Amd" | "Intel" | "string",       
+        "vendor": "nvidia" | "amd" | "intel" | "string",       
       }
     ]
   }
@@ -265,14 +265,14 @@ The script **must** be able to output the result of the testing loop in a define
 
   "hwinfo": {
     "os": {
-      "name": "Windows" | "Linux" | "Mac",
+      "name": "windows" | "linux" | "mac",
       "version_id": "string",
       "version": "string",
     },
     "cpu": [
       {
         "product": "string",
-        "vendor": "Intel" | "Amd" | "string",
+        "vendor": "intel" | "amd" | "string",
       }
     ],
     "memory": [
@@ -284,7 +284,7 @@ The script **must** be able to output the result of the testing loop in a define
     "gpu": [
       {
         "product": "string",
-        "vendor": "Nvidia" | "Amd" | "Intel" | "string",       
+        "vendor": "windows" | "linux" | "mac" | "string",       
       }
     ]
   },
