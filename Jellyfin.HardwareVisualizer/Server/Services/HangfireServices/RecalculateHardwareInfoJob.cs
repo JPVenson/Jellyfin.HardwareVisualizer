@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using Jellyfin.HardwareVisualizer.Server.Database;
+﻿using Jellyfin.HardwareVisualizer.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using ServiceLocator.Attributes;
 

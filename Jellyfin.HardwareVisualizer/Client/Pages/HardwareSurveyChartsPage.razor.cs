@@ -5,7 +5,6 @@ using ChartJs.Blazor.Common.Axes;
 using ChartJs.Blazor.Common.Axes.Ticks;
 using ChartJs.Blazor.Common.Enums;
 using Jellyfin.HardwareVisualizer.Client.Service;
-using Jellyfin.HardwareVisualizer.Client.Service.Http;
 using Jellyfin.HardwareVisualizer.Client.Service.ResLoaded;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Components;

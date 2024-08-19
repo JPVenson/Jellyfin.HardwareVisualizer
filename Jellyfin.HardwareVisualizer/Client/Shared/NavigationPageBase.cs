@@ -2,7 +2,6 @@
 using Jellyfin.HardwareVisualizer.Client.Service.WaiterIndicator;
 using Jellyfin.HardwareVisualizer.Client.Shared.ViewUtil;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace Jellyfin.HardwareVisualizer.Client.Shared;
 

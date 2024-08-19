@@ -2,12 +2,8 @@
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Schema.Generation;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using ServiceLocator.Attributes;
 using TestCaseType = Jellyfin.HardwareVisualizer.Shared.Models.TestCaseType;
-using Newtonsoft.Json.Schema;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.TestData;
 

@@ -1,11 +1,10 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using ServiceLocator.Attributes;
 
 namespace Jellyfin.HardwareVisualizer.Client.Service.Auth
 {
-	[SingletonService(typeof(AuthenticationStateProvider))]
+    [SingletonService(typeof(AuthenticationStateProvider))]
 	public class GithubAuthenticationStateProvider : AuthenticationStateProvider
 	{
 		public GithubAuthenticationStateProvider()

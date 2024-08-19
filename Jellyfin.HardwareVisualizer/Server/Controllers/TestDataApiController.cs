@@ -1,6 +1,5 @@
 ﻿using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using System.ComponentModel.DataAnnotations;
 using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.TestData;

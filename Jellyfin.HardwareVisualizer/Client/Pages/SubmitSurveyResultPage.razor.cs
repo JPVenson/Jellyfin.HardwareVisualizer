@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using BlazorMonaco.Editor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Jellyfin.HardwareVisualizer.Client.Service.Http;

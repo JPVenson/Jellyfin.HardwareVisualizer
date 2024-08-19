@@ -1,6 +1,5 @@
 ﻿using Jellyfin.HardwareVisualizer.Client.Service;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace Jellyfin.HardwareVisualizer.Client.Shared;
 

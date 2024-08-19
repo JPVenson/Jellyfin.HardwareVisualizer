@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-
-namespace Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
+﻿namespace Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
 
 public interface ISubmitTokenService
 {

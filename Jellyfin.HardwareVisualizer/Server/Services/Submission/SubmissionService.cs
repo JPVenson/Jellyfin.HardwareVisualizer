@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Transactions;
 using Hangfire;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Server.Services.HangfireServices;
@@ -8,7 +7,6 @@ using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using ServiceLocator.Attributes;
-using DeviceType = Jellyfin.HardwareVisualizer.Server.Database.DeviceType;
 
 namespace Jellyfin.HardwareVisualizer.Server.Services.Submission;
 

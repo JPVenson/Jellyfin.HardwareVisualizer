@@ -2,8 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Polly;
-using Polly.Extensions.Http;
 using ServiceLocator.Discovery.Service;
 
 namespace Jellyfin.HardwareVisualizer.Client;
