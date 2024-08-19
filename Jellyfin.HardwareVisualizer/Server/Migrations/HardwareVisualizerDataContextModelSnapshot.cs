@@ -101,11 +101,11 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         new
                         {
                             Id = new Guid("2c720157-f8fb-48c9-8686-d4dfe7daae9a"),
-                            HashMd5 = "183e22d865e9d99ab86506f4313b3bae",
-                            HashSha256 = "a01b7d556f69941041e3265f916c22613b2f58fd39a062ccf8a3104b3c99350d",
+                            HashMd5 = "d41d8cd98f00b204e9800998ecf8427e",
+                            HashSha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
                             PlatformId = new Guid("8d58b84b-73dc-4275-985d-123abe886818"),
-                            Source = "https://repo.jellyfin.org/files/ffmpeg/ubuntu/6.x/6.0.1-8/amd64/jellyfin-ffmpeg6_6.0.1-8-focal_amd64.deb",
-                            Version = "6.0.1-8",
+                            Source = "https://repo.jellyfin.org/files/ffmpeg/linux/6.x/6.0.1-7/amd64/jellyfin-ffmpeg_6.0.1-7_portable_linux64-gpl.tar.xz",
+                            Version = "6.0.1-7",
                             VersionGroup = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f")
                         },
                         new
@@ -213,13 +213,13 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                     b.Property<Guid?>("CpuTypeId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("FromHardwareCodecId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FromResolutionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("GpuTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("HardwareCodecId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("HardwareSurveySubmissionId")
@@ -231,6 +231,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                     b.Property<bool>("Processed")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("ToHardwareCodecId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("ToResolutionId")
                         .HasColumnType("uuid");
 
@@ -238,13 +241,15 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
 
                     b.HasIndex("CpuTypeId");
 
+                    b.HasIndex("FromHardwareCodecId");
+
                     b.HasIndex("FromResolutionId");
 
                     b.HasIndex("GpuTypeId");
 
-                    b.HasIndex("HardwareCodecId");
-
                     b.HasIndex("HardwareSurveySubmissionId");
+
+                    b.HasIndex("ToHardwareCodecId");
 
                     b.HasIndex("ToResolutionId");
 
@@ -426,7 +431,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("3657b420-2f2a-4940-8ed3-ee70b9b3720d"),
                             DisplayName = "Linux Generic",
                             Name = "Linux Generic",
-                            Supported = false,
+                            Supported = true,
                             Type = 1,
                             Version = "Linux",
                             VersionId = "Generic"
@@ -467,6 +472,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                     b.Property<int>("TestCaseType")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ToCodecId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ToResolution")
                         .IsRequired()
                         .HasColumnType("text");
@@ -474,6 +482,8 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MediaTestFileId");
+
+                    b.HasIndex("ToCodecId");
 
                     b.ToTable("TestCases");
 
@@ -485,6 +495,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "2160p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -494,6 +505,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "2160p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -503,6 +515,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "2160p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -512,6 +525,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "1080p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -521,6 +535,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "1080p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -530,6 +545,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "1080p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -539,6 +555,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "720p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -548,6 +565,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "720p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -557,6 +575,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             FromResolution = "720p",
                             MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -564,8 +583,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("56398356-cd67-18e1-1206-3489c3754ade"),
                             Bitrate = 79616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -573,8 +593,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("c84b0320-56a3-62c0-b138-a037fb4859cc"),
                             Bitrate = 9616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -582,8 +603,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("2b51a90a-cc94-f2a7-c5da-c06770fc3249"),
                             Bitrate = 3616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         },
                         new
@@ -591,8 +613,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("11dfaadf-13dc-0016-c3d6-a52e2ca91cc9"),
                             Bitrate = 79616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -600,8 +623,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("197e68ac-1e23-5449-5c59-03c99659f2b4"),
                             Bitrate = 9616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -609,8 +633,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("51585605-4769-f7f0-9251-68be2678c51b"),
                             Bitrate = 3616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         },
                         new
@@ -618,8 +643,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("08baf6bd-197d-c126-608b-b583104d6a6a"),
                             Bitrate = 79616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -627,8 +653,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("d629f0e4-ca51-655f-7887-86d2b58b2de3"),
                             Bitrate = 9616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -636,8 +663,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("9f0be794-ea9e-ec37-3096-f1de916ce744"),
                             Bitrate = 3616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            MediaTestFileId = new Guid("e8a75e65-a3f3-4d92-a45b-84e71a13efab"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         },
                         new
@@ -645,8 +673,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("35d9fee7-ee4f-f3ca-9655-8ff692540bd5"),
                             Bitrate = 79616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -654,8 +683,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("28efd25d-ca42-f9cb-b93c-a5bbd981d30b"),
                             Bitrate = 9616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -663,8 +693,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("b7ea429f-f7b1-a593-1d18-08495a415adc"),
                             Bitrate = 3616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -672,8 +703,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("bf801b8a-be7d-1c02-32e0-7c13490f1915"),
                             Bitrate = 79616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -681,8 +713,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("50568481-5469-6623-3f4a-0b2ac2829f78"),
                             Bitrate = 9616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -690,8 +723,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("bd30c9e2-1401-e18d-3fcd-84d17a7f5b0e"),
                             Bitrate = 3616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -699,8 +733,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("d5c7f3fe-09ea-3572-f81a-7f33b3d75ab0"),
                             Bitrate = 79616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "2160p"
                         },
                         new
@@ -708,8 +743,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("7f310440-5cde-6c14-f774-109bd052ebbf"),
                             Bitrate = 9616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "1080p"
                         },
                         new
@@ -717,8 +753,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("ce2bfcee-c9ba-d88d-56fa-c5e694592e67"),
                             Bitrate = 3616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
                             ToResolution = "720p"
                         },
                         new
@@ -726,8 +763,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("7690d373-dc4e-a22f-df5a-de76f9d765a5"),
                             Bitrate = 79616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -735,8 +773,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("b645bf2e-8bac-77f6-7759-28e4972dd79d"),
                             Bitrate = 9616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -744,8 +783,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("fd28a846-75c2-1171-cd89-ef5feb17de7f"),
                             Bitrate = 3616000L,
                             FromResolution = "2160p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         },
                         new
@@ -753,8 +793,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("d5b81f94-7813-e7bb-dc18-fef5b34b0ab2"),
                             Bitrate = 79616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -762,8 +803,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("502f4082-68ae-b9e3-4e34-e8229c978c5f"),
                             Bitrate = 9616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -771,8 +813,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("774fa97a-0274-cd8a-ed41-20a9767c5e82"),
                             Bitrate = 3616000L,
                             FromResolution = "1080p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         },
                         new
@@ -780,8 +823,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("aadc3d7e-8ee7-2cd0-3bfe-86df8f994a45"),
                             Bitrate = 79616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "2160p"
                         },
                         new
@@ -789,8 +833,9 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("097a9f8c-93fb-803d-b661-636d473a43d2"),
                             Bitrate = 9616000L,
                             FromResolution = "720p",
-                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "1080p"
                         },
                         new
@@ -798,8 +843,369 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                             Id = new Guid("5fa366d5-e1ba-ec78-d922-3c767caa3e53"),
                             Bitrate = 3616000L,
                             FromResolution = "720p",
+                            MediaTestFileId = new Guid("e1e58b15-6664-454c-868a-20442db30557"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("d71cdaf6-5401-eb86-ff5c-f4852a62e401"),
+                            Bitrate = 79616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("2909b3bb-ebf5-aa8a-268e-30d957c7030b"),
+                            Bitrate = 9616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("6c770f23-6c1d-81d1-e0b7-5f5eedf2c176"),
+                            Bitrate = 3616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("c8ba3a3e-15a1-0a5e-5072-b07223ac9438"),
+                            Bitrate = 79616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("1b61e958-77ea-4fe3-e287-483d8b2bbc34"),
+                            Bitrate = 9616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("1c9bbacd-3b0c-0e69-b16d-1caabb5e5d33"),
+                            Bitrate = 3616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("04062623-a591-c68b-566b-e519cc207e24"),
+                            Bitrate = 79616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("69a47cb5-7811-1d2c-7f52-6a7d5b399383"),
+                            Bitrate = 9616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("651a1429-b825-27a3-2ed4-c5a155504290"),
+                            Bitrate = 3616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("3ff4f7ee-f4b9-ab21-fae8-843e3b0d6a1d"),
+                            Bitrate = 79616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("b7ef62d7-1905-fdfe-d97d-3b3cb28bc72f"),
+                            Bitrate = 9616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("638fd910-5444-35c9-f26f-6a3c3364ec20"),
+                            Bitrate = 3616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("f3c9a86a-8a60-d48b-f8f7-663cb9e5f86f"),
+                            Bitrate = 79616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("622d5521-077e-82d9-98ba-c596afc2c974"),
+                            Bitrate = 9616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("0ad21a90-d4c1-86cf-4eba-6a4cee8c7c0d"),
+                            Bitrate = 3616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("de1bfb76-8a36-63a2-ce46-5ba6c5f42536"),
+                            Bitrate = 79616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("9eacf12d-ed12-4cad-86a7-14c39c8c940b"),
+                            Bitrate = 9616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("b320b73d-eba6-063d-786f-3b7b7928c159"),
+                            Bitrate = 3616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("70daebe7-c9fc-4e02-a524-2fc825a49355"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("fd1e3495-dde0-88fa-4dce-578f75dec742"),
+                            Bitrate = 79616000L,
+                            FromResolution = "2160p",
                             MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
                             TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("0d684fb2-71d4-4290-b3a5-26a3b132d35d"),
+                            Bitrate = 9616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("672ebae6-976d-5f2a-bc97-66d793ae9099"),
+                            Bitrate = 3616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("29c9f9a8-b3c0-2385-a4dc-493ab757d61b"),
+                            Bitrate = 79616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("bba8fafb-5fb0-1ad4-2408-503d0bb8ae05"),
+                            Bitrate = 9616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("b7fa8d15-aa69-329d-340b-c3904ef0a865"),
+                            Bitrate = 3616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("99dc4bc0-d405-49e9-25ae-04b7634817eb"),
+                            Bitrate = 79616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("2a25432e-1f5d-51b1-5d76-87a49c43cc34"),
+                            Bitrate = 9616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("c07ceb60-14dc-40ff-a3b1-92baa5e5ceeb"),
+                            Bitrate = 3616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("0a62d7f3-7eca-a107-998b-3b8f4d44ace2"),
+                            Bitrate = 79616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("7857d0e2-57cb-190f-44e5-86ab8cf6ab77"),
+                            Bitrate = 9616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("c4b19ba7-c1e0-e26a-e3db-2651d870f25f"),
+                            Bitrate = 3616000L,
+                            FromResolution = "2160p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("d5d8af04-568e-9c20-c848-c6e4f75c14a2"),
+                            Bitrate = 79616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("b2e8c4df-e892-2001-6574-94f031be41d3"),
+                            Bitrate = 9616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("dda726f3-d61e-50e9-7b15-fc98fb85ea87"),
+                            Bitrate = 3616000L,
+                            FromResolution = "1080p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "720p"
+                        },
+                        new
+                        {
+                            Id = new Guid("147183c7-3f87-1ccc-adb8-6f19c12f6b0a"),
+                            Bitrate = 79616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "2160p"
+                        },
+                        new
+                        {
+                            Id = new Guid("d0f1f207-37b5-0984-da97-377dec6925e0"),
+                            Bitrate = 9616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
+                            ToResolution = "1080p"
+                        },
+                        new
+                        {
+                            Id = new Guid("ad290d8a-2c4c-b34b-598a-2f6566d08e4b"),
+                            Bitrate = 3616000L,
+                            FromResolution = "720p",
+                            MediaTestFileId = new Guid("1d943d13-586d-4562-a968-eb1d0ffae947"),
+                            TestCaseType = 0,
+                            ToCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
                             ToResolution = "720p"
                         });
                 });
@@ -837,7 +1243,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1c76b8cc-7a23-4c9d-8ed7-9cbf2d741631"),
+                            Id = new Guid("0891f1aa-1993-8fd2-fe68-3af0074f2f44"),
                             FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -845,7 +1251,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("26b70d55-42e0-4def-8288-f00b562c0d6d"),
+                            Id = new Guid("b48f8f93-bd06-dbbe-a63d-772a071fa30a"),
                             FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -853,7 +1259,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5535efbb-bcee-4196-961d-7c7358c1c232"),
+                            Id = new Guid("fad3ec09-1cd8-704c-3b99-aee4f15bab0a"),
                             FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -861,7 +1267,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a3af8e6a-456a-41c2-91c6-f1a4cde9c7f4"),
+                            Id = new Guid("d6d2ea5b-da40-ec44-33b6-6255a2a887df"),
                             FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -869,7 +1275,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("4ff85976-2046-4560-94fd-a79af116f154"),
+                            Id = new Guid("1be730c5-357b-766c-421f-796d0ed9e94a"),
                             FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v h264_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -877,7 +1283,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2a255052-3128-4e2a-a511-bef273f4889c"),
+                            Id = new Guid("1dce6c92-cc4c-2fc9-a7e6-c622baf6cd92"),
                             FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v hevc_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -885,7 +1291,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("49463914-c696-4dca-8f62-c041ec2d8200"),
+                            Id = new Guid("c11fcf11-9074-258e-7e5c-942160d7de59"),
                             FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -893,7 +1299,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ec73eeb5-e095-40f5-8b84-4d2307f13bfd"),
+                            Id = new Guid("36c317cc-6ad9-f893-67b7-73946e49bc4c"),
                             FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("9f9565f1-4661-484b-8c80-433bc909e70f"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -901,7 +1307,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ec18dd27-1243-47ae-a639-e037ae992ab7"),
+                            Id = new Guid("3f5be651-27ba-01d6-dda8-9ef038a7ced0"),
                             FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -909,7 +1315,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("dd920765-e078-474c-8e39-5e1a3d8857ef"),
+                            Id = new Guid("a3556c08-9732-a6b9-3c26-5abc1cfab734"),
                             FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -917,7 +1323,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f24ca383-2d7b-4188-a906-1a6e93391d2f"),
+                            Id = new Guid("7ad0479f-9f7b-a59f-40c1-5830cba2c0bf"),
                             FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -925,7 +1331,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("40a624a3-5df0-4ad9-a81e-5faa3f29df17"),
+                            Id = new Guid("018ca3e9-19f4-ba19-2cb4-0294cd19e5e3"),
                             FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -933,7 +1339,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e9258a1d-0b54-44ff-881f-133d89eac405"),
+                            Id = new Guid("f0506af1-54d7-6954-cdb0-62703e89da99"),
                             FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v h264_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -941,7 +1347,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("34888563-6946-4eb1-92b6-a3a7a79ed981"),
+                            Id = new Guid("78d39a65-b56e-863f-2e15-4dc69c0ad727"),
                             FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v hevc_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -949,7 +1355,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ec598d96-372e-45c3-82c3-a39a0f4b86b8"),
+                            Id = new Guid("613e75dc-d052-95e8-4f22-3444b6a87ba3"),
                             FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("bf2065dc-9b03-48b8-9a30-206a12a6319c"),
@@ -957,7 +1363,7 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         },
                         new
                         {
-                            Id = new Guid("183375a4-8d8e-44da-a32f-8bde2df1a89f"),
+                            Id = new Guid("332e69da-6c46-3b75-2ac9-c2c1068dcdc2"),
                             FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
                             FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
                             HardwareCodecId = new Guid("104537db-e1e2-4490-a82a-afaede9a8fd4"),
@@ -1001,6 +1407,12 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         .WithMany()
                         .HasForeignKey("CpuTypeId");
 
+                    b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.HardwareCodec", "FromHardwareCodec")
+                        .WithMany()
+                        .HasForeignKey("FromHardwareCodecId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.TestResolution", "FromResolution")
                         .WithMany()
                         .HasForeignKey("FromResolutionId")
@@ -1011,15 +1423,15 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         .WithMany()
                         .HasForeignKey("GpuTypeId");
 
-                    b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.HardwareCodec", "HardwareCodec")
-                        .WithMany()
-                        .HasForeignKey("HardwareCodecId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.HardwareSurveySubmission", "HardwareSurveySubmission")
                         .WithMany("HardwareSurveyEntry")
                         .HasForeignKey("HardwareSurveySubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.HardwareCodec", "ToHardwareCodec")
+                        .WithMany()
+                        .HasForeignKey("ToHardwareCodecId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1031,13 +1443,15 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
 
                     b.Navigation("CpuType");
 
+                    b.Navigation("FromHardwareCodec");
+
                     b.Navigation("FromResolution");
 
                     b.Navigation("GpuType");
 
-                    b.Navigation("HardwareCodec");
-
                     b.Navigation("HardwareSurveySubmission");
+
+                    b.Navigation("ToHardwareCodec");
 
                     b.Navigation("ToResolution");
                 });
@@ -1061,7 +1475,15 @@ namespace Jellyfin.HardwareVisualizer.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Jellyfin.HardwareVisualizer.Server.Database.HardwareCodec", "ToCodec")
+                        .WithMany()
+                        .HasForeignKey("ToCodecId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("MediaTestFile");
+
+                    b.Navigation("ToCodec");
                 });
 
             modelBuilder.Entity("Jellyfin.HardwareVisualizer.Server.Database.TestCaseArgument", b =>

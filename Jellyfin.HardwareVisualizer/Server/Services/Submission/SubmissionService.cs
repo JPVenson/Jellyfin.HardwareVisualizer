@@ -1,11 +1,12 @@
-﻿using System.Transactions;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Transactions;
 using Hangfire;
 using Jellyfin.HardwareVisualizer.Server.Database;
 using Jellyfin.HardwareVisualizer.Server.Services.HangfireServices;
 using Jellyfin.HardwareVisualizer.Shared.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using ServiceLocator.Attributes;
 using DeviceType = Jellyfin.HardwareVisualizer.Server.Database.DeviceType;
 
@@ -16,15 +17,19 @@ public class SubmissionService : ISubmissionService
 {
 	private readonly IDbContextFactory<HardwareVisualizerDataContext> _dbContextFactory;
 	private readonly IBackgroundJobClientFactory _backgroundJobClientFactory;
+    private readonly JsonSerializerOptions _jsonSerializerSettings;
 
-	public SubmissionService(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory,
+    public SubmissionService(IDbContextFactory<HardwareVisualizerDataContext> dbContextFactory,
 		IBackgroundJobClientFactory backgroundJobClientFactory)
 	{
 		_dbContextFactory = dbContextFactory;
 		_backgroundJobClientFactory = backgroundJobClientFactory;
-	}
-
-	
+        _jsonSerializerSettings = new JsonSerializerOptions()
+			{
+				PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+				Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false) }
+			};
+    }
 
 	public void BeginRecalcHardwareStats(Guid group)
 	{
@@ -40,7 +45,7 @@ public class SubmissionService : ISubmissionService
 		var rawSubmission = new RawSurveySubmission()
 		{
 			Id = Guid.NewGuid(),
-			Json = JsonConvert.SerializeObject(submission)
+			Json = JsonSerializer.Serialize(submission, _jsonSerializerSettings)
 		};
 
 		var submissionEntity = new HardwareSurveySubmission()
@@ -105,7 +110,7 @@ public class SubmissionService : ISubmissionService
 			.Include(e => e.HardwareSurveyEntry)
 			.Include(e => e.HardwareSurveyEntry.First().FromResolution)
 			.Include(e => e.HardwareSurveyEntry.First().ToResolution)
-			.Include(e => e.HardwareSurveyEntry.First().HardwareCodec)
+			.Include(e => e.HardwareSurveyEntry.First().ToHardwareCodec)
 			.FirstOrDefaultAsync(e => e.Id == id);
 	}
 
@@ -152,7 +157,8 @@ public class SubmissionService : ISubmissionService
 			FromResolutionId = await GetOrAddResolution(db, testReference.FromResolution),
 			ToResolutionId = await GetOrAddResolution(db, testReference.ToResolution),
 			MaxStreams = codecTest.Results.MaxStreams,
-			HardwareCodecId = await GetOrAddCodec(db, testReference.MediaTestFile.VideoCodec),
+			FromHardwareCodecId = await GetOrAddCodec(db, testReference.MediaTestFile.VideoCodec),
+			ToHardwareCodecId = testReference.ToCodecId,
 			GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
 			CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,
 			Id = Guid.NewGuid(),

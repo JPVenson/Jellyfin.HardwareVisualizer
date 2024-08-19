@@ -42,7 +42,7 @@ public class RecalculateHardwareInfoJob
 			var submissions = await query
 					.GroupBy(e => new
 						{
-							CodecName = e.HardwareCodec.Name,
+							CodecName = e.ToHardwareCodec.Name,
 							From = e.FromResolution.Name,
 							To = e.ToResolution.Name,
 						})

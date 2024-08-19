@@ -75,9 +75,12 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "Linux",
 					VersionId = "Generic",
 					DisplayName = "Linux Generic",
-					Supported = false
+					Supported = true
 				}
 			});
+
+		var windowsVersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512");
+		var genericLinuxVersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F");
 
 		modelBuilder.Entity<FfmpegVersion>()
 			.HasData(new FfmpegVersion[]
@@ -91,7 +94,7 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "5.1.6-3",
 					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
 					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
-					VersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512")
+					VersionGroup = windowsVersionGroup
 				},
 				new FfmpegVersion()
 				{
@@ -102,18 +105,18 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "5.1.6-3",
 					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
 					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
-					VersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512")
+					VersionGroup = windowsVersionGroup
 				},
 				new FfmpegVersion()
 				{
 					Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
 					PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
 					Source =
-						"https://repo.jellyfin.org/files/ffmpeg/ubuntu/6.x/6.0.1-8/amd64/jellyfin-ffmpeg6_6.0.1-8-focal_amd64.deb",
-					Version = "6.0.1-8",
-					HashSha256 = "a01b7d556f69941041e3265f916c22613b2f58fd39a062ccf8a3104b3c99350d",
-					HashMd5 = "183e22d865e9d99ab86506f4313b3bae",
-					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
+						"https://repo.jellyfin.org/files/ffmpeg/linux/6.x/6.0.1-7/amd64/jellyfin-ffmpeg_6.0.1-7_portable_linux64-gpl.tar.xz",
+					Version = "6.0.1-7",
+					HashSha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+					HashMd5 = "d41d8cd98f00b204e9800998ecf8427e",
+					VersionGroup = genericLinuxVersionGroup
 				},
 				new FfmpegVersion()
 				{
@@ -124,22 +127,25 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "6.0.1-7",
 					HashSha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					HashMd5 = "d41d8cd98f00b204e9800998ecf8427e",
-					VersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F")
+					VersionGroup = genericLinuxVersionGroup
 				}
 			});
+
+		var h264CodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"); 
+		var hvecCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"); 
 
 		modelBuilder.Entity<HardwareCodec>()
 			.HasData(new HardwareCodec[]
 			{
 				new HardwareCodec()
 				{
-					Id = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					Id = h264CodecId,
 					Identifier = "h264",
 					Name = "H264"
 				},
 				new HardwareCodec()
 				{
-					Id = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					Id = hvecCodecId,
 					Identifier = "h265",
 					Name = "HVEC"
 				},
@@ -211,8 +217,97 @@ public class HardwareVisualizerDataContext : DbContext
 		modelBuilder.Entity<TestCase>()
 			.HasData(new TestCase[]
 			{
-				#region File E8A75E65-A3F3-4D92-A45B-84E71A13EFAB
-							
+				#region File E8A75E65-A3F3-4D92-A45B-84E71A13EFAB	
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
 
 				new TestCase()
 				{
@@ -222,6 +317,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -231,6 +327,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -240,6 +337,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -249,6 +347,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -258,6 +357,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -267,6 +367,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -276,6 +377,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -285,6 +387,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
 				},
 				new TestCase()
 				{
@@ -294,7 +397,9 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
 				},
+
 				#endregion
 
 				#region File E1E58B15-6664-454C-868A-20442DB30557
@@ -307,6 +412,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -316,6 +422,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -325,6 +432,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -334,6 +442,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -343,6 +452,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -352,6 +462,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -361,6 +472,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -370,6 +482,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -379,94 +492,289 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+
+
+
+
+
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("E1E58B15-6664-454C-868A-20442DB30557"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
 				},
 				#endregion
 
 				#region File 70DAEBE7-C9FC-4E02-A524-2FC825A49355
+		
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = h264CodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
 
-				
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
 
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "2160p",
-					ToResolution = "2160p",
-					Bitrate = 79616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "2160p",
-					ToResolution = "1080p",
-					Bitrate = 9616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "2160p",
-					ToResolution = "720p",
-					Bitrate = 3616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "1080p",
-					ToResolution = "2160p",
-					Bitrate = 79616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "1080p",
-					ToResolution = "1080p",
-					Bitrate = 9616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "1080p",
-					ToResolution = "720p",
-					Bitrate = 3616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "720p",
-					ToResolution = "2160p",
-					Bitrate = 79616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "720p",
-					ToResolution = "1080p",
-					Bitrate = 9616000,
-				},
-				new TestCase()
-				{
-					Id = GetNext(),
-					MediaTestFileId = new Guid("70DAEBE7-C9FC-4E02-A524-2FC825A49355"),
-					TestCaseType = TestCaseType.Transcode,
-					FromResolution = "720p",
-					ToResolution = "720p",
-					Bitrate = 3616000,
-				},
 				#endregion
 				#region File 1D943D13-586D-4562-A968-EB1D0FFAE947
 				
@@ -478,6 +786,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -487,6 +796,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -496,6 +806,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "2160p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -505,6 +816,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -514,6 +826,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -523,6 +836,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "1080p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -532,6 +846,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "2160p",
 					Bitrate = 79616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -541,6 +856,7 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "1080p",
 					Bitrate = 9616000,
+					ToCodecId = h264CodecId
 				},
 				new TestCase()
 				{
@@ -550,6 +866,98 @@ public class HardwareVisualizerDataContext : DbContext
 					FromResolution = "720p",
 					ToResolution = "720p",
 					Bitrate = 3616000,
+					ToCodecId = h264CodecId
+				},
+
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "2160p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "1080p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "2160p",
+					Bitrate = 79616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "1080p",
+					Bitrate = 9616000,
+					ToCodecId = hvecCodecId
+				},
+				new TestCase()
+				{
+					Id = GetNext(),
+					MediaTestFileId = new Guid("1D943D13-586D-4562-A968-EB1D0FFAE947"),
+					TestCaseType = TestCaseType.Transcode,
+					FromResolution = "720p",
+					ToResolution = "720p",
+					Bitrate = 3616000,
+					ToCodecId = hvecCodecId
 				},
 				#endregion
 			});
@@ -559,134 +967,134 @@ public class HardwareVisualizerDataContext : DbContext
 			{
 				new TestCaseArgument()
 				{
-					Id = new Guid("1C76B8CC-7A23-4C9D-8ED7-9CBF2D741631"),
+					Id = GetNext(),
 					FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("26B70D55-42E0-4DEF-8288-F00B562C0D6D"),
+					Id = GetNext(),
 					FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("5535EFBB-BCEE-4196-961D-7C7358C1C232"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("A3AF8E6A-456A-41C2-91C6-F1A4CDE9C7F4"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("4FF85976-2046-4560-94FD-A79AF116F154"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v h264_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("2A255052-3128-4E2A-A511-BEF273F4889C"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v hevc_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("49463914-C696-4DCA-8F62-C041EC2D8200"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("EC73EEB5-E095-40F5-8B84-4D2307F13BFD"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-					FfmpegVersionGroupId = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = genericLinuxVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 
 				// Windows specifics: 3b20be6a-7c32-41a0-a6ca-259937e69512
 
 				new TestCaseArgument()
 				{
-					Id = new Guid("ec18dd27-1243-47ae-a639-e037ae992ab7"),
+					Id = GetNext(),
 					FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("dd920765-e078-474c-8e39-5e1a3d8857ef"),
+					Id = GetNext(),
 					FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("f24ca383-2d7b-4188-a906-1a6e93391d2f"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("40a624a3-5df0-4ad9-a81e-5faa3f29df17"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -autoscale 0 -an -sn -vf scale_cuda=-1:{scale}:yuv420p -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("e9258a1d-0b54-44ff-881f-133d89eac405"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v h264_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("34888563-6946-4eb1-92b6-a3a7a79ed981"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=-1:{scale}:format=nv12 -c:v hevc_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("ec598d96-372e-45c3-82c3-a39a0f4b86b8"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("BF2065DC-9B03-48B8-9A30-206A12A6319C"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = h264CodecId,
 				},
 				new TestCaseArgument()
 				{
-					Id = new Guid("183375a4-8d8e-44da-a32f-8bde2df1a89f"),
+					Id = GetNext(),
 					FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -autoscale 0 -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-					FfmpegVersionGroupId = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512"),
-					HardwareCodecId = new Guid("104537DB-E1E2-4490-A82A-AFAEDE9A8FD4"),
+					FfmpegVersionGroupId = windowsVersionGroup,
+					HardwareCodecId = hvecCodecId,
 				}
 			});
 	}

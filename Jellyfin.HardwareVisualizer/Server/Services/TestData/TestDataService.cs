@@ -62,7 +62,10 @@ public class TestDataService
 			foreach (var testCase in mediaTestFile.TestCases)
 			{
 				var caseModel = _mapperService.ViewModelMapper.Map<TestCaseDataModel>(testCase);
-				caseModel.Arguments = testArguments.Select(testCaseArgument => new FfmpegArgumentsModel()
+				caseModel.Arguments = testArguments
+					.Where(e => e.HardwareCodecId == testCase.ToCodecId)
+					//.Where(e => mediaTestFile.Bitrate > testCase.Bitrate)
+					.Select(testCaseArgument => new FfmpegArgumentsModel()
 					{
 						Codec = testCaseArgument.HardwareCodec.Identifier,
 						Type = (FfmpegArgumentDeviceType)testCaseArgument.TestCaseArgumentDeviceType,

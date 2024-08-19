@@ -12,6 +12,7 @@
         "vscode": {
             "extensions": [
                 "ms-dotnettools.csdevkit",
+				"ms-dotnettools.csharp",
                 "kosunix.guid"
             ]
         }
@@ -26,7 +27,15 @@
 	// "customizations": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5000, 5001],
+	"forwardPorts": ["pgadmin:8081"],	
+	"portsAttributes": {
+		"8081": {
+			"label": "pgAdmin",
+			"onAutoForward": "notify",
+			"requireLocalPort": true
+		}
+	},
+
 	// "portsAttributes": {
 	//		"5001": {
 	//			"protocol": "https"
