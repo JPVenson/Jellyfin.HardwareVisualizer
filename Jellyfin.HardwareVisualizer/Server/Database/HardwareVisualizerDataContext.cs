@@ -1144,7 +1144,25 @@ public class HardwareVisualizerDataContext : DbContext
 					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
 					FfmpegVersionGroupId = windowsVersionGroup,
 					HardwareCodecId = hvecCodecId,
-				}
+				},
+				// MacOS specifics
+				new TestCaseArgument()
+				{
+					Id = GetNext(),
+					FfmpegArgument = "-c:v h264 -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
+					FfmpegVersionGroupId = macVersionGroup,
+					HardwareCodecId = h264CodecId,
+				},
+				new TestCaseArgument()
+				{
+					Id = GetNext(),
+					FfmpegArgument = "-c:v hevc -i {video_file} -autoscale 0 -an -sn -vf scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+					TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
+					FfmpegVersionGroupId = macVersionGroup,
+					HardwareCodecId = hvecCodecId,
+				},
+				
 			});
 	}
 }
