@@ -5,6 +5,7 @@ using Jellyfin.HardwareVisualizer.Server.Services.Mapper;
 using Jellyfin.HardwareVisualizer.Server.Services.TestData;
 using Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
 using Microsoft.Extensions.Primitives;
+using Jellyfin.HardwareVisualizer.Server.Database;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -49,14 +50,15 @@ public class TestDataApiController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 	//[EnableRateLimiting("fixed_start_testing")]
-	public async Task<IActionResult> GetTestData([Required, FromQuery]Guid platformId, CancellationToken cancellationToken)
+	public async Task<IActionResult> GetTestData([Required, FromQuery]Guid platformId, 
+		CancellationToken cancellationToken)
 	{
 		var testDataToken = _submitTokenService.GenerateToken();
 		if (testDataToken.retryAfter is not null)
 		{
 			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.TotalSeconds.ToString());
 
-			return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
+			return new StatusCodeResult(StatusCodes.Status429TooManyRequests);
 		}
 
 		var testData = await _testDataService.GetTestDataFor(platformId, cancellationToken);

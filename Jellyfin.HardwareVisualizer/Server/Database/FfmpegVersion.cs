@@ -15,10 +15,3 @@ public class FfmpegVersion : HashedExternalEntity
 
 	public ICollection<TestCaseArgument> TestCaseArguments { get; set; }
 }
-
-public enum PlatformType
-{
-	Windows,
-	Linux,
-	Mac
-}

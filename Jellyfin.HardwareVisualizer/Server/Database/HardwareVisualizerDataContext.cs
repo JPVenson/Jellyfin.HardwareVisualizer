@@ -45,7 +45,8 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "Windows 11 version 23H2",
 					VersionId = "22631",
 					DisplayName = "Windows 11",
-					Supported = true
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
 				},
 				new Platform()
 				{
@@ -55,7 +56,8 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "Windows 10 version 22H2",
 					VersionId = "19045",
 					DisplayName = "Windows 10",
-					Supported = true
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
 				},
 				new Platform()
 				{
@@ -65,7 +67,8 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "Ubuntu",
 					VersionId = "22.04",
 					DisplayName = "Ubuntu Focal",
-					Supported = true
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
 				},
 				new Platform()
 				{
@@ -75,12 +78,36 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "Linux",
 					VersionId = "Generic",
 					DisplayName = "Linux Generic",
-					Supported = true
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
+				},
+				new Platform()
+				{
+					Id = new Guid("5AEA52AB-60BF-4425-B412-C046A60CCC83"),
+					Name = "Mac OS",
+					Type = PlatformType.Mac,
+					Version = "14.5",
+					VersionId = "14.5",
+					DisplayName = "Mac OS Darwin",
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
+				},
+				new Platform()
+				{
+					Id = new Guid("6CF9234F-A4BB-4099-8FC8-675A653BA573"),
+					Name = "Mac OS",
+					Type = PlatformType.Mac,
+					Version = "14.5",
+					VersionId = "14.5",
+					DisplayName = "Mac OS Darwin",
+					Supported = true,
+					Architecture = PlatformArchitecture.Amd64
 				}
 			});
 
 		var windowsVersionGroup = new Guid("3b20be6a-7c32-41a0-a6ca-259937e69512");
 		var genericLinuxVersionGroup = new Guid("9F9565F1-4661-484B-8C80-433BC909E70F");
+		var macVersionGroup = new Guid("3504C0A3-19B6-418D-995E-C8731C9789A5");
 
 		modelBuilder.Entity<FfmpegVersion>()
 			.HasData(new FfmpegVersion[]
@@ -94,7 +121,7 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "5.1.6-3",
 					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
 					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
-					VersionGroup = windowsVersionGroup
+					VersionGroup = windowsVersionGroup,
 				},
 				new FfmpegVersion()
 				{
@@ -105,7 +132,7 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "5.1.6-3",
 					HashSha256 = "824542b798f04c482b171417002c3aee94f880eec2aa1ee9f016de6d912e31bd",
 					HashMd5 = "73a6a7f9d02a9abbda0f6aadd39abc89",					
-					VersionGroup = windowsVersionGroup
+					VersionGroup = windowsVersionGroup,
 				},
 				new FfmpegVersion()
 				{
@@ -116,7 +143,7 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "6.0.1-7",
 					HashSha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					HashMd5 = "d41d8cd98f00b204e9800998ecf8427e",
-					VersionGroup = genericLinuxVersionGroup
+					VersionGroup = genericLinuxVersionGroup,
 				},
 				new FfmpegVersion()
 				{
@@ -127,7 +154,29 @@ public class HardwareVisualizerDataContext : DbContext
 					Version = "6.0.1-7",
 					HashSha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					HashMd5 = "d41d8cd98f00b204e9800998ecf8427e",
-					VersionGroup = genericLinuxVersionGroup
+					VersionGroup = genericLinuxVersionGroup,
+				},
+				new FfmpegVersion()
+				{
+					Id = new Guid("5AF82644-47A0-4C0C-AB83-31A5DFF71153"),
+					PlatformId = new Guid("5AEA52AB-60BF-4425-B412-C046A60CCC83"),
+					Source =
+						"https://repo.jellyfin.org/files/ffmpeg/macos/7.x/7.0.2-3/x86_64/jellyfin-ffmpeg_7.0.2-3_portable_mac64-gpl.tar.xz",
+					Version = "7.0.2-3",
+					HashSha256 = "ed4061fc90e35ac405cb824dc99781481879a20e0a6b447934ddadd54bc40b3d",
+					HashMd5 = "db3ede0396234e92991f45c5ef9058b7",
+					VersionGroup = macVersionGroup,
+				},
+				new FfmpegVersion()
+				{
+					Id = new Guid("413B53ED-E63F-4410-B901-492173CABF13"),
+					PlatformId = new Guid("6CF9234F-A4BB-4099-8FC8-675A653BA573"),
+					Source =
+						"https://repo.jellyfin.org/files/ffmpeg/macos/7.x/7.0.2-3/arm64/jellyfin-ffmpeg_7.0.2-3_portable_macarm64-gpl.tar.xz",
+					Version = "7.0.2-3",
+					HashSha256 = "4f3eb2bf612e989d218a26c822d5d008cf3c4eafc54cf41e7816fc2eefc73d10",
+					HashMd5 = "bc6b6e09b2ec13871250f866e87952e8",
+					VersionGroup = macVersionGroup,
 				}
 			});
 

@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Jellyfin.HardwareVisualizer.Client.Service.Http;
 using Jellyfin.HardwareVisualizer.Client.Service.Http.Base;
+using Microsoft.JSInterop;
 
 namespace Jellyfin.HardwareVisualizer.Client.Pages;
 

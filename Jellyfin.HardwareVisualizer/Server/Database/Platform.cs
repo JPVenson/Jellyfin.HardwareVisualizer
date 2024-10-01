@@ -12,5 +12,15 @@ public class Platform
 	public string VersionId { get; set; }
 	public string DisplayName { get; set; }
 	public string? ReplacementId { get; set; }
+
+	public PlatformArchitecture Architecture { get; set; }
+
 	public bool Supported { get; set; }
+}
+
+public enum PlatformArchitecture
+{
+	X32,
+	Amd64,
+	Arm64
 }

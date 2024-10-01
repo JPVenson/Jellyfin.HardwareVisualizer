@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace Jellyfin.HardwareVisualizer.Server.Database;
 
 public static class DbSetupHelper
