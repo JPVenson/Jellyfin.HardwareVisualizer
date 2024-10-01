@@ -101,7 +101,7 @@ public class HardwareVisualizerDataContext : DbContext
 					VersionId = "14.5",
 					DisplayName = "Mac OS Darwin",
 					Supported = true,
-					Architecture = PlatformArchitecture.Amd64
+					Architecture = PlatformArchitecture.Arm64
 				}
 			});
 

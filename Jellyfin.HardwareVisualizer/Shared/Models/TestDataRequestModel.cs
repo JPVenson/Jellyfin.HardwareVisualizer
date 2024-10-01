@@ -15,6 +15,15 @@ public class SupportedPlatform
 	public string DisplayName { get; set; }
 	public string ReplacementId { get; set; }
 	public bool Supported { get; set; }
+	public SupportedPlatformArchitecture Architecture { get; set; }
+}
+
+public enum SupportedPlatformArchitecture
+{
+	
+	X32,
+	Amd64,
+	Arm64
 }
 
 public class TestDataRequestModel

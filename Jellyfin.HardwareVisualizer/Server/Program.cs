@@ -215,6 +215,7 @@ public class Program
 			var services = scope.ServiceProvider;
 			DbSetupHelper.SetupDbIfNotExist(GetConnectionString());
 			var context = services.GetRequiredService<HardwareVisualizerDataContext>();
+			var pending = context.Database.GetPendingMigrations();
 			context.Database.Migrate();
 		}
 

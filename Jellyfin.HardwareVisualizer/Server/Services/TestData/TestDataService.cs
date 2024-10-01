@@ -51,7 +51,7 @@ public class TestDataService
 			{
 				Name = mediaTestFile.Name,
 				TestType = TestCaseType.Transcode,
-				SourceUrl = mediaTestFile.SourceUrl
+				SourceUrl = mediaTestFile.SourceUrl,				
 			};
 
 			var testCases = new List<TestCaseDataModel>();

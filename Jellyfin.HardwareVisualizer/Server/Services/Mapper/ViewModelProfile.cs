@@ -21,8 +21,34 @@ public class ViewModelProfile : Profile
 		CreateMap<Platform, SupportedPlatform>();
 		CreateMap<FfmpegVersion, FfmpegModel>()
 			.ForMember(e => e.FfmpegSourceUrl, e => e.MapFrom(f => f.Source))
-			.ForMember(e => e.FfmpegVersion, e => e.MapFrom(f => f.Version));
+			.ForMember(e => e.FfmpegVersion, e => e.MapFrom(f => f.Version))
+			.ForMember(e => e.FfmpegHashs, e => e.ConvertUsing(new FileHashConverter(), e => e));
 
 		CreateMap<TestCase, TestCaseDataModel>();
 	}
+}
+
+public class FileHashConverter : IValueConverter<HashedExternalEntity, IEnumerable<ExternalFileHashModel>>
+{
+    public IEnumerable<ExternalFileHashModel> Convert(HashedExternalEntity source, ResolutionContext context)
+    {
+		var hashes = new List<ExternalFileHashModel>();
+		if (!string.IsNullOrWhiteSpace(source.HashMd5))
+		{
+			hashes.Add(new ExternalFileHashModel()
+			{
+				Hash = source.HashMd5,
+				Type = "md5"
+			});
+		}
+		if (!string.IsNullOrWhiteSpace(source.HashSha256))
+		{
+			hashes.Add(new ExternalFileHashModel()
+			{
+				Hash = source.HashSha256,
+				Type = "sha526"
+			});
+		}
+		return hashes;
+    }
 }
