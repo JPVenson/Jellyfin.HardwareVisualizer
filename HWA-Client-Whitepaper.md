@@ -5,8 +5,10 @@ The goal is to provide all nessesary informations on how to obtain test data, pr
 
 ## Version
 - 0.00 Draft, 06.02.2024, JPVenson
-- 0.01 Draft, 08.02.2024, JPVenson  
+- 0.01 Draft, 08.02.2024, JPVenson
   Added Platform api, fixed several typos, refactored response type.
+- 0.02 Draft, 02.10.2024, JPVenson
+  Added new server URL, added architecture selector
 
 # Abstract
 
@@ -15,7 +17,7 @@ https://www.rfc-editor.org/rfc/rfc2119
 
 
 
-All references to the HWA-Server are assumed to target the current running http server running at `https://jellyfin.jpb.software`.
+All references to the HWA-Server are assumed to target the current running http server running at `https://hwa.jellyfin.org`.
 All http calls are assumed to be requested from the same IP. 
 All http results can be requested as `application/json` as well as `application/xml`, for the sake of this document; all return values are shown as JSON.
 
@@ -52,7 +54,8 @@ content-type: application/json; charset=utf-8
       "version_id": "string",
       "display_name": "string",
       "replacement_id": "string",
-      "supported": "boolean"
+      "supported": "boolean",
+      "architecture": "amd64" | "x32" | "arm64"
     }
   ]
 }
@@ -75,7 +78,9 @@ DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=22.04
 ```
 
-So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** use the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
+So you can match them directly. You **must** always try to select the exact match for your operating system. In case the version is not supported but present in the list of platforms, you **must** use the corresponding platform via the `replacement_id`. In case no exact match is found you _may_ implement a alternative matching method or you _may_ use the corresponding custom type that will show the `version` and `version_id` set to `UnkownOperatingSystem`. You will also have to take the underlying system architecture into account, match it with all 3 available architectures.
+
+When using the `UnknownOperatingSystem` key, you **must** provide the corresponding values that shall be used for matching in the result json under the `os` property.
 
 The media api can be expected to look like this:
 
