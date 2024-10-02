@@ -2,7 +2,7 @@
 
 namespace Jellyfin.HardwareVisualizer.Server.Database;
 
-public class TestCaseArgument
+public record TestCaseArgument
 {
 	[Key] public Guid Id { get; set; }
 	public string FfmpegArgument { get; set; }

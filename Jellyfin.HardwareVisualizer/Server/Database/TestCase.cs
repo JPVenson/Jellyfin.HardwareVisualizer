@@ -2,7 +2,7 @@
 
 namespace Jellyfin.HardwareVisualizer.Server.Database;
 
-public class TestCase
+public record TestCase
 {
 	[Key] public Guid Id { get; set; }
 
