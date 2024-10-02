@@ -79,6 +79,17 @@ public class FfmpegVersionConfig : IEntityTypeConfiguration<FfmpegVersion>
                     HashSha256 = "4f3eb2bf612e989d218a26c822d5d008cf3c4eafc54cf41e7816fc2eefc73d10",
                     HashMd5 = "bc6b6e09b2ec13871250f866e87952e8",
                     VersionGroup  = FfmpegVersionConfig.MacVersionGroup,
+                },
+                new FfmpegVersion()
+                {
+                    Id = new Guid("FE43005A-D480-4113-AF8A-8EBBC6392071"),
+                    PlatformId = new Guid("EBE72964-459B-411E-A8DA-2FF77C7370E4"),
+                    Source =
+                        "https://repo.jellyfin.org/files/ffmpeg/linux/7.x/7.0.2-3/arm64/jellyfin-ffmpeg_7.0.2-3_portable_linuxarm64-gpl.tar.xz",
+                    Version = "7.0.2-3",
+                    HashSha256 = "e0e8fd50233578bc68db43b25f63984808c7604b7787b3a30d40aad66902daf8",
+                    HashMd5 = "2ab051df11ff755b5b7f51937188e186",
+                    VersionGroup  = FfmpegVersionConfig.GenericLinuxVersionGroup,
                 }
             });
     }

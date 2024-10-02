@@ -21,7 +21,7 @@ public class SupportedPlatform
 public enum SupportedPlatformArchitecture
 {
 	
-	X32,
+	i386,
 	Amd64,
 	Arm64
 }

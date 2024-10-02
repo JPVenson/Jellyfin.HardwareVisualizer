@@ -55,6 +55,17 @@ public class PlatformConfig : IEntityTypeConfiguration<Platform>
                 },
                 new Platform()
                 {
+                    Id = new Guid("EBE72964-459B-411E-A8DA-2FF77C7370E4"),
+                    Name = "Linux Generic",
+                    Type = PlatformType.Linux,
+                    Version = "Linux",
+                    VersionId = "Generic",
+                    DisplayName = "Linux Generic",
+                    Supported = true,
+                    Architecture = PlatformArchitecture.Arm64
+                },
+                new Platform()
+                {
                     Id = new Guid("5AEA52AB-60BF-4425-B412-C046A60CCC83"),
                     Name = "MacOS",
                     Type = PlatformType.Mac,
