@@ -59,7 +59,7 @@ public class TestDataService
 			{
 				var caseModel = _mapperService.ViewModelMapper.Map<TestCaseDataModel>(testCase);
 				caseModel.Arguments = testArguments
-					.Where(e => e.HardwareCodecId == testCase.ToCodecId)
+					.Where(e => e.HardwareCodecId == testCase.MediaTestFile.VideoCodec)
 					//.Where(e => mediaTestFile.Bitrate > testCase.Bitrate)
 					.Select(testCaseArgument => new FfmpegArgumentsModel()
 					{
