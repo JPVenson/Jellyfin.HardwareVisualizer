@@ -11,7 +11,7 @@ public class MediaTestFile : HashedExternalEntity
 
 	public long Bitrate { get; set; }
 	public long Size { get; set; }
-	public string VideoCodec { get; set; }
+	public Guid VideoCodec { get; set; }
 	public string AudioCodec { get; set; }
 
 	public ICollection<TestCase> TestCases { get; set; }
