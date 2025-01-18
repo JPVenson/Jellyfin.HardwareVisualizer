@@ -37,7 +37,8 @@ public class TestDataService
 
 		var testFiles = await db.MediaTestFiles.Include(e => e.TestCases).ToArrayAsync(cancellationToken);
 		var testArguments = await db.TestCaseArguments
-			.Include(testCaseArgument => testCaseArgument.HardwareCodec)
+			.Include(testCaseArgument => testCaseArgument.FromHardwareCodec)
+			.Include(testCaseArgument => testCaseArgument.ToHardwareCodec)
 			.Where(e => e.FfmpegVersionGroupId == ffmpegForPlatform.VersionGroup)
 			.ToArrayAsync(cancellationToken);
 
@@ -51,7 +52,15 @@ public class TestDataService
 			{
 				Name = mediaTestFile.Name,
 				TestType = TestCaseType.Transcode,
-				SourceUrl = mediaTestFile.SourceUrl,				
+				SourceUrl = mediaTestFile.SourceUrl,
+				SourceHashs = [new ExternalFileHashModel{
+					Hash = mediaTestFile.HashMd5,
+					Type = "md5"
+				},
+				new ExternalFileHashModel{
+					Hash = mediaTestFile.HashSha256,
+					Type = "sha256"
+				}]
 			};
 
 			var testCases = new List<TestCaseDataModel>();
@@ -59,11 +68,12 @@ public class TestDataService
 			{
 				var caseModel = _mapperService.ViewModelMapper.Map<TestCaseDataModel>(testCase);
 				caseModel.Arguments = testArguments
-					.Where(e => e.HardwareCodecId == testCase.ToCodecId)
+					.Where(e => e.ToHardwareCodecId == testCase.ToCodecId)
+					.Where(e => e.FromHardwareCodecId == mediaTestFile.VideoCodecId)
 					//.Where(e => mediaTestFile.Bitrate > testCase.Bitrate)
 					.Select(testCaseArgument => new FfmpegArgumentsModel()
 					{
-						Codec = testCaseArgument.HardwareCodec.Identifier,
+						Codec = testCaseArgument.ToHardwareCodec.Identifier,
 						Type = (FfmpegArgumentDeviceType)testCaseArgument.TestCaseArgumentDeviceType,
 						Args = testCaseArgument.FfmpegArgument.Replace("{scale}", mediaTestFile.Size.ToString())
 							.Replace("{bitrate}", caseModel.Bitrate.ToString())

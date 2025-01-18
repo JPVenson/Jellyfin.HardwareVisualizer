@@ -155,7 +155,7 @@ public class SubmissionService : ISubmissionService
 			FromResolutionId = await GetOrAddResolution(db, testReference.FromResolution),
 			ToResolutionId = await GetOrAddResolution(db, testReference.ToResolution),
 			MaxStreams = codecTest.Results.MaxStreams,
-			FromHardwareCodecId = await GetOrAddCodec(db, testReference.MediaTestFile.VideoCodec),
+			FromHardwareCodecId = testReference.MediaTestFile.VideoCodecId,
 			ToHardwareCodecId = testReference.ToCodecId,
 			GpuTypeId = selectedGpu is not null ? await GetOrAddGpuType(db, selectedGpu) : null,
 			CpuTypeId = selectedCpu is not null ? await GetOrAddCpuType(db, selectedCpu) : null,

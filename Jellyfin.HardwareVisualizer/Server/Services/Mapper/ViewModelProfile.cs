@@ -25,6 +25,8 @@ public class ViewModelProfile : Profile
 			.ForMember(e => e.FfmpegHashs, e => e.ConvertUsing(new FileHashConverter(), e => e));
 
 		CreateMap<TestCase, TestCaseDataModel>();
+		CreateMap<TestCase, TestCaseModel>()
+			.ForMember(e => e.SourceHashs, e => e.ConvertUsing(new FileHashConverter(), e => e.MediaTestFile));
 	}
 }
 

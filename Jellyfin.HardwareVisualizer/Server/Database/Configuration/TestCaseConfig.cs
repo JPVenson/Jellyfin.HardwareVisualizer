@@ -13,7 +13,6 @@ public class TestCaseConfig : IEntityTypeConfiguration<TestCase>
 				#region File E8A75E65-A3F3-4D92-A45B-84E71A13EFAB	
 				new TestCase()
                 {
-
                     MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
                     TestCaseType = TestCaseType.Transcode,
                     FromResolution = "2160p",
@@ -23,7 +22,6 @@ public class TestCaseConfig : IEntityTypeConfiguration<TestCase>
                 },
                 new TestCase()
                 {
-
                     MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
                     TestCaseType = TestCaseType.Transcode,
                     FromResolution = "2160p",
@@ -33,7 +31,6 @@ public class TestCaseConfig : IEntityTypeConfiguration<TestCase>
                 },
                 new TestCase()
                 {
-
                     MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
                     TestCaseType = TestCaseType.Transcode,
                     FromResolution = "2160p",
@@ -43,7 +40,6 @@ public class TestCaseConfig : IEntityTypeConfiguration<TestCase>
                 },
                 new TestCase()
                 {
-
                     MediaTestFileId = new Guid("E8A75E65-A3F3-4D92-A45B-84E71A13EFAB"),
                     TestCaseType = TestCaseType.Transcode,
                     FromResolution = "1080p",

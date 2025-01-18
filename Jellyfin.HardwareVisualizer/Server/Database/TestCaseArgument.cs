@@ -10,6 +10,9 @@ public record TestCaseArgument
 
 	public Guid FfmpegVersionGroupId { get; set; }
 
-	public Guid HardwareCodecId { get; set; }
-	public HardwareCodec HardwareCodec { get; set; }
+	public Guid FromHardwareCodecId { get; set; }
+	public HardwareCodec FromHardwareCodec { get; set; }
+
+	public Guid ToHardwareCodecId { get; set; }
+	public HardwareCodec ToHardwareCodec { get; set; }
 }

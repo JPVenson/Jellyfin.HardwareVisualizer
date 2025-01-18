@@ -5,142 +5,112 @@ namespace Jellyfin.HardwareVisualizer.Server.Database.Configuration;
 
 public class TestCaseArgumentConfig : IEntityTypeConfiguration<TestCaseArgument>
 {
+    private class TestCaseGen
+    {
+        public string Template;
+        public (Guid codec, string type)[] Source;
+        public (Guid codec, string type)[] Target;
+    }
+
     public void Configure(EntityTypeBuilder<TestCaseArgument> modelBuilder)
     {
-        modelBuilder
-            .HasData(new TestCaseArgument[]
+        var generators = new Dictionary<(TestCaseArgumentDeviceType Device, Guid[] ffmpegGroup), TestCaseGen>()
+        {
             {
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v h264 -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v hevc -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -noautoscale -an -sn -vf \"scale_cuda=-1:{scale}:yuv420p\" -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -noautoscale -an -sn -vf \"scale_cuda=-1:{scale}:yuv420p\" -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v h264 -i {video_file} -noautoscale -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v h264_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v hevc -i {video_file} -noautoscale -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v hevc_vaapi -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -noautoscale -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -noautoscale -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.GenericLinuxVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
+             (TestCaseArgumentDeviceType.Cpu, [FfmpegVersionConfig.GenericLinuxVersionGroup, FfmpegVersionConfig.WindowsVersionGroup, FfmpegVersionConfig.MacVersionGroup]),
+             new TestCaseGen(){
+                Template = "-c:v {SOURCE} -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v {TARGET} -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+                Source = [
+                    (HardwareCodecConfig.h264CodecId, "h264"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc"),
+                ],
+                Target = [
+                    (HardwareCodecConfig.h264CodecId, "libx264"),
+                    (HardwareCodecConfig.hvecCodecId, "libx265"),
+                ]
+             }
+            },
+            {
+             (TestCaseArgumentDeviceType.Nvidia, [FfmpegVersionConfig.GenericLinuxVersionGroup, FfmpegVersionConfig.WindowsVersionGroup]),
+             new TestCaseGen(){
+                Template = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v {SOURCE} -i {video_file} -noautoscale -an -sn -vf \"scale_cuda=-1:{scale}:yuv420p\" -c:v {TARGET} -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+                Source = [
+                    (HardwareCodecConfig.h264CodecId, "h264_cuvid"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_cuvid"),
+                ],
+                Target = [
+                    (HardwareCodecConfig.h264CodecId, "h264_nvenc"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_nvenc"),
+                ]
+             }
+            },
+            {
+             (TestCaseArgumentDeviceType.Amd, [FfmpegVersionConfig.GenericLinuxVersionGroup]),
+             new TestCaseGen(){
+                Template = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -hwaccel vaapi -hwaccel_output_format vaapi -c:v {SOURCE} -i {video_file} -noautoscale -an -sn -vf scale_vaapi=-1:{scale}:format=nv12 -c:v {TARGET} -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+                Source = [
+                    (HardwareCodecConfig.h264CodecId, "h264"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc"),
+                ],
+                Target = [
+                    (HardwareCodecConfig.h264CodecId, "h264_vaapi"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_vaapi"),
+                ]
+             }
+            },
+            {
+             (TestCaseArgumentDeviceType.Amd, [FfmpegVersionConfig.WindowsVersionGroup]),
+             new TestCaseGen(){
+                Template = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v {SOURCE} -i {video_file} -noautoscale -an -sn -vf \"scale=-1:{scale}:format=nv12\" -c:v {TARGET} -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+                Source = [
+                    (HardwareCodecConfig.h264CodecId, "h264"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc"),
+                ],
+                Target = [
+                    (HardwareCodecConfig.h264CodecId, "h264_amf"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_amf"),
+                ]
+             }
+            },
+            {
+             (TestCaseArgumentDeviceType.Intel, [FfmpegVersionConfig.GenericLinuxVersionGroup]),
+             new TestCaseGen(){
+                Template = "-init_hw_device vaapi=va:/dev/dri/by-path/{gpu}-render -init_hw_device qsv=qs@va -hwaccel qsv -hwaccel_output_format qsv -c:v {SOURCE} -i {video_file} -noautoscale -an -sn -vf scale_qsv=-1:{scale}:format=nv12 -c:v {TARGET} -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
+                Source = [
+                    (HardwareCodecConfig.h264CodecId, "h264_qsv"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_qsv"),
+                ],
+                Target = [
+                    (HardwareCodecConfig.h264CodecId, "h264_qsv"),
+                    (HardwareCodecConfig.hvecCodecId, "hevc_qsv"),
+                ]
+             }
+            },            
+        };
 
-				// Windows specifics: 3b20be6a-7c32-41a0-a6ca-259937e69512
+        var testCases = new List<TestCaseArgument>();
+        foreach (var item in generators)
+        {
+            foreach (var osGroup in item.Key.ffmpegGroup)
+            {
+                foreach (var sourceGen in item.Value.Source)
+                {
+                    foreach (var targetGen in item.Value.Target)
+                    {
+                        testCases.Add(new TestCaseArgument()
+                        {
+                            FfmpegArgument = item.Value.Template.Replace("{SOURCE}", sourceGen.type).Replace("{TARGET}", targetGen.type),
+                            TestCaseArgumentDeviceType = item.Key.Device,
+                            FfmpegVersionGroupId = osGroup,
+                            FromHardwareCodecId = sourceGen.codec,
+                            ToHardwareCodecId = targetGen.codec,
+                        });
+                    }
+                }
+            }
+        }
 
-				new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v h264 -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v hevc -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v h264_cuvid -i {video_file} -noautoscale -an -sn -vf \"scale_cuda=-1:{scale}:yuv420p\" -c:v h264_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device cuda=cu:{gpu} -hwaccel cuda -hwaccel_output_format cuda -c:v hevc_cuvid -i {video_file} -noautoscale -an -sn -vf \"scale_cuda=-1:{scale}:yuv420p\" -c:v hevc_nvenc -preset p1 -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Nvidia,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v h264 -i {video_file} -noautoscale -an -sn -vf \"scale=-1:{scale}:format=nv12\" -c:v h264_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel d3d11va -hwaccel_output_format d3d11 -c:v hevc -i {video_file} -noautoscale -an -sn -vf \"scale=-1:{scale}:format=nv12\" -c:v hevc_amf -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Amd,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v h264_qsv -i {video_file} -noautoscale -an -sn -vf \"scale_qsv=-1:{scale}:format=nv12\" -c:v h264_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-init_hw_device d3d11va:{gpu} -hwaccel qsv -hwaccel_output_format qsv -c:v hevc_qsv -i {video_file} -noautoscale -an -sn -vf \"scale_qsv=-1:{scale}:format=nv12\" -c:v hevc_qsv -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Intel,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.WindowsVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-				// MacOS specifics
-				new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v h264 -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx264 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.MacVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.h264CodecId,
-                },
-                new TestCaseArgument()
-                {
-                    FfmpegArgument = "-c:v hevc -i {video_file} -noautoscale -an -sn -vf \"scale=trunc(min(max(iw\\,ih*a)\\,{scale})/2)*2:trunc(ow/a/2)*2,format=yuv420p\" -c:v libx265 -preset veryfast -b:v {bitrate} -maxrate {bitrate} -f null - -benchmark",
-                    TestCaseArgumentDeviceType = TestCaseArgumentDeviceType.Cpu,
-                    FfmpegVersionGroupId  = FfmpegVersionConfig.MacVersionGroup,
-                    HardwareCodecId  = HardwareCodecConfig.hvecCodecId,
-                },
-
-            }.GetWithId());
+        modelBuilder
+            .HasData(testCases.GetWithId());
     }
 }
