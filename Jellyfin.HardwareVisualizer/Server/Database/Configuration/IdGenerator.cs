@@ -8,7 +8,9 @@ public static class IdGenerator
     {
         return testCaseArgument with
         {
-            Id = new Guid(Get16BitHash(testCaseArgument.GetHashCode()))
+            Id = new Guid(Get16BitHash(HashCode.Combine(testCaseArgument.FfmpegArgument,
+                testCaseArgument.FromHardwareCodecId,
+                testCaseArgument.ToHardwareCodecId)))
         };
     }
 
