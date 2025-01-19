@@ -10,7 +10,8 @@ public static class IdGenerator
         {
             Id = new Guid(Get16BitHash(HashCode.Combine(testCaseArgument.FfmpegArgument,
                 testCaseArgument.FromHardwareCodecId,
-                testCaseArgument.ToHardwareCodecId)))
+                testCaseArgument.ToHardwareCodecId,
+                testCaseArgument.FfmpegVersionGroupId)))
         };
     }
 
