@@ -48,7 +48,7 @@ public class FileHashConverter : IValueConverter<HashedExternalEntity, IEnumerab
 			hashes.Add(new ExternalFileHashModel()
 			{
 				Hash = source.HashSha256,
-				Type = "sha526"
+				Type = "sha256"
 			});
 		}
 		return hashes;
