@@ -21,6 +21,7 @@ using Octokit.Internal;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
 using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
+using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace Jellyfin.HardwareVisualizer.Server;
 
@@ -84,6 +85,13 @@ public class Program
 			{
 				Console.WriteLine($"Add Proxy: {proxy}");
 				options.KnownProxies.Add(IPAddress.Parse(proxy));
+			}			
+			
+			foreach(var proxy in hostingOptions.KnownProxyNetworks ?? [])
+			{
+				Console.WriteLine($"Add Proxy: {proxy}");
+				var proxyNetwork = proxy.Split("/");
+				options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse(proxyNetwork[0]), int.Parse(proxyNetwork[1])));
 			}
 		});
 		

@@ -16,4 +16,5 @@ public class EFCoreOptions
 public class HostingOptions
 {
 	public List<string> KnownProxies { get; set; } = new();
+	public List<string> KnownProxyNetworks { get; set; } = new();
 }
