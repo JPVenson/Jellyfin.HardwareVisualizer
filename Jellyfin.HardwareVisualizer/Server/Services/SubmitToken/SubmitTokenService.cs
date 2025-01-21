@@ -69,10 +69,10 @@ public class SubmitTokenService : ISubmitTokenService
 		return token.ValidTo > DateTime.UtcNow;
 	}
 
-	public (string? token, TimeSpan? retryAfter) GenerateToken()
+	public (string? token, TimeSpan? retryAfter) GenerateToken(bool force)
 	{
 		var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-		var cacheKey = "ip-token-" + ipAddress;
+		var cacheKey = force ? Guid.NewGuid().ToString() : "ip-token-" + ipAddress;
 		if (_memoryCache.TryGetValue<TokenStore>(cacheKey, out var tokenStore) 
 			&& tokenStore.JwtPayload.ValidTo > DateTime.UtcNow)
 		{

@@ -6,6 +6,9 @@ using Jellyfin.HardwareVisualizer.Server.Services.TestData;
 using Jellyfin.HardwareVisualizer.Server.Services.SubmitToken;
 using Microsoft.Extensions.Primitives;
 using Jellyfin.HardwareVisualizer.Server.Database;
+using Microsoft.Extensions.Options;
+using Jellyfin.HardwareVisualizer.Server.Configuration;
+using System.Runtime.InteropServices;
 
 namespace Jellyfin.HardwareVisualizer.Server.Controllers;
 
@@ -19,15 +22,18 @@ public class TestDataApiController : ControllerBase
 	private readonly TestDataService _testDataService;
 	private readonly IMapperService _mapperService;
 	private readonly ISubmitTokenService _submitTokenService;
+    private readonly IOptions<LocalAuthenticationOptions> _authOptions;
 
-	public TestDataApiController(TestDataService testDataService, 
+    public TestDataApiController(TestDataService testDataService, 
 		IMapperService mapperService,
-		ISubmitTokenService submitTokenService)
+		ISubmitTokenService submitTokenService,
+		IOptions<LocalAuthenticationOptions> authOptions)
 	{
 		_testDataService = testDataService;
 		_mapperService = mapperService;
 		_submitTokenService = submitTokenService;
-	}
+        _authOptions = authOptions;
+    }
 
 	/// <summary>
 	///		Obtains a set of supported Platforms.
@@ -53,7 +59,7 @@ public class TestDataApiController : ControllerBase
 	public async Task<IActionResult> GetTestData([Required, FromQuery]Guid platformId, 
 		CancellationToken cancellationToken)
 	{
-		var testDataToken = _submitTokenService.GenerateToken();
+		var testDataToken = _submitTokenService.GenerateToken(User.Identity?.IsAuthenticated ?? false);
 		if (testDataToken.retryAfter is not null)
 		{
 			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.TotalSeconds.ToString());

@@ -7,5 +7,6 @@ public class LocalAuthenticationOptions
 {
 	public string Authority { get; set; }
 	public SwaggerAuthOptions Swagger { get; set; }
-	
+
+	public List<string> TestAdminKeys { get; set; }	
 }
