@@ -30,7 +30,9 @@ public class Program
 	public static void Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
-		builder.Configuration
+		builder.Configuration			
+			.AddJsonFile("appsettings.json", true)
+			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
 			.AddEnvironmentVariables("PG_")
 			.AddEnvironmentVariables("JF_")
 			.AddEnvironmentVariables("GH_")
@@ -113,13 +115,12 @@ public class Program
 		var authenticationBuilder = builder.Services
 			.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie();
-		var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
+		var oauthSettings = builder.Configuration.Get<GithubOauthOptions>();
 		if (oauthSettings != null)
 		{
 			Console.WriteLine("Add Github Authentication.");
 			authenticationBuilder.AddGitHub(options =>
 				{
-					var oauthSettings = builder.Configuration.GetSection("GH").Get<GithubOauthOptions>();
 					options.ClientId = oauthSettings.ClientId;
 					options.ClientSecret = oauthSettings.ClientSecret;
 					options.Scope.Add("user:email");
@@ -146,11 +147,12 @@ public class Program
 						var octClient =
 							new GitHubClient(new ProductHeaderValue("Jellyfin.HardwareSurvey.Server"), new InMemoryCredentialStore(new Credentials(context.AccessToken)));
 						var organizations = await octClient.Organization.GetAllForCurrent();
-						if (organizations.All(e => e.Id != 45698031))
-						{
-							context.Fail("Not part of the Jellyfin Organization");
+						if (organizations.Any(e => e.Id == 45698031))
+						{							
 							return;
 						}
+
+						context.Fail("Not part of the Jellyfin Organization");
 					};
 				})
 				;

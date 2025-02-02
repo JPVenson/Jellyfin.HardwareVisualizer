@@ -7,7 +7,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "preLaunchTask": "build",
+            "preLaunchTask": "dotnet: build",
             "program": "${workspaceFolder}/Jellyfin.HardwareVisualizer/Server/bin/Debug/net8.0/Jellyfin.HardwareVisualizer.Server.dll",
             "cwd": "${workspaceFolder}/Jellyfin.HardwareVisualizer",
             "internalConsoleOptions": "openOnSessionStart",
@@ -18,7 +18,9 @@
                 "PG_HOST": "db",
                 "PG_PORT": "5432",
                 "PG_DATABASE": "Jellyfin.HardwareVisualizer",               
-                "HOSTING_KnownProxies__0": "172.18.0.2"
+                "HOSTING_KnownProxies__0": "172.18.0.2",
+                "GH_ClientSecret":"62a622584958d259032f226c39cbe0ab5dafe18a",
+                "GH_ClientId": "c38f701ca9104480275a"
             },
             "url": "https://localhost:5001"
         },

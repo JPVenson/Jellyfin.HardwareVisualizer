@@ -3,6 +3,12 @@
 
 <h3>Dashboard</h3>
 
-@code {
 
-}
+<AuthorizeView>
+    <Authorized>
+        Name: <span>@context.User.Identity.Name</span>
+    </Authorized>
+    <NotAuthorized>
+        <span>Nope</span>
+    </NotAuthorized>
+</AuthorizeView>

@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Jellyfin.HardwareVisualizer.Server.Database.Configuration;
 
@@ -8,7 +9,7 @@ public static class IdGenerator
     {
         return testCaseArgument with
         {
-            Id = new Guid(Get16BitHash(HashCode.Combine(testCaseArgument.FfmpegArgument,
+            Id = new Guid(Get16BitHash(HashCode.Combine(Encoding.UTF8.GetBytes(testCaseArgument.FfmpegArgument.ToUpper()).Select(f => (int)f).Aggregate((e,f) => e + f),
                 testCaseArgument.FromHardwareCodecId,
                 testCaseArgument.ToHardwareCodecId,
                 testCaseArgument.FfmpegVersionGroupId)))

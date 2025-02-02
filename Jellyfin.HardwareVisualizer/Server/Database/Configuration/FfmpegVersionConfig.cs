@@ -41,10 +41,10 @@ public class FfmpegVersionConfig : IEntityTypeConfiguration<FfmpegVersion>
                     Id = new Guid("2C720157-F8FB-48C9-8686-D4DFE7DAAE9A"),
                     PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
                     Source =
-                        "https://repo.jellyfin.org/files/ffmpeg/linux/6.x/6.0.1-7/amd64/jellyfin-ffmpeg_6.0.1-7_portable_linux64-gpl.tar.xz",
+                        "https://repo.jellyfin.org/files/ffmpeg/linux/7.x/7.0.2-3/amd64/jellyfin-ffmpeg_7.0.2-3_portable_linux64-gpl.tar.xz",
                     Version = "6.0.1-7",
-                    HashSha256 = "FA960A6A36CFF9FB9DF215DED55B57A1AC3285147849EF6BE1D8EA63552FFC17",
-                    HashMd5 = "61493050969F95E4D069BA01833834ED",
+                    HashSha256 = "BA4D7B028C5C6B61813CF92AB1B05376AE545E29C5EC65373FED4E93A45CC160",
+                    HashMd5 = "369BE12F07E0A61739CFBD4E57AA2AB6",
                     VersionGroup  = FfmpegVersionConfig.GenericLinuxVersionGroup,
                 },
                 new FfmpegVersion()
@@ -52,10 +52,10 @@ public class FfmpegVersionConfig : IEntityTypeConfiguration<FfmpegVersion>
                     Id = new Guid("501d7e27-8410-40af-b48d-1e7ce0002173"),
                     PlatformId = new Guid("3657b420-2f2a-4940-8ed3-ee70b9b3720d"),
                     Source =
-                        "https://repo.jellyfin.org/files/ffmpeg/linux/6.x/6.0.1-7/amd64/jellyfin-ffmpeg_6.0.1-7_portable_linux64-gpl.tar.xz",
+                        "https://repo.jellyfin.org/files/ffmpeg/linux/7.x/7.0.2-3/amd64/jellyfin-ffmpeg_7.0.2-3_portable_linux64-gpl.tar.xz",
                     Version = "6.0.1-7",
-                    HashSha256 = "FA960A6A36CFF9FB9DF215DED55B57A1AC3285147849EF6BE1D8EA63552FFC17",
-                    HashMd5 = "61493050969F95E4D069BA01833834ED",
+                    HashSha256 = "BA4D7B028C5C6B61813CF92AB1B05376AE545E29C5EC65373FED4E93A45CC160",
+                    HashMd5 = "369BE12F07E0A61739CFBD4E57AA2AB6",
                     VersionGroup  = FfmpegVersionConfig.GenericLinuxVersionGroup,
                 },
                 new FfmpegVersion()
