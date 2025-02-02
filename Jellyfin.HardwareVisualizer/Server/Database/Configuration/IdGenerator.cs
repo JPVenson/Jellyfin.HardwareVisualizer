@@ -9,10 +9,10 @@ public static class IdGenerator
     {
         return testCaseArgument with
         {
-            Id = new Guid(Get16BitHash(HashCode.Combine(Encoding.UTF8.GetBytes(testCaseArgument.FfmpegArgument.ToUpper()).Select(f => (int)f).Aggregate((e,f) => e + f),
-                testCaseArgument.FromHardwareCodecId,
-                testCaseArgument.ToHardwareCodecId,
-                testCaseArgument.FfmpegVersionGroupId)))
+            Id = new Guid(Get16BitHash(testCaseArgument.FfmpegArgument.ToUpper() + 
+                testCaseArgument.FromHardwareCodecId +
+                testCaseArgument.ToHardwareCodecId +
+                testCaseArgument.FfmpegVersionGroupId))
         };
     }
 
@@ -25,13 +25,28 @@ public static class IdGenerator
     {
         return testCase with
         {
-            Id = new Guid(Get16BitHash(testCase.GetHashCode()))
+            Id = new Guid(Get16BitHash(testCase.ToString()))
         };
     }
 
     public static IEnumerable<TestCase> GetWithId(this IEnumerable<TestCase> testCaseArgument)
     {
         return testCaseArgument.Select(GetWithId);
+    }
+
+    public static byte[] Get16BitHash(string input)
+    {
+        using (var md5Hasher = MD5.Create())
+        {
+            var data = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var target = new byte[16];
+            for (int i = 0; i < data.Length; i++)
+            {
+                target[i % 16] |= data[i];
+            }
+            return target;
+        }
     }
 
     public static byte[] Get16BitHash(int input)
