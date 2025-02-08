@@ -42,9 +42,9 @@ public class FfmpegVersionConfig : IEntityTypeConfiguration<FfmpegVersion>
                     PlatformId = new Guid("8D58B84B-73DC-4275-985D-123ABE886818"),
                     Source =
                         "https://repo.jellyfin.org/files/ffmpeg/linux/7.x/7.0.2-3/amd64/jellyfin-ffmpeg_7.0.2-3_portable_linux64-gpl.tar.xz",
-                    Version = "6.0.1-7",
-                    HashSha256 = "BA4D7B028C5C6B61813CF92AB1B05376AE545E29C5EC65373FED4E93A45CC160",
-                    HashMd5 = "369BE12F07E0A61739CFBD4E57AA2AB6",
+                    Version = "7.0.2-3",
+                    HashSha256 = "C737508DCE127A871EAE0D7537181CEAC6C39D3086348B8E2B100251FAD2071D",
+                    HashMd5 = "2BCE8782024607AE0104B8C6DA6F0636",
                     VersionGroup  = FfmpegVersionConfig.GenericLinuxVersionGroup,
                 },
                 new FfmpegVersion()
@@ -53,9 +53,9 @@ public class FfmpegVersionConfig : IEntityTypeConfiguration<FfmpegVersion>
                     PlatformId = new Guid("3657b420-2f2a-4940-8ed3-ee70b9b3720d"),
                     Source =
                         "https://repo.jellyfin.org/files/ffmpeg/linux/7.x/7.0.2-3/amd64/jellyfin-ffmpeg_7.0.2-3_portable_linux64-gpl.tar.xz",
-                    Version = "6.0.1-7",
-                    HashSha256 = "BA4D7B028C5C6B61813CF92AB1B05376AE545E29C5EC65373FED4E93A45CC160",
-                    HashMd5 = "369BE12F07E0A61739CFBD4E57AA2AB6",
+                    Version = "7.0.2-3",
+                    HashSha256 = "C737508DCE127A871EAE0D7537181CEAC6C39D3086348B8E2B100251FAD2071D",
+                    HashMd5 = "2BCE8782024607AE0104B8C6DA6F0636",
                     VersionGroup  = FfmpegVersionConfig.GenericLinuxVersionGroup,
                 },
                 new FfmpegVersion()
