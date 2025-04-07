@@ -62,7 +62,7 @@ public class TestDataApiController : ControllerBase
 		var testDataToken = _submitTokenService.GenerateToken(User.Identity?.IsAuthenticated ?? false);
 		if (testDataToken.retryAfter is not null)
 		{
-			Response.Headers.RetryAfter = new StringValues(testDataToken.retryAfter.Value.TotalSeconds.ToString());
+			Response.Headers.RetryAfter = new StringValues(Math.Round(testDataToken.retryAfter.Value.TotalSeconds).ToString());
 
 			return new StatusCodeResult(StatusCodes.Status429TooManyRequests);
 		}
